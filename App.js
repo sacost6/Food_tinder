@@ -1,30 +1,42 @@
-import React, {useState} from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Button, TextInput, ScrollView, Image } from 'react-native';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
-export default function App() {
-  const [outputText, setOutputText] = useState('Hello World!');
-  return (
-    <View style={{padding: 70}}>
+import Home from './src/WelcomeScreen'
+import MainMenu from './src/MainMenu'
+import host from './src/host'
+import join from './src/join'
+import Swipe from './src/Swipe'
 
-      <View style={{flexDirection: 'row', justifyContent : 'space-between', alignItems : 'center' }}> 
-        <TextInput placeholder="New Task"
-         style={{width : '80%', borderBottomColor:'black', borderBottomWidth: 1, padding : 10}}/>
-        <Button title="ADD"/>
-      </View>
 
-      <View>
-
-      </View>
-
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+const Navigator = createStackNavigator({
+  Home: {
+    screen: Home,
+    navigationOptions: { headerShown: false, }
   },
-});
+  MainMenu: {
+    screen: MainMenu,
+    navigationOptions: { headerShown: false, }
+  },
+  host: {
+    screen: host,
+    navigationOptions: { headerShown: false, }
+  },
+  join: {
+    screen: join,
+    navigationOptions: { headerShown: false, }
+  },
+  Swipe: {
+    screen: Swipe,
+    navigationOptions: { headerShown: false, }
+  }
+})
+
+const App = createAppContainer(Navigator);
+
+export default App;
+
+
+
+
