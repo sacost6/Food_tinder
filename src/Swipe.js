@@ -81,7 +81,7 @@ export default class join extends React.Component {
                 }
                 else if (gestureState.dx < -120) {
                     Animated.spring(this.position, {
-                        toValue: { x: -SCREEN_WIDTH - 50, y: gestureState.dy }
+                        toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy }
                     }).start(() => {
                         this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
                             this.position.setValue({ x: 0, y: 0 })

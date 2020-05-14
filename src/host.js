@@ -3,12 +3,35 @@ import { StyleSheet, Text, View, TextInput, Image, ActivityIndicator } from 'rea
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { Button } from 'react-native-elements';
 import LinearGradient from 'expo-linear-gradient';
+import socketIO from 'socket.io-client';
+
+
+const socket = socketIO('http://127.0.0.1:8000', {
+    transports: ['websocket'], jsonp: false
+});
+
+
 
 export default class host extends React.Component {
+
+
+
+    // connect to the server and on connection, send a message indicating that this user is hosting a session
+    //TODO: Handle receiving key from the server after connecting
+    componentDidMount() {
+        socket.connect();
+        socket.on('connect', () => {
+            console.log("Connected to socket server");
+            socket.emit('Connected', 'hosting');
+        });
+
+    }
+
 
     render() {
         const { navigate } = this.props.navigation;
         const RaisedButton = props => <Button raised {...props} />;
+
 
         return (
             <View style={styles.screen}>

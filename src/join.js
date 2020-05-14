@@ -2,8 +2,38 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Image, ActivityIndicator } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import LinearGradient from 'expo-linear-gradient';
+import socketIO from 'socket.io-client';
+
+
+const socket = socketIO('http://127.0.0.1:8000', {
+    transports: ['websocket'], jsonp: false
+});
+
+
+
 
 export default class join extends React.Component {
+
+    state = {
+        // updated whenever the KeyInput field is updated
+        sesskey: ''
+    }
+
+
+
+    // called when the join button is pressed
+    // connects to the server and sends the key provided by the client
+    join = () => {
+
+        socket.connect()
+        socket.on('connect', () => {
+            socket.emit('connected', this.state.sesskey)
+            console.log('Connected to server, and sent session key: ' + this.state.sesskey);
+
+        })
+    }
+
+
 
 
 
@@ -12,16 +42,22 @@ export default class join extends React.Component {
         const KeyInput = props => <Input leftIcon {...props} />;
         const RaisedButton = props => <Button raised {...props} />;
         const { navigate } = this.props.navigation;
+
         return (
             <View style={styles.screen}>
                 <View style={styles.pane}>
-                    <KeyInput inputContainerStyle={styles.input} placeholder='Enter session key'
+                    <KeyInput inputContainerStyle={styles.input}
+                        onChangeText={text => {
+                            this.state.sesskey = text
+                            console.log('sessKey updated to: ' + this.state.sesskey);
+                        }}
+                        placeholder='Enter session key'
                         leftIcon={{ type: 'font-awesome', name: 'key' }} />
 
                     <RaisedButton
                         buttonStyle={styles.mButton}
                         title="Join"
-                        onPress={() => navigate('Swipe')}
+                        onPress={join}
                         ViewComponent={LinearGradient} // Don't forget this!
                         linearGradientProps={{
                             colors: ['red', 'orange'],
