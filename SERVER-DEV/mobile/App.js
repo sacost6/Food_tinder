@@ -32,7 +32,10 @@ export default class App extends Component {
         socket.on('userID', (data) => {
           this.state.userName = data;
           console.log("data is " + data);
-        })
+        });
+        socket.on('host-info', (key) => {
+          console.log("the host key is " + key);
+        });
       });
       // Get user location on boot up and send to user
       navigator.geolocation.getCurrentPosition(position => {
@@ -54,6 +57,14 @@ export default class App extends Component {
         console.log("User longitude is " + this.state.longitude);
         console.log("User latitude is " + this.state.latitude);
       }} />
+      <Button title="Become Host" onPress={() => {
+        console.log("dude wanna be the host fse")
+        socket.emit('host-req', this.state.userName);
+      }} />
+      <Button title="Join a session" onPress={() => {
+        console.log("pussy boy wanna join");
+        socket.emit('session-req', {key: '307772', userID: this.state.userName});
+      }}/>
     </View>
   );
 }
