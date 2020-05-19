@@ -10,6 +10,10 @@ const {Client, Status} = require('@googlemaps/google-maps-services-js');
 //Required to create Places API requests 
 var https = require('follow-redirects').https;
 
+//Required to generate a random string to be sent as a key
+var crypto = require("crypto");
+
+
 var placeDetails = function() {
     this.places = [];
 }
@@ -17,7 +21,7 @@ var placeDetails = function() {
 // Find places within the specified radius, based on the coordinates 
 //provided by the getCoordinates function
 
-function placeSearch(latitude, longitude, radius) {
+function placeSearch(latitude, longitude, radius, socket) {
     /* This part of the code is used to send the HTTP request to the Places API
      * The PlaceResponse function is the part of the code that is parses the JSON response
      * Note: you can change "&type=___" to a couple of different things 
@@ -30,7 +34,7 @@ function placeSearch(latitude, longitude, radius) {
         path: '/maps/api/place/nearbysearch/json?location=' + 
         latitude + ',' + longitude + '&radius=' + radius + '&type=meal_takeaway&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI', 
         method: 'GET'}, 
-        PlaceResponse).end();
+        (socket) => PlaceResponse).end();
 }
 
 /*
@@ -40,7 +44,7 @@ function placeSearch(latitude, longitude, radius) {
  * (e.g. McDonald's, Burger King, etc.). Try to find out how to get more than 20 results
  * and how to get these restaurants included in the result.
  */ 
-function PlaceResponse(response) {
+function PlaceResponse(response, socket) {
     var p; 
     var data = "";
     var sdata = "";
@@ -77,6 +81,20 @@ let
     users = new Map();
     counter = 0; 
 
+// Variables used to store sessions 
+let 
+    Sessions = new Map(); 
+    SessionsKeys = [];
+
+// Used to store the information of sessions and active sessions 
+class Session { 
+    constructor(host, guest, key) {
+        this.host = host; 
+        this.guest = guest; 
+        this.key = key;
+    }   
+};
+
 class User { 
     constructor(username, lon, lat, info) {
         this.username = username; 
@@ -85,6 +103,8 @@ class User {
         this.info = [false, false];
     }
 };
+
+
 
 // event fired every time a new client connects:
 server.on("connection", (socket) => {
@@ -115,10 +135,12 @@ server.on("connection", (socket) => {
       temp.info[1] = true;
       console.log("User " + counter + " has longitude/latitude: " + temp.lon);
     })
+
     /* Wait for a client to send a request for restaurants with their userID included. 
      * This uses the userID sent to get the client information from the map and then 
      * calls the searchPlaces function.  
-     */
+     */ 
+    /* 
     socket.on('get-restaurant', (userID) => {
         console.log("Restaurant request received");
         console.log("User " + userID + " has requested to see restaurants")
@@ -130,10 +152,55 @@ server.on("connection", (socket) => {
             socket.emit('error', userID);
         }
         else {
-            placeSearch(temp.lat, temp.lon, 4828);
+            placeSearch(temp.lat, temp.lon, 4828, socket);
             console.log("Places have been searched")
         }
+    }); */ 
+
+    /* Listens for a request to be a host from a user, then 
+     * generates a key of 6 strings to identify the session. 
+     * This session is created and stored in a map by the key value, then
+     * the server sends this key to the host for them to share. 
+     */ 
+    socket.on('host-req', (userID) => { 
+        var id = crypto.randomBytes(3).toString('hex');
+        console.log('session key is ' + id);
+        SessionsKeys.push(id)
+        var host = users.get(userID)
+        var newSess = new Session(host, undefined, id);
+        Sessions.set(id, newSess)
+        console.log("size of the sessionskey array is " + SessionsKeys.length);
+        socket.emit('host-info', id);
+        
     });
+
+    /* Listens for a guest's request to join a session and recieves 
+     * the user's input as a key and their userID. The user is added 
+     * to the session as a guest if their session key is valid. 
+     */ 
+    socket.on('session-req', (data) => {
+        let temp = SessionsKeys.find(function() {
+            for(i=0; i<SessionsKeys.length; i++) {
+                if(SessionsKeys[i] == data.key) {
+                    return true;
+                }
+            }
+            return false;
+        }); 
+
+        if(temp == undefined) {
+            console.log("key not found in array");
+        }
+        else {
+            console.log('found in the array')
+            let sess = Sessions.get(data.key);
+            sess.guest = users.get(data.userID); 
+            console.log("Current sessions are " + Sessions.get(data.key));
+            console.log("Current session joined is " + sess.key)
+        }
+    }); 
+
+    
 });
 
 
