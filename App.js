@@ -8,7 +8,10 @@ import MainMenu from './src/MainMenu'
 import host from './src/host'
 import join from './src/join'
 import Swipe from './src/Swipe'
+import info from './src/info'
 
+
+console.disableYellowBox = true;
 
 const Navigator = createStackNavigator({
   Home: {
@@ -29,6 +32,10 @@ const Navigator = createStackNavigator({
   },
   Swipe: {
     screen: Swipe,
+    navigationOptions: { headerShown: false, }
+  },
+  info: {
+    screen: info,
     navigationOptions: { headerShown: false, }
   }
 })

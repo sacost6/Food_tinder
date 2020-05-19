@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, Dimensions, Animated, PanResponder } from 'react-native';
-
+import { LinearGradient } from 'expo-linear-gradient';
 
 SCREEN_HEIGHT = Dimensions.get('window').height
 SCREEN_WIDTH = Dimensions.get('window').width
@@ -13,7 +13,10 @@ Restaurants = [
 ]
 
 
-export default class join extends React.Component {
+
+
+export default class Swipe extends React.Component {
+
 
     constructor() {
         super()
@@ -61,6 +64,8 @@ export default class join extends React.Component {
     // method is functional but no longer recommended. 
     //TODO: update method 
     UNSAFE_componentWillMount() {
+
+
         this.PanResponder = PanResponder.create({
             onStartShouldSetPanResponder: (evt, gestureState) => true,
             onPanResponderMove: (evt, gestureState) => {
@@ -72,21 +77,28 @@ export default class join extends React.Component {
 
                 if (gestureState.dx > 120) {
                     Animated.spring(this.position, {
-                        toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy }
+                        toValue: { x: SCREEN_WIDTH + 1, y: gestureState.dy }
                     }).start(() => {
                         this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
                             this.position.setValue({ x: 0, y: 0 })
                         })
                     })
+                    console.log('done updating state');
                 }
                 else if (gestureState.dx < -120) {
                     Animated.spring(this.position, {
-                        toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy }
+                        toValue: { x: -SCREEN_WIDTH - 1, y: gestureState.dy }
                     }).start(() => {
                         this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
                             this.position.setValue({ x: 0, y: 0 })
                         })
                     })
+                    console.log('done updating state');
+                }
+                else if (Math.abs(gestureState.dx) < 6 && Math.abs(gestureState.dy < 6)) {
+
+                    this.props.navigation.navigate('info');
+
                 }
                 else {
                     Animated.spring(this.position, {
@@ -96,17 +108,21 @@ export default class join extends React.Component {
                 }
 
             }
+
         })
     }
 
 
 
     renderRestaurants = () => {
+
+
         return Restaurants.map((item, i) => {
             if (i < this.state.currentIndex) {
                 return null
             }
             else if (i == this.state.currentIndex) {
+                console.log('rendering next card');
                 return (
                     <Animated.View
                         {...this.PanResponder.panHandlers}
@@ -156,18 +172,20 @@ export default class join extends React.Component {
 
     render() {
 
-        const { navigate } = this.props.navigation;
         return (
             <View style={{ flex: 1 }}>
-                <View style={{ height: 60 }}>
-                </View>
+                <LinearGradient colors={['#4568dc', '#b06ab3']}
+                    style={{ flex: 1 }}>
+                    <View style={{ height: 60 }}>
+                    </View>
 
-                <View style={{ flex: 1 }}>
-                    {this.renderRestaurants()}
-                </View>
+                    <View style={{ flex: 1 }}>
+                        {this.renderRestaurants()}
+                    </View>
 
-                <View style={{ height: 60 }}>
-                </View>
+                    <View style={{ height: 60 }}>
+                    </View>
+                </LinearGradient>
             </View>
         );
     }
