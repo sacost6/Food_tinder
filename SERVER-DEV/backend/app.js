@@ -180,9 +180,11 @@ server.on("connection", (socket) => {
      * to the session as a guest if their session key is valid. 
      */
     socket.on('session-req', (data) => {
+        console.log("the session data is " + data);
         let temp = SessionsKeys.find(function () {
             for (i = 0; i < SessionsKeys.length; i++) {
-                if (SessionsKeys[i] == data.key) {
+                console.log("in current session" + SessionsKeys[i]);
+                if (SessionsKeys[i] === data.key) {
                     return true;
                 }
             }

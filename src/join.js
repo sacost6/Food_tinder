@@ -1,40 +1,17 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Image, ActivityIndicator } from 'react-native';
 import { Input, Button } from 'react-native-elements';
-
+import { connect } from 'react-redux';
 import { LinearGradient } from 'expo-linear-gradient';
-import socketIO from 'socket.io-client';
-
-
-const socket = socketIO('http://127.0.0.1:8000', {
-    transports: ['websocket'], jsonp: false
-});
-
-
-
+import socket from '../store/socket';
 
 export default class join extends React.Component {
+
 
     state = {
         // updated whenever the KeyInput field is updated
         sesskey: ''
     }
-
-
-
-    // called when the join button is pressed
-    // connects to the server and sends the key provided by the client
-    join = () => {
-
-        socket.connect()
-        socket.on('connect', () => {
-            socket.emit('connected', this.state.sesskey)
-            console.log('Connected to server, and sent session key: ' + this.state.sesskey);
-
-        })
-    }
-
-
 
 
 
@@ -60,7 +37,10 @@ export default class join extends React.Component {
                         <RaisedButton
                             buttonStyle={styles.mButton}
                             title="Join"
-                            onPress={() => navigate('Swipe')}
+                            onPress={() => {
+                                console.log(this.state.sesskey);
+                                socket.emit('session-req', { key: this.state.sesskey, userID: 4 })
+                            }}
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{
                                 colors: ['#4568dc', '#b06ab3'],

@@ -3,25 +3,23 @@ import { StyleSheet, Text, View, TextInput, Image, ActivityIndicator } from 'rea
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { Button } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
-import socketIO from 'socket.io-client';
+import socket from '../store/socket'
 import * as Location from 'expo-location';
-
-
-const socket = socketIO('http://127.0.0.1:8000', {
-    transports: ['websocket'], jsonp: false
-});
 
 
 
 export default class host extends React.Component {
-
+    constructor() {
+        super();
+        socket.emit('host-req', 9);
+        socket.on('host-info', key => { console.log("key is " + key) })
+    }
 
     state = {
         location: '',
         userID: 0,
         key: 0
     }
-
 
     // async function to get location from the hosting client
     getLocation = () => {
@@ -36,36 +34,6 @@ export default class host extends React.Component {
             console.log('latitude: ' + location.coords.latitude);
         })();
     }
-
-
-    // connect to the server and on connection, send a message indicating that this user is hosting a session
-    // send location 
-    //TODO: Handle receiving key from the server after connecting
-    componentDidMount() {
-
-        this.getLocation();
-        socket.connect();
-        console.log('Connection status: ' + socket.connected);
-        socket.on('connect', () => {
-            console.log("Connected to socket server");
-            socket.emit('Connected', 'hosting');
-
-            socket.on('userID', (ID) => {
-                this.setState({ userID: ID })
-                console.log('Received user ID: ' + this.state.userID);
-                socket.emit('host-req', this.state.userID);
-            });
-            socket.on('host-info', (key) => {
-                this.setState({ key: key })
-                console.log('Received session key: ' + this.state.key);
-
-            });
-        });
-
-    }
-
-
-
 
     render() {
         const { navigate } = this.props.navigation;
