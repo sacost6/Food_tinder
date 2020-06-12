@@ -45,20 +45,22 @@ export default class host extends React.Component {
 
         this.getLocation();
         socket.connect();
+        console.log('Connection status: ' + socket.connected);
         socket.on('connect', () => {
             console.log("Connected to socket server");
             socket.emit('Connected', 'hosting');
-        });
-        socket.on('userID', (ID) => {
-            this.setState({ userID: ID })
-            console.log('Received user ID: ' + this.state.userID);
-            socket.emit('host-req', this.state.userID);
-        });
-        socket.on('host-info', (key) => {
-            this.setState({ key: key })
-            console.log('Received session key: ' + this.state.key);
 
-        })
+            socket.on('userID', (ID) => {
+                this.setState({ userID: ID })
+                console.log('Received user ID: ' + this.state.userID);
+                socket.emit('host-req', this.state.userID);
+            });
+            socket.on('host-info', (key) => {
+                this.setState({ key: key })
+                console.log('Received session key: ' + this.state.key);
+
+            });
+        });
 
     }
 

@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { Provider } from 'react-redux';
 import { StyleSheet, Text, View, Button, TextInput, ScrollView, Image } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import * as Location from 'expo-location';
+import socketIO from 'socket.io-client';
+
 
 import Home from './src/WelcomeScreen'
 import MainMenu from './src/MainMenu'
@@ -10,8 +14,12 @@ import join from './src/join'
 import Swipe from './src/Swipe'
 import info from './src/info'
 
-
 console.disableYellowBox = true;
+
+const socket = socketIO('http://192.168.0.14:8000', {
+  transports: ['websocket'], jsonp: false
+});
+
 
 const Navigator = createStackNavigator({
   Home: {
@@ -40,10 +48,9 @@ const Navigator = createStackNavigator({
   }
 })
 
+
+
 const App = createAppContainer(Navigator);
 
 export default App;
-
-
-
 
