@@ -16,7 +16,7 @@ import info from './src/info'
 
 console.disableYellowBox = true;
 
-const socket = socketIO('http://192.168.0.14:8000', {
+const socket = socketIO('http://192.168.1.84:8000', {
   transports: ['websocket'], jsonp: false
 });
 

@@ -1,6 +1,6 @@
 // Require socket.io and start a server at port 8000
 const
-    io = require("socket.io"),
+    io = require("socket.io")(http),
     server = io.listen(8000);
 
 // Require JS google maps services for Places API 
@@ -8,15 +8,15 @@ const
 const { Client, Status } = require('@googlemaps/google-maps-services-js');
 
 //Required to create Places API requests 
-var https = require('follow-redirects').https;
+let https = require('follow-redirects').https;
 
 //Required to generate a random string to be sent as a key
-var crypto = require("crypto");
+let crypto = require("crypto");
 
 
-var placeDetails = function () {
+let placeDetails = function () {
     this.places = [];
-}
+};
 
 // Find places within the specified radius, based on the coordinates 
 //provided by the getCoordinates function
@@ -46,10 +46,10 @@ function placeSearch(latitude, longitude, radius, socket) {
  * and how to get these restaurants included in the result.
  */
 function PlaceResponse(response, socket) {
-    var p;
-    var data = "";
-    var sdata = "";
-    var PD = new placeDetails();
+    let p;
+    let data = "";
+    let sdata = "";
+    let PD = new placeDetails();
 
     response.on('data', function (chunk) {
         data += chunk;
@@ -78,7 +78,7 @@ function PlaceResponse(response, socket) {
 }
 // Variables used to hold clients and client information 
 let
-    sequenceNumberByClient = new Map();
+    clientSockets = new Map();
 users = new Map();
 counter = 0;
 
@@ -91,17 +91,16 @@ SessionsKeys = [];
 class Session {
     constructor(host, guest, key) {
         this.host = host;
-        this.guest = guest;
+        this.guest = undefined;
         this.key = key;
     }
 };
 
 class User {
-    constructor(username, lon, lat, info) {
+    constructor(username, lon, lat, socket) {
         this.username = username;
         this.lon = lon;
         this.lat = lat;
-        this.info = [false, false];
     }
 };
 
@@ -112,26 +111,26 @@ server.on("connection", (socket) => {
     console.info(`Client connected [id=${socket.id}]`);
     // initialize this client's sequence number
     counter = counter + 1;
-    sequenceNumberByClient.set(counter, socket);
+    clientSockets.set(counter, socket);
     // initialize the client's user object and add it to the map
-    var user = new User(counter, 0.0, 0.0);
+    const user = new User(counter, 0.0, 0.0, socket);
     users.set(counter, user);
     // send the user their ID in the server
     socket.emit('userID', counter);
     // when socket disconnects, remove it from the list:
     socket.on("disconnect", () => {
-        sequenceNumberByClient.delete(socket);
+        clientSockets.delete(socket);
         console.info(`Client gone [id=${socket.id}]`);
     });
     socket.on('latitude', (lat) => {
         console.log("User coordinates are " + lat);
-        temp = users.get(counter);
+        let temp = users.get(counter);
         temp.lat = lat;
         temp.info[0] = true;
     });
 
     socket.on('longitude', (lon) => {
-        temp = users.get(counter);
+        let temp = users.get(counter);
         temp.lon = lon;
         temp.info[1] = true;
         console.log("User " + counter + " has longitude/latitude: " + temp.lon);
@@ -179,7 +178,7 @@ server.on("connection", (socket) => {
      * the user's input as a key and their userID. The user is added 
      * to the session as a guest if their session key is valid. 
      */
-    socket.on('session-req', (data) => {
+    socket.on('session-req', (data, userID) => {
         console.log("the session data is " + data);
         let temp = SessionsKeys.find(function () {
             for (i = 0; i < SessionsKeys.length; i++) {
@@ -191,19 +190,23 @@ server.on("connection", (socket) => {
             return false;
         });
 
-        if (temp == undefined) {
+        if (temp === undefined) {
             console.log("key not found in array");
         }
         else {
             console.log('found in the array')
             let sess = Sessions.get(data.key);
+            let host = sess.host;
+            console.log("The host of this session is" + host );
+            console.log("The guest of this session is " + userID);
+            console.log("the host socket is " + clientSockets.get(host));
             sess.guest = users.get(data.userID);
             console.log("Current sessions are " + Sessions.get(data.key));
-            console.log("Current session joined is " + sess.key)
+            console.log("Current session joined is " + sess.key);
+            socket.emit('Start', data.userID);
+            clientSockets.get(host).emit('Start', host);
         }
     });
-
-
 });
 
 
