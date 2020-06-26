@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Image, ActivityIndicator } from 'react-native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
 import { Button } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import socket from '../store/socket'
 import * as Location from 'expo-location';
+import Navigator from '../App.js'
 
 
 
 export default class host extends React.Component {
     constructor(props) {
         super(props);
+        const navigate = this.props.navigation;
         socket.emit('host-req', 9);
         console.log("host-request sent");
-        socket.on('host-info', key => { console.log("key is " + key) })
+        socket.on('host-info', data => {
+            this.setState( {key: data});
+            console.log("1) key is " + data) });
+        socket.on('Start', () => {navigate('Swipe')});
     }
+
 
     state = {
         location: '',

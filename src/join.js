@@ -4,8 +4,14 @@ import { Input, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { LinearGradient } from 'expo-linear-gradient';
 import socket from '../store/socket';
+import Navigator from '../App.js'
 
 export default class join extends React.Component {
+    constructor(props) {
+        super(props);
+        const navigate = this.props.navigation;
+        socket.on('Start', () => {navigate('Swipe')});
+    }
 
 
     state = {
@@ -19,7 +25,6 @@ export default class join extends React.Component {
     render() {
         const KeyInput = props => <Input leftIcon {...props} />;
         const RaisedButton = props => <Button raised {...props} />;
-        const { navigate } = this.props.navigation;
 
         return (
             <View style={styles.screen}>
