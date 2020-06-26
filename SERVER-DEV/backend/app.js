@@ -56,7 +56,7 @@ function PlaceResponse(response, socket) {
     });
     response.on('end', function () {
         sdata = JSON.parse(data);
-        if (sdata.status == 'OK') {
+        if (sdata.status === 'OK') {
             console.log('Status: ' + sdata.status);
             console.log('Results: ' + sdata.results.length);
             for (p = 0; p < sdata.results.length; p++) {
@@ -79,13 +79,15 @@ function PlaceResponse(response, socket) {
 // Variables used to hold clients and client information 
 let
     clientSockets = new Map();
-users = new Map();
-counter = 0;
+    users = new Map();
+    counter = 0;
+
 
 // Variables used to store sessions 
 let
     Sessions = new Map();
-SessionsKeys = [];
+    counter = 0;
+    SessionsKeys = [];
 
 // Used to store the information of sessions and active sessions 
 class Session {
@@ -94,15 +96,16 @@ class Session {
         this.guest = undefined;
         this.key = key;
     }
-};
+}
 
 class User {
     constructor(username, lon, lat, socket) {
         this.username = username;
         this.lon = lon;
         this.lat = lat;
+        this.socket = socket;
     }
-};
+}
 
 
 
@@ -112,6 +115,10 @@ server.on("connection", (socket) => {
     // initialize this client's sequence number
     counter = counter + 1;
     clientSockets.set(counter, socket);
+<<<<<<< HEAD
+    console.log('Counter number ' + counter);
+=======
+>>>>>>> 8b28ece5b4b7c6d3a582e417b09ec6e51d20e9f4
     // initialize the client's user object and add it to the map
     const user = new User(counter, 0.0, 0.0, socket);
     users.set(counter, user);
@@ -163,25 +170,25 @@ server.on("connection", (socket) => {
      * the server sends this key to the host for them to share. 
      */
     socket.on('host-req', (userID) => {
-        var id = crypto.randomBytes(3).toString('hex');
+        let id = crypto.randomBytes(3).toString('hex');
         console.log('session key is ' + id);
-        SessionsKeys.push(id)
-        var host = users.get(userID)
-        var newSess = new Session(host, undefined, id);
-        Sessions.set(id, newSess)
+        SessionsKeys.push(id);
+        let host = userID;
+        let newSess = new Session(host, -1, id);
+        Sessions.set(id, newSess);
         console.log("size of the sessionskey array is " + SessionsKeys.length);
         socket.emit('host-info', id);
 
     });
 
-    /* Listens for a guest's request to join a session and recieves 
+    /* Listens for a guest's request to join a session and receives
      * the user's input as a key and their userID. The user is added 
      * to the session as a guest if their session key is valid. 
      */
     socket.on('session-req', (data, userID) => {
         console.log("the session data is " + data);
         let temp = SessionsKeys.find(function () {
-            for (i = 0; i < SessionsKeys.length; i++) {
+            for (let i = 0; i < SessionsKeys.length; i++) {
                 console.log("in current session" + SessionsKeys[i]);
                 if (SessionsKeys[i] === data.key) {
                     return true;
@@ -197,6 +204,19 @@ server.on("connection", (socket) => {
             console.log('found in the array')
             let sess = Sessions.get(data.key);
             let host = sess.host;
+<<<<<<< HEAD
+            console.log('The session is ' + sess.key);
+            console.log("The host of this session is" + sess.host);
+            console.log("The guest of this session is " + data.userID);
+            console.log("the host socket is " + clientSockets.get(host));
+            sess.guest = data.userID;
+            console.log("Current sessions are " + Sessions.get(data.key));
+            console.log("Current session joined is " + sess.key);
+            socket.emit('Start', data.userID);
+            console.log('1/2 Start message sent to ' + socket);
+           // clientSockets.get(host).emit('Start', host);
+            console.log('2/2 Start message sent to ' + socket);
+=======
             console.log("The host of this session is" + host );
             console.log("The guest of this session is " + userID);
             console.log("the host socket is " + clientSockets.get(host));
@@ -205,9 +225,11 @@ server.on("connection", (socket) => {
             console.log("Current session joined is " + sess.key);
             socket.emit('Start', data.userID);
             clientSockets.get(host).emit('Start', host);
+>>>>>>> 8b28ece5b4b7c6d3a582e417b09ec6e51d20e9f4
         }
     });
 });
+
 
 
 
