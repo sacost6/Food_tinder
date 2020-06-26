@@ -9,9 +9,10 @@ import * as Location from 'expo-location';
 
 
 export default class host extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         socket.emit('host-req', 9);
+        console.log("host-request sent");
         socket.on('host-info', key => { console.log("key is " + key) })
     }
 
