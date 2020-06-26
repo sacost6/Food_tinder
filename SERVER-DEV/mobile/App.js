@@ -9,7 +9,7 @@ import socketIO from 'socket.io-client';
 import Inputs from './services/input';
 
 
-const socket = socketIO('http://127.0.0.1:8000', {
+const socket = socketIO('http://192.168.1.85:8000', {
   transports: ['websocket'], jsonp: false
 });
 

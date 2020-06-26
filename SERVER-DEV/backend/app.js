@@ -1,6 +1,6 @@
 // Require socket.io and start a server at port 8000
 const
-    io = require("socket.io")(http),
+    io = require("socket.io"),
     server = io.listen(8000);
 
 // Require JS google maps services for Places API 
