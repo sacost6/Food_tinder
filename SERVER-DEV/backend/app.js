@@ -1,6 +1,6 @@
 // Require socket.io and start a server at port 8000
 const
-    io = require("socket.io")(http),
+    io = require("socket.io"),
     server = io.listen(8000);
 
 // Require JS google maps services for Places API 
@@ -82,11 +82,9 @@ let
     users = new Map();
     counter = 0;
 
-
 // Variables used to store sessions 
 let
-    Sessions = new Map();
-    counter = 0;
+    Sessions = new Map(), counter;
     SessionsKeys = [];
 
 // Used to store the information of sessions and active sessions 
@@ -103,7 +101,6 @@ class User {
         this.username = username;
         this.lon = lon;
         this.lat = lat;
-        this.socket = socket;
     }
 }
 
@@ -115,10 +112,6 @@ server.on("connection", (socket) => {
     // initialize this client's sequence number
     counter = counter + 1;
     clientSockets.set(counter, socket);
-<<<<<<< HEAD
-    console.log('Counter number ' + counter);
-=======
->>>>>>> 8b28ece5b4b7c6d3a582e417b09ec6e51d20e9f4
     // initialize the client's user object and add it to the map
     const user = new User(counter, 0.0, 0.0, socket);
     users.set(counter, user);
@@ -172,10 +165,10 @@ server.on("connection", (socket) => {
     socket.on('host-req', (userID) => {
         let id = crypto.randomBytes(3).toString('hex');
         console.log('session key is ' + id);
-        SessionsKeys.push(id);
-        let host = userID;
-        let newSess = new Session(host, -1, id);
-        Sessions.set(id, newSess);
+        SessionsKeys.push(id)
+        let host = users.get(userID);
+        let newSess = new Session(host, undefined, id);
+        Sessions.set(id, newSess)
         console.log("size of the sessionskey array is " + SessionsKeys.length);
         socket.emit('host-info', id);
 
@@ -185,7 +178,7 @@ server.on("connection", (socket) => {
      * the user's input as a key and their userID. The user is added 
      * to the session as a guest if their session key is valid. 
      */
-    socket.on('session-req', (data, userID) => {
+    socket.on('session-req', (data) => {
         console.log("the session data is " + data);
         let temp = SessionsKeys.find(function () {
             for (let i = 0; i < SessionsKeys.length; i++) {
@@ -204,32 +197,19 @@ server.on("connection", (socket) => {
             console.log('found in the array')
             let sess = Sessions.get(data.key);
             let host = sess.host;
-<<<<<<< HEAD
-            console.log('The session is ' + sess.key);
-            console.log("The host of this session is" + sess.host);
-            console.log("The guest of this session is " + data.userID);
-            console.log("the host socket is " + clientSockets.get(host));
-            sess.guest = data.userID;
-            console.log("Current sessions are " + Sessions.get(data.key));
-            console.log("Current session joined is " + sess.key);
-            socket.emit('Start', data.userID);
-            console.log('1/2 Start message sent to ' + socket);
-           // clientSockets.get(host).emit('Start', host);
-            console.log('2/2 Start message sent to ' + socket);
-=======
             console.log("The host of this session is" + host );
-            console.log("The guest of this session is " + userID);
+            console.log("The guest of this session is " + data.userID);
             console.log("the host socket is " + clientSockets.get(host));
             sess.guest = users.get(data.userID);
             console.log("Current sessions are " + Sessions.get(data.key));
             console.log("Current session joined is " + sess.key);
             socket.emit('Start', data.userID);
+            console.log('1/2 Start message sent to ' + socket);
             clientSockets.get(host).emit('Start', host);
->>>>>>> 8b28ece5b4b7c6d3a582e417b09ec6e51d20e9f4
+            console.log('2/2 Start message sent to ' + socket);
         }
     });
 });
-
 
 
 
