@@ -15,7 +15,6 @@ export default class join extends React.Component {
 
 
 
-
     render() {
         const KeyInput = props => <Input leftIcon {...props} />;
         const RaisedButton = props => <Button raised {...props} />;
@@ -39,7 +38,7 @@ export default class join extends React.Component {
                             title="Join"
                             onPress={() => {
                                 console.log(this.state.sesskey);
-                                socket.emit('session-req', { key: this.state.sesskey, userID: 4 })
+                                socket.emit('session-req', { key: this.state.sesskey, userID: 4 });
                             }}
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{

@@ -5,14 +5,21 @@ import { Button } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import socket from '../store/socket'
 import * as Location from 'expo-location';
-
-
+// New import statements 
+import { foodApp, host, guest } from './reducers';
+import store from '../store/index'
+import { SessionKey } from '../store/actionTypes';
 
 export default class host extends React.Component {
     constructor() {
         super();
         socket.emit('host-req', 9);
-        socket.on('host-info', key => { console.log("key is " + key) })
+        socket.on('host-info', key => {
+
+            store.dispatch(SessionKey(key));
+            console.log("key is " + store.getState());
+        });
+
     }
 
     state = {
@@ -57,6 +64,7 @@ export default class host extends React.Component {
                         <RaisedButton
                             buttonStyle={styles.mButton}
                             title="Cancel"
+                            onPress={() => navigate('MainMenu')}
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{
                                 colors: ['#4568dc', '#b06ab3'],
