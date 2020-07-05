@@ -5,8 +5,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import socket from '../store/socket'
 import * as Location from 'expo-location';
 
-
-
+// New import statements 
+import { foodApp, host, guest } from './reducers';
+import store from '../store/index'
+import { SessionKey } from '../store/actionTypes';
 
 
 export default class host extends React.Component {
@@ -14,11 +16,18 @@ export default class host extends React.Component {
         super(props);
         const {navigate} = this.props.navigation;
         socket.emit('host-req', 9);
+        socket.on('host-info', key => {
+
+            store.dispatch(SessionKey(key));
+            console.log("key is " + store.getState());
+        });
+
         console.log("host-request sent");
         socket.on('host-info', data => {
             this.setState( {key: data});
             console.log("1) key is " + data) });
-        socket.on('Start', () => navigate('Swipe'));
+        socket.on('Start', () => {navigate('Swipe')});
+
     }
 
 
@@ -67,6 +76,7 @@ export default class host extends React.Component {
                             buttonStyle={styles.mButton}
                             title="Cancel"
                             titleStyle={styles.buttonText}
+                            onPress={() => navigate('MainMenu')}
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{
                                 colors: ['#879826', '#bfcd31'],

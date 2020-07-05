@@ -54,6 +54,7 @@ function PlaceResponse(response, socket) {
     response.on('data', function (chunk) {
         data += chunk;
     });
+
     response.on('end', function () {
         sdata = JSON.parse(data);
         if (sdata.status === 'OK') {
@@ -105,7 +106,6 @@ class User {
 }
 
 
-
 // event fired every time a new client connects:
 server.on("connection", (socket) => {
     console.info(`Client connected [id=${socket.id}]`);
@@ -140,7 +140,7 @@ server.on("connection", (socket) => {
      * This uses the userID sent to get the client information from the map and then 
      * calls the searchPlaces function.  
      */
-    /* 
+
     socket.on('get-restaurant', (userID) => {
         console.log("Restaurant request received");
         console.log("User " + userID + " has requested to see restaurants")
@@ -148,14 +148,14 @@ server.on("connection", (socket) => {
         // check if the user currently has stored coordinates 
         temp = users.get(userID);
         // check if the user has both longitude and latitude values stored.
-        if(temp.info[0] != true || temp.info[1] != true) {
+        if (temp.info[0] != true || temp.info[1] != true) {
             socket.emit('error', userID);
         }
         else {
             placeSearch(temp.lat, temp.lon, 4828, socket);
             console.log("Places have been searched")
         }
-    }); */
+    });
 
     /* Listens for a request to be a host from a user, then 
      * generates a key of 6 strings to identify the session. 
