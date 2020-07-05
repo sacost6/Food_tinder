@@ -4,13 +4,12 @@ import { Input, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { LinearGradient } from 'expo-linear-gradient';
 import socket from '../store/socket';
-import Navigator from '../App.js'
 
 export default class join extends React.Component {
     constructor(props) {
         super(props);
-        const navigate = this.props.navigation;
-        socket.on('Start', () => {navigate('Swipe')});
+        const {navigate} = this.props.navigation;
+        socket.on('Start', () => navigate('Swipe'));
     }
 
 
@@ -25,30 +24,34 @@ export default class join extends React.Component {
     render() {
         const KeyInput = props => <Input leftIcon {...props} />;
         const RaisedButton = props => <Button raised {...props} />;
-
+        const {navigate} = this.props.navigation; 
         return (
             <View style={styles.screen}>
-                <LinearGradient colors={['#4568dc', '#b06ab3']}
+                <LinearGradient colors={['#000000', '#202020']}
                     style={{ flex: 1, alignItems: 'center', justifyContent: 'center', position: 'absolute', height: '100%', width: '100%' }} >
                     <View style={styles.pane}>
                         <KeyInput inputContainerStyle={styles.input}
+                            labelStyle={styles.inputLabel}
                             onChangeText={text => {
                                 this.state.sesskey = text
                                 console.log('sessKey updated to: ' + this.state.sesskey);
                             }}
                             placeholder='Enter session key'
-                            leftIcon={{ type: 'font-awesome', name: 'key' }} />
+                            leftIcon={{ type: 'font-awesome', name: 'key', color: '#879826' }}
+                            leftIconContainerStyle={styles.iconContainer} />
 
                         <RaisedButton
                             buttonStyle={styles.mButton}
                             title="Join"
-                            onPress={() => {
-                                console.log(this.state.sesskey);
-                                socket.emit('session-req', { key: this.state.sesskey, userID: 4 })
-                            }}
+                            titleStyle= {styles.buttonText}
+                            onPress={() => 
+                                //console.log(this.state.sesskey);
+                                //socket.emit('session-req', { key: this.state.sesskey, userID: 4 })
+                                navigate('Swipe')
+                            }
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{
-                                colors: ['#4568dc', '#b06ab3'],
+                                colors: ['#879826', '#bfcd31'],
                                 start: { x: 0, y: 0.5 },
                                 end: { x: 1, y: 0.5 },
                             }} />
@@ -71,18 +74,18 @@ const styles = StyleSheet.create({
         width: '100%',
         borderStyle: 'solid',
         overflow: 'hidden',
-        backgroundColor: '#f2f0ee',
+        backgroundColor: '#3d3d3d',
         borderRadius: 25,
-        borderBottomColor: '#FFFFFF',
+        borderBottomColor: '#3d3d3d'
 
     },
     pane: {
-        //backgroundColor: 'rgba(52, 52, 52, 0.2)', transparent color
-        backgroundColor: '#FFFFFF',
-        padding: 40,
+       
+        backgroundColor: 'rgba(185, 185, 185, 0.15)', 
+        padding: 20,
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '30%',
+        height: '35%',
         width: '90%',
         position: 'absolute',
         borderRadius: 25,
@@ -94,6 +97,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
 
+    },
+    buttonText: {
+        fontWeight: 'bold',
+        fontSize: 20
+    },
+    iconContainer: {
+        marginLeft: '10%'
+    },
+    inputLabel: {
+        color: 'black',
+        fontWeight: 'bold'
     }
-
 });

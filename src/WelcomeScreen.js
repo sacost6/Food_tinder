@@ -34,9 +34,10 @@ export default class WelcomeScreen extends React.Component {
 
                 <TouchableWithoutFeedback onPress={() => navigate('MainMenu')}>
                     <View style={{ flex: 1 }}>
-                        <LinearGradient colors={['#4568dc', '#b06ab3']}
+                        <LinearGradient colors={['#000000', '#202020']}
                             style={styles.container}>
-                            <Image source={require('../assets/Logo_placeholder.png')} />
+                            <Image style={styles.logo}
+                            source={require('../assets/upick_logo.png')} />
                             <Text style={styles.welcomeText}>
                                 Tap to Begin
                         </Text>
@@ -56,12 +57,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'space-evenly'
+        justifyContent: 'flex-end'
     },
     welcomeText: {
         fontWeight: 'bold',
         fontSize: 18,
         color: 'white',
+        marginBottom: '20%',
+        marginTop: '10%'
     },
+    logo: {
+
+        width: '65%',
+        height: '65%'
+    }
 
 });

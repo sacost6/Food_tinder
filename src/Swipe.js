@@ -16,11 +16,66 @@ Restaurants = [
 
 
 export default class Swipe extends React.Component {
+    placeDetails = () => {
+        this.places = [];
+    };
+
+
+     placeSearch(latitude, longitude, radius, socket) {
+        /* This part of the code is used to send the HTTP request to the Places API
+         * The PlaceResponse function is the part of the code that is parses the JSON response
+         * Note: you can change "&type=___" to a couple of different things 
+         * (e.g. restaurant, meal_takeaway, meal_delivery, etc.) and change the radius (which is 
+         * measured in meters).
+         */
+    
+        https.request({
+            host: 'maps.googleapis.com',
+            path: '/maps/api/place/nearbysearch/json?location=' +
+            '41.879410' + ',' + '-87.885930' + '&radius=' + '1500' + '&type=meal_takeaway&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI',
+            method: 'GET'
+        },
+            (socket) => PlaceResponse).end();
+    }
+    
+    PlaceResponse(response, socket) {
+        let p;
+        let data = "";
+        let sdata = "";
+        let PD = new placeDetails();
+    
+        response.on('data', function (chunk) {
+            data += chunk;
+        });
+        response.on('end', function () {
+            sdata = JSON.parse(data);
+            if (sdata.status === 'OK') {
+                console.log('Status: ' + sdata.status);
+                console.log('Results: ' + sdata.results.length);
+                for (p = 0; p < sdata.results.length; p++) {
+                    PD.places.push(sdata.results[p]);
+                }
+                for (r = 0; r < sdata.results.length; r++) {
+                    console.log('----------------------------------------------');
+                    console.log(PD.places[r].name);
+                    console.log('Place ID (for Place Detail search on Google):' + PD.places[r].place_id);
+                    console.log('Rating: ' + PD.places[r].rating);
+                    console.log('Vicinity: ' + PD.places[r].vicinity);
+                }
+    
+            }
+            else {
+                console.log(sdata.status);
+            }
+        })
+    }
+
+
 
 
     constructor() {
         super()
-
+        this.placeSearch();
         this.position = new Animated.ValueXY()
         this.state = {
             currentIndex: 0

@@ -9,7 +9,7 @@ export default class MainMenu extends React.Component {
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.screen}>
-                <LinearGradient colors={['#4568dc', '#b06ab3']}
+                <LinearGradient colors={['#000000', '#202020']}
                     style={{ flex: 1, width: '100%', height: '100%', position: 'absolute', alignItems: 'center', justifyContent: 'space-between' }}>
                     <TouchableWithoutFeedback onPress={() => navigate('host')}>
                         <View style={styles.create}>
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(52, 52, 52, 0.2)',
+        backgroundColor: 'rgba(100, 100, 100, 0.30)',
         marginBottom: 10
     },
     create: {
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         width: '95%',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(52, 52, 52, 0.2)'
+        backgroundColor: 'rgba(100, 100, 100, 0.30)'
     },
     textStyle: {
         color: 'white',

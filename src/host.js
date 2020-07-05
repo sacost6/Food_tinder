@@ -4,20 +4,21 @@ import { Button } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import socket from '../store/socket'
 import * as Location from 'expo-location';
-import Navigator from '../App.js'
+
+
 
 
 
 export default class host extends React.Component {
     constructor(props) {
         super(props);
-        const navigate = this.props.navigation;
+        const {navigate} = this.props.navigation;
         socket.emit('host-req', 9);
         console.log("host-request sent");
         socket.on('host-info', data => {
             this.setState( {key: data});
             console.log("1) key is " + data) });
-        socket.on('Start', () => {navigate('Swipe')});
+        socket.on('Start', () => navigate('Swipe'));
     }
 
 
@@ -48,7 +49,7 @@ export default class host extends React.Component {
 
         return (
             <View style={styles.screen}>
-                <LinearGradient colors={['#4568dc', '#b06ab3']}
+                <LinearGradient colors={['#000000', '#202020']}
                     style={{ flex: 1, alignItems: 'center', justifyContent: 'center', position: 'absolute', height: '100%', width: '100%' }}>
                     <View style={styles.pane}>
                         <View style={styles.keyContainer}>
@@ -56,16 +57,19 @@ export default class host extends React.Component {
                                 {this.state.key}
                             </Text>
                         </View>
-                        <ActivityIndicator size='large' />
+                        <ActivityIndicator size='large'
+                            color='#b4cd31'
+                        />
                         <Text style={styles.waitingText}>
                             Waiting for someone to join...
                     </Text>
                         <RaisedButton
                             buttonStyle={styles.mButton}
                             title="Cancel"
+                            titleStyle={styles.buttonText}
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{
-                                colors: ['#4568dc', '#b06ab3'],
+                                colors: ['#879826', '#bfcd31'],
                                 start: { x: 0, y: 0.5 },
                                 end: { x: 1, y: 0.5 },
                             }} />
@@ -84,7 +88,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     keyContainer: {
-        backgroundColor: '#f7f2ee',
+        backgroundColor: '#3d3d3d',
         width: '80%',
         height: 50,
         borderRadius: 25,
@@ -93,29 +97,37 @@ const styles = StyleSheet.create({
     },
     keyStyle: {
         fontWeight: 'bold',
+        color: 'white',
         fontSize: 18,
     },
     pane: {
-        //backgroundColor: 'rgba(52, 52, 52, 0.2)',  transparent color
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'rgba(185, 185, 185, 0.15)',  
         paddingTop: 20,
         paddingBottom: 20,
         borderRadius: 25,
         width: '93%',
-        height: '35%',
+        height: '40%',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
     },
     waitingText: {
         fontSize: 12,
+        fontWeight: 'bold',
+        color: 'white'
     },
     mButton: {
-        width: 350,
+        width: 285,
         height: 55,
         borderRadius: 25,
         alignItems: 'center',
         justifyContent: 'center',
-
+        
+    },
+    buttonText: {
+        fontSize: 20,
+        color: 'white',
+        fontWeight: 'bold'
     }
+    
 
 });

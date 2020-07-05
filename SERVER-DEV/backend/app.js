@@ -84,7 +84,7 @@ let
 
 // Variables used to store sessions 
 let
-    Sessions = new Map(), counter;
+    Sessions = new Map();
     SessionsKeys = [];
 
 // Used to store the information of sessions and active sessions 
@@ -205,7 +205,7 @@ server.on("connection", (socket) => {
             console.log("Current session joined is " + sess.key);
             socket.emit('Start', data.userID);
             console.log('1/2 Start message sent to ' + socket);
-            clientSockets.get(host).emit('Start', host);
+            //clientSockets.get(host).emit('Start', host);
             console.log('2/2 Start message sent to ' + socket);
         }
     });
