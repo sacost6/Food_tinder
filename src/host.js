@@ -1,26 +1,41 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Image, ActivityIndicator } from 'react-native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
 import { Button } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import socket from '../store/socket'
 import * as Location from 'expo-location';
+<<<<<<< HEAD
 // New import statements 
 import { foodApp, host, guest } from './reducers';
 import store from '../store/index'
 import { SessionKey } from '../store/actionTypes';
+=======
+import Navigator from '../App.js'
+
+
+>>>>>>> 21c64c1e6b0cd3471a630e552e0913bb307bde82
 
 export default class host extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        const navigate = this.props.navigation;
         socket.emit('host-req', 9);
+<<<<<<< HEAD
         socket.on('host-info', key => {
 
             store.dispatch(SessionKey(key));
             console.log("key is " + store.getState());
         });
 
+=======
+        console.log("host-request sent");
+        socket.on('host-info', data => {
+            this.setState( {key: data});
+            console.log("1) key is " + data) });
+        socket.on('Start', () => {navigate('Swipe')});
+>>>>>>> 21c64c1e6b0cd3471a630e552e0913bb307bde82
     }
+
 
     state = {
         location: '',

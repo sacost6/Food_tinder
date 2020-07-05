@@ -16,11 +16,6 @@ import info from './src/info'
 
 console.disableYellowBox = true;
 
-const socket = socketIO('http://192.168.0.14:8000', {
-  transports: ['websocket'], jsonp: false
-});
-
-
 const Navigator = createStackNavigator({
   Home: {
     screen: Home,
