@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 
 import { ADD_HOST, ADD_GUEST, ADD_CURRENT_USER, SESSION_KEY } from './actionTypes';
 
-function host(state = undefined, action) {
+function getHost(state = undefined, action) {
     switch (action.type) {
         case ADD_HOST:
             return action.userID;
@@ -40,7 +40,7 @@ function GetSessionKey(state = '', action) {
 
 
 const foodApp = combineReducers({
-    host,
+    getHost,
     guest,
     addCurrentUser,
     GetSessionKey

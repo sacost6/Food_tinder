@@ -9,7 +9,7 @@ export function CurrentUser(socket) {
     return { type: ADD_CURRENT_USER, socket };
 }
 
-export function host(userID) {
+export function getHost(userID) {
     return { type: ADD_HOST, userID };
 }
 

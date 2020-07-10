@@ -8,7 +8,7 @@ import socket from '../store/socket';
 export default class join extends React.Component {
     constructor(props) {
         super(props);
-        const {navigate} = this.props.navigation;
+        const { navigate } = this.props.navigation;
         socket.on('Start', () => navigate('Swipe'));
     }
 
@@ -23,7 +23,7 @@ export default class join extends React.Component {
     render() {
         const KeyInput = props => <Input leftIcon {...props} />;
         const RaisedButton = props => <Button raised {...props} />;
-        const {navigate} = this.props.navigation; 
+        const { navigate } = this.props.navigation;
         return (
             <View style={styles.screen}>
                 <LinearGradient colors={['#000000', '#202020']}
@@ -42,19 +42,12 @@ export default class join extends React.Component {
                         <RaisedButton
                             buttonStyle={styles.mButton}
                             title="Join"
-<<<<<<< HEAD
-                            titleStyle= {styles.buttonText}
-                            onPress={() => 
-                                //console.log(this.state.sesskey);
-                                //socket.emit('session-req', { key: this.state.sesskey, userID: 4 })
-                                navigate('Swipe')
-                            }
-=======
+                            titleStyle={styles.buttonText}
                             onPress={() => {
                                 console.log(this.state.sesskey);
-                                socket.emit('session-req', { key: this.state.sesskey, userID: 4 });
+                                socket.emit('session-req', { key: this.state.sesskey, userID: 4 })
+                                navigate('Swipe')
                             }}
->>>>>>> 5792fd6746165383e69b42391111278e6d856b13
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{
                                 colors: ['#879826', '#bfcd31'],
@@ -86,8 +79,8 @@ const styles = StyleSheet.create({
 
     },
     pane: {
-       
-        backgroundColor: 'rgba(185, 185, 185, 0.15)', 
+
+        backgroundColor: 'rgba(185, 185, 185, 0.15)',
         padding: 20,
         justifyContent: 'space-between',
         alignItems: 'center',

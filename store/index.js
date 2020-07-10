@@ -2,7 +2,7 @@ import { createStore } from 'redux';
 import socket from './socket';
 
 // New import statements 
-import { foodApp, host, guest } from './reducers';
+import { foodApp, getHost, guest } from './reducers';
 import { CurrentUser } from './actionTypes';
 
 let navigate;

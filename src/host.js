@@ -6,7 +6,7 @@ import socket from '../store/socket'
 import * as Location from 'expo-location';
 
 // New import statements 
-import { foodApp, host, guest } from './reducers';
+import { foodApp, getHost, guest } from '../store/reducers';
 import store from '../store/index'
 import { SessionKey } from '../store/actionTypes';
 
@@ -14,7 +14,7 @@ import { SessionKey } from '../store/actionTypes';
 export default class host extends React.Component {
     constructor(props) {
         super(props);
-        const {navigate} = this.props.navigation;
+        const { navigate } = this.props.navigation;
         socket.emit('host-req', 9);
         socket.on('host-info', key => {
 
@@ -24,9 +24,10 @@ export default class host extends React.Component {
 
         console.log("host-request sent");
         socket.on('host-info', data => {
-            this.setState( {key: data});
-            console.log("1) key is " + data) });
-        socket.on('Start', () => {navigate('Swipe')});
+            this.setState({ key: data });
+            console.log("1) key is " + data)
+        });
+        socket.on('Start', () => { navigate('Swipe') });
 
     }
 
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     pane: {
-        backgroundColor: 'rgba(185, 185, 185, 0.15)',  
+        backgroundColor: 'rgba(185, 185, 185, 0.15)',
         paddingTop: 20,
         paddingBottom: 20,
         borderRadius: 25,
@@ -131,13 +132,13 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         alignItems: 'center',
         justifyContent: 'center',
-        
+
     },
     buttonText: {
         fontSize: 20,
         color: 'white',
         fontWeight: 'bold'
     }
-    
+
 
 });
