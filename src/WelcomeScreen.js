@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Button, TextInput, ScrollView, Image, Touchable
 import { LinearGradient } from 'expo-linear-gradient';
 import socketIO from 'socket.io-client';
 
-const socket = socketIO('http://127.0.0.1:8000', {
+export const socket = socketIO('http://127.0.0.1:8000', {
     transports: ['websocket'], jsonp: false
 });
 

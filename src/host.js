@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Image, ActivityIndicator } from 'react-native';
 import { Button } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
-import socket from '../store/socket'
+import { socket } from './WelcomeScreen';
 import * as Location from 'expo-location';
 
 // New import statements 
+
 import { foodApp, getHost, guest } from '../store/reducers';
 import store from '../store/index'
 import { SessionKey } from '../store/actionTypes';
 
-
 export default class host extends React.Component {
+
     constructor(props) {
         super(props);
         const { navigate } = this.props.navigation;
@@ -30,7 +31,6 @@ export default class host extends React.Component {
         socket.on('Start', () => { navigate('Swipe') });
 
     }
-
 
     state = {
         location: '',

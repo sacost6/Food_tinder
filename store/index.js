@@ -2,10 +2,8 @@ import { createStore } from 'redux';
 import socket from './socket';
 
 // New import statements 
-import { foodApp, getHost, guest } from './reducers';
+import foodApp from './reducers'
 import { CurrentUser } from './actionTypes';
-
-let navigate;
 
 export const store = createStore(foodApp);
 

@@ -12,9 +12,6 @@ Restaurants = [
     { id: "4", uri: require('../assets/dominos_logo.png') },
 ]
 
-
-
-
 export default class Swipe extends React.Component {
     placeDetails = () => {
         this.places = [];

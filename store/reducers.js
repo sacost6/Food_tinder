@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 
 import { ADD_HOST, ADD_GUEST, ADD_CURRENT_USER, SESSION_KEY } from './actionTypes';
 
-function getHost(state = undefined, action) {
+function getHost(state = -1, action) {
     switch (action.type) {
         case ADD_HOST:
             return action.userID;
@@ -11,7 +11,7 @@ function getHost(state = undefined, action) {
     }
 }
 
-function guest(state = undefined, action) {
+function guest(state = -1, action) {
     switch (action.type) {
         case ADD_GUEST:
             return action.userID;
@@ -20,7 +20,7 @@ function guest(state = undefined, action) {
     }
 }
 
-function addCurrentUser(state = undefined, action) {
+function addCurrentUser(state = 0, action) {
     switch (action.type) {
         case ADD_CURRENT_USER:
             return action.socket;
