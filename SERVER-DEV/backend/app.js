@@ -103,6 +103,16 @@ server.on("connection", (socket) => {
     console.info(`Client gone [id=${socket.id}]`);
   });
 
+  // Give client a userID and add them to the list.
+  socket.on("needs-ID", () =>{
+    counter = counter + 1;
+    clientSockets.set(counter, socket);
+    // initialize the client's user object and add it to the map
+    const user = new User(counter, 0.0, 0.0, socket);
+    users.set(counter, user);
+    socket.emit("userID", counter);
+  })
+
   socket.on("latitude", (lat) => {
     console.log("User coordinates are " + lat);
     let temp = users.get(counter);
@@ -129,17 +139,24 @@ server.on("connection", (socket) => {
     // check if the user currently has stored coordinates
     let temp = users.get(userID);
     // check if the user has both longitude and latitude values stored.
-    if (temp.info[0] !== true || temp.info[1] !== true) {
-      // If both coordinates are not found in the user's information
-      // send an error signal to the client
-      userSocket = clientSockets.get(userID);
-      userSocket.emit("error", userID);
-    } else {
-      // If the user location is stored, call the search function
-      userSocket = clientSockets.get(userID);
-      placeSearch(temp.lat, temp.lon, RADIUS, userSocket);
-      console.log("Places have been searched using ");
+    try {
+      if (temp.info[0] !== true || temp.info[1] !== true) {
+        // If both coordinates are not found in the user's information
+        // send an error signal to the client
+
+        userSocket = clientSockets.get(userID);
+        userSocket.emit("error", userID);
+      } else {
+        // If the user location is stored, call the search function
+        userSocket = clientSockets.get(userID);
+        placeSearch(temp.lat, temp.lon, RADIUS, userSocket);
+        console.log("Places have been searched using ");
+      }
     }
+    catch (e) {
+      console.log(e);
+    }
+
   });
 
   /* Listens for a request to be a host from a user, then
@@ -204,5 +221,11 @@ server.on("connection", (socket) => {
       clientSockets.get(host).emit("Start", host);
       console.log("2/2 Start message sent to " + socket);
     }
+  });
+  socket.on("yes", (data) => {
+    console.log("UserID " + data.userID + " said yes to " + data.rest);
+  });
+  socket.on("no", (data) => {
+    console.log("UserID " + data.userID + " said no to " + data.rest);
   });
 });

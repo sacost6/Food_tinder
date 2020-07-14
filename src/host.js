@@ -1,10 +1,7 @@
-import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  TextInput,
-  Image,
   ActivityIndicator,
 } from "react-native";
 import { Button } from "react-native-elements";
@@ -12,20 +9,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import socket from "../store/socket";
 import { userID, Partner } from "../store/index";
-// New import statements
 
-import { foodApp, getHost, guest } from "../store/reducers";
-import store from "../store/index";
-import { SessionKey } from "../store/actionTypes";
-
-var options = {
+const options = {
   enableHighAccuracy: true,
   timeout: 5000,
   maximumAge: 0,
 };
 
 function success(pos) {
-  var crd = pos.coords;
+  let crd = pos.coords;
 
   console.log("Your current position is:");
   console.log(`Latitude : ${crd.latitude}`);
@@ -43,6 +35,9 @@ export default class host extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
+    if(userID === -1) {
+      socket.emit("needs-ID", socket);
+    }
     socket.emit("host-req", userID);
     navigator.geolocation.getCurrentPosition(success, error, options);
     socket.on("host-info", (data) => {
@@ -61,20 +56,6 @@ export default class host extends React.Component {
     location: "",
     userID: 0,
     key: 0,
-  };
-
-  // async function to get location from the hosting client
-  getLocation = () => {
-    (async () => {
-      let { status } = await Location.requestPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      this.setState({ location: location });
-      console.log("latitude: " + location.coords.latitude);
-    })();
   };
 
   render() {

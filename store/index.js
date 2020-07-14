@@ -14,7 +14,7 @@ const Partner = {
 let placeDetails = function () {
   this.places = [];
 };
-
+let PD = new placeDetails();
 socket.on("connect", () => {
   // get userId from server
   socket.on("userID", (data) => {
@@ -30,7 +30,6 @@ socket.on("connect", () => {
   });
   socket.on("restaurants", (data) => {
     let sdata = "";
-    let PD = new placeDetails();
     sdata = JSON.parse(data);
     if (sdata.status === "OK") {
       console.log("Status: " + sdata.status);
@@ -54,4 +53,4 @@ socket.on("connect", () => {
   });
 });
 
-export { userID, Partner };
+export { userID, Partner, PD };
