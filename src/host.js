@@ -27,7 +27,7 @@ export default class host extends React.Component {
             this.setState( {key: data});
             console.log("1) key is " + data) });
         socket.on('Start', () => {navigate('Swipe')});
-
+ 
     }
 
 
