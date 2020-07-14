@@ -12,10 +12,6 @@ let https = require("follow-redirects").https;
 //Required to generate a random string to be sent as a key
 let crypto = require("crypto");
 
-let placeDetails = function () {
-  this.places = [];
-};
-
 const RADIUS = 4828;
 
 // Find places within the specified radius, based on the coordinates
@@ -27,11 +23,10 @@ function placeSearch(latitude, longitude, radius, socket) {
    * Note: you can change "&type=___" to a couple of different things
    * (e.g. restaurant, meal_takeaway, meal_delivery, etc.) and change the radius (which is
    * measured in meters).
+   * The results are then sent to the clients in order to be parsed on the client-side.
    */
 
-  https
-    .request(
-      {
+  https.request({
         host: "maps.googleapis.com",
         path:
           "/maps/api/place/nearbysearch/json?location=" +
@@ -41,62 +36,32 @@ function placeSearch(latitude, longitude, radius, socket) {
           "&radius=" +
           radius +
           "&type=meal_takeaway&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI",
-        method: "GET",
-      },
-      (socket) => PlaceResponse
-    )
-    .end();
+        method: "GET", } ,
+      /*
+       * This callback is used to send the info to the user requesting restaurant information.
+       */
+      function(response){
+        let data = "";
+        console.log("UserID parameter is " + socket.id);
+
+        response.on("data", function (chunk) {
+          data += chunk;
+        });
+
+        response.on("end", function () {
+          socket.emit("restaurants", data);
+        });
+      }).end();
 }
 
-/*
- * This function is called after placeSearch in order to parse the JSON file that is
- * returned after the query.
- * TODO: Only 20 responses are sent and some fast food places are not shown
- * (e.g. McDonald's, Burger King, etc.). Try to find out how to get more than 20 results
- * and how to get these restaurants included in the result.
- */
-function PlaceResponse(response, socket) {
-  let p;
-  let data = "";
-  let sdata = "";
-  let PD = new placeDetails();
-
-  response.on("data", function (chunk) {
-    data += chunk;
-  });
-
-  response.on("end", function () {
-    socket.emit("restaurants", data);
-    sdata = JSON.parse(data);
-    if (sdata.status === "OK") {
-      console.log("Status: " + sdata.status);
-      console.log("Results: " + sdata.results.length);
-      for (p = 0; p < sdata.results.length; p++) {
-        PD.places.push(sdata.results[p]);
-      }
-      for (r = 0; r < sdata.results.length; r++) {
-        console.log("----------------------------------------------");
-        console.log(PD.places[r].name);
-        console.log(
-          "Place ID (for Place Detail search on Google):" +
-            PD.places[r].place_id
-        );
-        console.log("Rating: " + PD.places[r].rating);
-        console.log("Vicinity: " + PD.places[r].vicinity);
-      }
-    } else {
-      console.log(sdata.status);
-    }
-  });
-}
 // Variables used to hold clients and client information
 let clientSockets = new Map();
-users = new Map();
-counter = 0;
+let users = new Map();
+let counter = 0;
 
 // Variables used to store sessions
 let Sessions = new Map();
-SessionsKeys = [];
+let SessionsKeys = [];
 
 // Used to store the information of sessions and active sessions
 class Session {
@@ -107,8 +72,9 @@ class Session {
   }
 }
 
+// Class used to store user's location and userID
 class User {
-  constructor(username, lon, lat, socket) {
+  constructor(username, lon, lat) {
     this.username = username;
     this.lon = lon;
     this.lat = lat;
@@ -119,19 +85,24 @@ class User {
 // event fired every time a new client connects:
 server.on("connection", (socket) => {
   console.info(`Client connected [id=${socket.id}]`);
+
   // initialize this client's sequence number
   counter = counter + 1;
   clientSockets.set(counter, socket);
+
   // initialize the client's user object and add it to the map
   const user = new User(counter, 0.0, 0.0, socket);
   users.set(counter, user);
+
   // send the user their ID in the server
   socket.emit("userID", counter);
+
   // when socket disconnects, remove it from the list:
   socket.on("disconnect", () => {
     clientSockets.delete(socket);
     console.info(`Client gone [id=${socket.id}]`);
   });
+
   socket.on("latitude", (lat) => {
     console.log("User coordinates are " + lat);
     let temp = users.get(counter);
@@ -154,14 +125,18 @@ server.on("connection", (socket) => {
   socket.on("get-restaurant", (userID) => {
     console.log("Restaurant request received");
     console.log("User " + userID + " has requested to see restaurants");
+    let userSocket;
     // check if the user currently has stored coordinates
     let temp = users.get(userID);
     // check if the user has both longitude and latitude values stored.
-    if (temp.info[0] != true || temp.info[1] != true) {
-      var userSocket = clientSockets.get(userID);
+    if (temp.info[0] !== true || temp.info[1] !== true) {
+      // If both coordinates are not found in the user's information
+      // send an error signal to the client
+      userSocket = clientSockets.get(userID);
       userSocket.emit("error", userID);
     } else {
-      var userSocket = clientSockets.get(userID);
+      // If the user location is stored, call the search function
+      userSocket = clientSockets.get(userID);
       placeSearch(temp.lat, temp.lon, RADIUS, userSocket);
       console.log("Places have been searched using ");
     }
@@ -173,11 +148,16 @@ server.on("connection", (socket) => {
    * the server sends this key to the host for them to share.
    */
   socket.on("host-req", (userID) => {
+    // Get a random 6-character key to store a session
     let id = crypto.randomBytes(3).toString("hex");
     console.log("session key is " + id);
+
+    // Push the key into the keys array and create new Session to insert in map
     SessionsKeys.push(id);
     let newSess = new Session(userID, -1, id);
     Sessions.set(id, newSess);
+
+    // send the key to the client that is requesting to be a host
     console.log("size of the sessionskey array is " + SessionsKeys.length);
     socket.emit("host-info", id);
   });
@@ -188,6 +168,8 @@ server.on("connection", (socket) => {
    */
   socket.on("session-req", (data) => {
     console.log("the session data is " + data);
+    // Search through the SessionKeys array and find the
+    // key received by the client.
     let temp = SessionsKeys.find(function () {
       for (let i = 0; i < SessionsKeys.length; i++) {
         console.log("in current session" + SessionsKeys[i]);
@@ -197,20 +179,26 @@ server.on("connection", (socket) => {
       }
       return false;
     });
-
+    //Check if the key received by the server is valid.
     if (temp === undefined) {
       console.log("key not found in array");
-    } else {
+    }
+    else {
+      // Get the session with the corresponding key and get the host
       console.log("found in the array");
       let sess = Sessions.get(data.key);
       let host = sess.host;
       console.log("The host of this session is" + host);
+
+      // Set the user's ID as the guest for the session
       console.log("The guest of this session is " + data.userID);
       sess.guest = data.userID;
       console.log("the host socket is " + clientSockets.get(host).id);
       sess.guest = users.get(data.userID);
       console.log("Current sessions are " + Sessions.get(data.key));
       console.log("Current session joined is " + sess.key);
+
+      // Send the start message to both the host and the guest.
       socket.emit("Start", data.userID);
       console.log("1/2 Start message sent to " + socket);
       clientSockets.get(host).emit("Start", host);

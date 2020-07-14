@@ -6,10 +6,13 @@ import foodApp from "./reducers";
 import { CurrentUser, SessionKey } from "./actionTypes";
 
 export const store = createStore(foodApp);
-var userID = -1;
-var Partner = {
+let userID = -1;
+const Partner = {
   userID: -1,
   socket: undefined,
+};
+let placeDetails = function () {
+  this.places = [];
 };
 
 socket.on("connect", () => {
@@ -26,15 +29,16 @@ socket.on("connect", () => {
     Partner.socket = user.socket;
   });
   socket.on("restaurants", (data) => {
-    console.log("json objected receieved " + data);
+    let sdata = "";
+    let PD = new placeDetails();
     sdata = JSON.parse(data);
     if (sdata.status === "OK") {
       console.log("Status: " + sdata.status);
       console.log("Results: " + sdata.results.length);
-      for (p = 0; p < sdata.results.length; p++) {
+      for (let p = 0; p < sdata.results.length; p++) {
         PD.places.push(sdata.results[p]);
       }
-      for (r = 0; r < sdata.results.length; r++) {
+      for (let r = 0; r < sdata.results.length; r++) {
         console.log("----------------------------------------------");
         console.log(PD.places[r].name);
         console.log(
@@ -50,4 +54,4 @@ socket.on("connect", () => {
   });
 });
 
-export { userID };
+export { userID, Partner };
