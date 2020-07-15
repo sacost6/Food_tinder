@@ -10,26 +10,27 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
-import { userID } from "../store/index";
-import { PD } from "../store/index";
+import { userID, SessionKey } from "../store/index";
 
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
 let SCREEN_WIDTH;
 SCREEN_WIDTH = Dimensions.get("window").width;
+let counter = 0;
 
 let Restaurants;
 Restaurants = [
-  { id: "1", uri: require("../assets/burger_king_logo.png") },
-  { id: "2", uri: require("../assets/mcdonalds_logo.png") },
-  { id: "3", uri: require("../assets/pizza_logo.png") },
-  { id: "4", uri: require("../assets/dominos_logo.png") },
+  { id: "1", uri: require("../assets/burger_king_logo.png"), restName: "Burger King" },
+  { id: "2", uri: require("../assets/mcdonalds_logo.png"), restName: "McDonald's" },
+  { id: "3", uri: require("../assets/pizza_logo.png"), restName: "PizzaHut" },
+  { id: "4", uri: require("../assets/dominos_logo.png"), restName: "Domino's"},
 ];
 
 export default class Swipe extends React.Component {
   constructor(props) {
     super(props);
     socket.emit("get-restaurant", userID);
+
     this.position = new Animated.ValueXY();
     this.state = {
       currentIndex: 0,
@@ -89,7 +90,8 @@ export default class Swipe extends React.Component {
             });
           });
           console.log("done updating state");
-          socket.emit("yes", {userID: userID, rest: "WingStop"});
+          socket.emit("yes", {key: SessionKey, userID: userID, rest: Restaurants[counter].restName});
+          counter = counter + 1;
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
             toValue: { x: -SCREEN_WIDTH - 1, y: gestureState.dy },
@@ -99,7 +101,8 @@ export default class Swipe extends React.Component {
             });
           });
           console.log("done updating state");
-          socket.emit("no", {userID: userID, rest: "McDonald's"});
+          socket.emit("no", {key: SessionKey, userID: userID, rest: Restaurants[counter].restName});
+          counter = counter + 1;
         } else if (
             Math.abs(gestureState.dy < 6) && Math.abs(gestureState.dx) < 6
         ) {

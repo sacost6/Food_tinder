@@ -70,6 +70,26 @@ class Session {
     this.guest = undefined;
     this.key = key;
   }
+
+  compareLikes(){
+    console.log("In CompareLikes(): ")
+    let user1, user2;
+    user1 = users.get(this.host);
+    user2 = users.get(this.guest);
+    let length = Math.min(user1.length, user2.length);
+    console.log("length: " + length);
+    for(let i = 0; i < length; i++) {
+      console.log(user1.results[i]);
+      if(user1.results[i].Choice && user2.results[i].Choice) {
+        console.log("Both users agreed to " + user1.results[i].Name);
+        let client1, client2;
+        client1 = clientSockets.get(this.host);
+        client2 = clientSockets.get(this.guest);
+        client1.emit("found the one", user1.results[i].Name);
+        client2.emit("found the one", user2.results[i].Name);
+      }
+    }
+  }
 }
 
 // Class used to store user's location and userID
@@ -79,6 +99,8 @@ class User {
     this.lon = lon;
     this.lat = lat;
     this.info = [false, false];
+    this.results = [];
+    this.length = 0;
   }
 }
 
@@ -211,21 +233,36 @@ server.on("connection", (socket) => {
       console.log("The guest of this session is " + data.userID);
       sess.guest = data.userID;
       console.log("the host socket is " + clientSockets.get(host).id);
-      sess.guest = users.get(data.userID);
       console.log("Current sessions are " + Sessions.get(data.key));
       console.log("Current session joined is " + sess.key);
 
       // Send the start message to both the host and the guest.
       socket.emit("Start", data.userID);
+      socket.emit("Start", data.key);
       console.log("1/2 Start message sent to " + socket);
       clientSockets.get(host).emit("Start", host);
       console.log("2/2 Start message sent to " + socket);
+      clientSockets.get(host).emit("key", data.key);
     }
   });
   socket.on("yes", (data) => {
     console.log("UserID " + data.userID + " said yes to " + data.rest);
+    let client = users.get(data.userID);
+    let temp = {Name: data.rest, Choice: true}
+    console.log("in yes listener " + temp);
+    client.results.push(temp);
+    client.length = client.length + 1;
+    console.log("in yes listener, results is " + client.results[0].Choice);
+    let sess = Sessions.get(data.key)
+    sess.compareLikes();
   });
   socket.on("no", (data) => {
     console.log("UserID " + data.userID + " said no to " + data.rest);
+    let client = users.get(data.userID);
+    let temp = {Name: data.rest, Choice: false }
+    client.results.push(temp);
+    client.length = client.length + 1;
+    let sess = Sessions.get(data.key);
+    sess.compareLikes();
   });
 });

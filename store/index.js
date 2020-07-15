@@ -3,7 +3,7 @@ import socket from "./socket";
 
 // New import statements
 import foodApp from "./reducers";
-import { CurrentUser, SessionKey } from "./actionTypes";
+import { CurrentUser } from "./actionTypes";
 
 export const store = createStore(foodApp);
 let userID = -1;
@@ -14,7 +14,10 @@ const Partner = {
 let placeDetails = function () {
   this.places = [];
 };
+let SessionKey = '';
+
 let PD = new placeDetails();
+
 socket.on("connect", () => {
   // get userId from server
   socket.on("userID", (data) => {
@@ -51,6 +54,12 @@ socket.on("connect", () => {
       console.log(sdata.status);
     }
   });
+  socket.on("key", (data) => {
+    SessionKey = data;
+  })
+  socket.on("found the one", (data) => {
+    console.log("both users chose " + data);
+  });
 });
 
-export { userID, Partner, PD };
+export { userID, Partner, PD, SessionKey };

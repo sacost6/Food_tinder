@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -35,9 +36,6 @@ export default class host extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
-    if(userID === -1) {
-      socket.emit("needs-ID", socket);
-    }
     socket.emit("host-req", userID);
     navigator.geolocation.getCurrentPosition(success, error, options);
     socket.on("host-info", (data) => {
