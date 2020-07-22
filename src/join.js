@@ -17,7 +17,7 @@ export default class join extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
-    socket.on("Start", () => navigate("Swipe"));
+    socket.on("Start", () => navigate("loading"));
   }
 
   state = {
@@ -127,4 +127,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
