@@ -10,13 +10,8 @@ import {
 
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import socket from "../store/socket";
-<<<<<<< HEAD
+import socket from "../store/socket"
 import { userID, PD , photos } from "../store/index";
-
-=======
-import { userID, SessionKey } from "../store/index";
->>>>>>> 94acde7bcb46f081b6c152dc78a8bd79e99e3be5
 
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -25,49 +20,28 @@ SCREEN_WIDTH = Dimensions.get("window").width;
 let counter = 0;
 
 let Restaurants;
+try {
 Restaurants = [
-  { id: "1", uri: require("../assets/burger_king_logo.png"), restName: "Burger King" },
+  { id: "1", uri: 'data:image/png;base64,' + photos[0], restName: "Burger King" },
   { id: "2", uri: require("../assets/mcdonalds_logo.png"), restName: "McDonald's" },
   { id: "3", uri: require("../assets/pizza_logo.png"), restName: "PizzaHut" },
   { id: "4", uri: require("../assets/dominos_logo.png"), restName: "Domino's"},
-];
+]; }
+catch(Error) {
+  console.log(Error);
+}
 
 export default class Swipe extends React.Component {
-<<<<<<< HEAD
-
 
 state = {
     refArray: []
 };
 
 
-getPhotos() {
-    console.log('IN GETPHOTOS()');
-    console.log('photos[] length: ' + photos.length);
-    for(let r=0; r < photos.length; r++) {
-      try {
-        console.log(photos[r]);
-        console.log('next');
-      } catch (error) {
-        console.log(error);
-      }
- 
-        //console.log(JSON.stringify(PD));
-
-    }
-}
 
 
-
-
-
-
-  constructor() {
-    super();
-=======
   constructor(props) {
     super(props);
->>>>>>> 94acde7bcb46f081b6c152dc78a8bd79e99e3be5
     socket.emit("get-restaurant", userID);
 
     this.position = new Animated.ValueXY();
@@ -158,7 +132,7 @@ getPhotos() {
 
   renderRestaurants = () => {
 
-    this.getPhotos();
+
     return Restaurants.map((item, i) => {
       if (i < this.state.currentIndex) {
         return null;
