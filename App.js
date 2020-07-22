@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 import { StyleSheet, Text, View, Button, TextInput, ScrollView, Image } from 'react-native';
 import { createAppContainer } from 'react-navigation';

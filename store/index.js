@@ -1,31 +1,69 @@
-import { createStore } from 'redux';
-import socket from './socket';
 
-// New import statements 
-import { foodApp, host, guest } from './reducers';
-import { CurrentUser } from './actionTypes';
+import socket from "./socket";
 
-let navigate;
+// New import statements
+import foodApp from "./reducers";
+import { CurrentUser, SessionKey } from "./actionTypes";
 
-export const store = createStore(foodApp);
+let userID = -1;
+const Partner = {
+  userID: -1,
+  socket: undefined,
+};
 
-socket.on('connect', () => {
+let placeDetails = function () {
+  this.places = [];
+};
+
+let photos = []
+let PD = new placeDetails();
+socket.on("connect", () => {
+  // get userId from server
+  socket.on("userID", (data) => {
+    console.log("1) data is " + data);
     console.log("Connected to socket server");
-    store.dispatch(CurrentUser(socket));
-    console.log("User socket is " + store.getState());
-    // get userId from server 
-    socket.on('userID', (data) => {
-        console.log("data is " + data);
-    });
-    socket.on('secondGuest', (user) => {
-        console.log("Added new user")
-    })
-    socket.on('host-info', (key) => {
-        console.log("the host key is " + key);
-    });
+    userID = data;
+    console.log("User socket is " + userID);
+  });
+  socket.on("secondGuest", (user) => {
+    console.log("Added new user");
+    Partner.userID = user.userID;
+    Partner.socket = user.socket;
+  });
+  socket.on("restaurants", (data) => {
+    let sdata = "";
+    
+    sdata = JSON.parse(data);
+    if (sdata.status === "OK") {
+      console.log("Status: " + sdata.status);
+      console.log("Results: " + sdata.results.length);
+      for (let p = 0; p < sdata.results.length; p++) {
+        PD.places.push(sdata.results[p]);
+      }
+      for (let r = 0; r < sdata.results.length; r++) {
+        console.log("----------------------------------------------");
+        console.log(PD.places[r].name);
+        console.log(
+          "Place ID (for Place Detail search on Google):" +
+            PD.places[r].place_id
+            
+            // place id ^^ for place details search
+        );
+        console.log("Rating: " + PD.places[r].rating);
+        console.log("Vicinity: " + PD.places[r].vicinity);
+      }
+    } else {
+      console.log(sdata.status);
+    }
+  });
+
+  socket.on('photos', (data) => {
+    console.log('photo: ' + data);
+    photos.push(data);
+  });
+
+
+
 });
 
-export const sendKey = key => {
-    console.log("Key is" + key);
-    socket.emit('session-req', key);
-};
+export { userID, Partner, PD , photos };
