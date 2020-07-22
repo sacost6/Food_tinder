@@ -7,11 +7,15 @@ import {
   Dimensions,
   Animated,
   PanResponder,
-
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+<<<<<<< HEAD
 import socket from "../store/socket"
 import { userID, PD , photos } from "../store/index";
+=======
+import socket from "../store/socket";
+import { userID, PD, photos } from "../store/index";
+>>>>>>> 18725048629398519c518a88f4b4b6b8d06e53e2
 
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -22,6 +26,7 @@ let counter = 0;
 let Restaurants;
 try {
 Restaurants = [
+<<<<<<< HEAD
   { id: "1", uri: 'data:image/png;base64,' + photos[0], restName: "Burger King" },
   { id: "2", uri: require("../assets/mcdonalds_logo.png"), restName: "McDonald's" },
   { id: "3", uri: require("../assets/pizza_logo.png"), restName: "PizzaHut" },
@@ -42,6 +47,44 @@ state = {
 
   constructor(props) {
     super(props);
+=======
+  {
+    id: "1",
+    uri: require("../assets/burger_king_logo.png"),
+    restName: "Burger King",
+  },
+  {
+    id: "2",
+    uri: require("../assets/mcdonalds_logo.png"),
+    restName: "McDonald's",
+  },
+  { id: "3", uri: require("../assets/pizza_logo.png"), restName: "PizzaHut" },
+  { id: "4", uri: require("../assets/dominos_logo.png"), restName: "Domino's" },
+];
+
+export default class Swipe extends React.Component {
+  state = {
+    refArray: [],
+  };
+
+  getPhotos() {
+    console.log("IN GETPHOTOS()");
+    console.log("photos[] length: " + photos.length);
+    for (let r = 0; r < photos.length; r++) {
+      try {
+        console.log(photos[r]);
+        console.log("next");
+      } catch (error) {
+        console.log(error);
+      }
+
+      //console.log(JSON.stringify(PD));
+    }
+  }
+
+  constructor() {
+    super();
+>>>>>>> 18725048629398519c518a88f4b4b6b8d06e53e2
     socket.emit("get-restaurant", userID);
 
     this.position = new Animated.ValueXY();
@@ -103,7 +146,11 @@ state = {
             });
           });
           console.log("done updating state");
-          socket.emit("yes", {key: SessionKey, userID: userID, rest: Restaurants[counter].restName});
+          socket.emit("yes", {
+            key: SessionKey,
+            userID: userID,
+            rest: Restaurants[counter].restName,
+          });
           counter = counter + 1;
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
@@ -114,10 +161,15 @@ state = {
             });
           });
           console.log("done updating state");
-          socket.emit("no", {key: SessionKey, userID: userID, rest: Restaurants[counter].restName});
+          socket.emit("no", {
+            key: SessionKey,
+            userID: userID,
+            rest: Restaurants[counter].restName,
+          });
           counter = counter + 1;
         } else if (
-            Math.abs(gestureState.dy < 6) && Math.abs(gestureState.dx) < 6
+          Math.abs(gestureState.dy < 6) &&
+          Math.abs(gestureState.dx) < 6
         ) {
           this.props.navigation.navigate("info");
         } else {
@@ -131,8 +183,12 @@ state = {
   }
 
   renderRestaurants = () => {
+<<<<<<< HEAD
 
 
+=======
+    this.getPhotos();
+>>>>>>> 18725048629398519c518a88f4b4b6b8d06e53e2
     return Restaurants.map((item, i) => {
       if (i < this.state.currentIndex) {
         return null;
@@ -169,7 +225,7 @@ state = {
               <Text style={styles.dislikeStyle}>NOPE</Text>
             </Animated.View>
 
-            <Image style={styles.imageStyle} source={item.uri}/>
+            <Image style={styles.imageStyle} source={item.uri} />
           </Animated.View>
         );
       } else {
@@ -187,7 +243,7 @@ state = {
               },
             ]}
           >
-            <Image style={styles.imageStyle} source={item.uri}/>
+            <Image style={styles.imageStyle} source={item.uri} />
           </Animated.View>
         );
       }
@@ -197,12 +253,12 @@ state = {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <LinearGradient colors={["#4568dc", "#b06ab3"]} style={{flex: 1}}>
-          <View style={{height: 60}}/>
+        <LinearGradient colors={["#4568dc", "#b06ab3"]} style={{ flex: 1 }}>
+          <View style={{ height: 60 }} />
 
           <View style={{ flex: 1 }}>{this.renderRestaurants()}</View>
 
-          <View style={{height: 60}}/>
+          <View style={{ height: 60 }} />
         </LinearGradient>
       </View>
     );

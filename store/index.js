@@ -1,4 +1,3 @@
-
 import socket from "./socket";
 
 // New import statements
@@ -14,7 +13,7 @@ const Partner = {
 let placeDetails = function () {
   this.places = [];
 };
-let SessionKey = '';
+let SessionKey = "";
 
 let PD = new placeDetails();
 
@@ -34,7 +33,11 @@ socket.on("connect", () => {
   });
   socket.on("restaurants", (data) => {
     let sdata = "";
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 18725048629398519c518a88f4b4b6b8d06e53e2
     sdata = JSON.parse(data);
     if (sdata.status === "OK") {
       console.log("Status: " + sdata.status);
@@ -48,8 +51,8 @@ socket.on("connect", () => {
         console.log(
           "Place ID (for Place Detail search on Google):" +
             PD.places[r].place_id
-            
-            // place id ^^ for place details search
+
+          // place id ^^ for place details search
         );
         console.log("Rating: " + PD.places[r].rating);
         console.log("Vicinity: " + PD.places[r].vicinity);
@@ -58,19 +61,30 @@ socket.on("connect", () => {
       console.log(sdata.status);
     }
   });
+<<<<<<< HEAD
   socket.on('photos', (data) => {
    
     photo = data.toString('ascii');
     console.log('photo: ' + photo);
+=======
+
+  socket.on("photos", (data) => {
+    photo = data.toString("ascii");
+    console.log("photo: " + photo);
+>>>>>>> 18725048629398519c518a88f4b4b6b8d06e53e2
     photos.push(photo);
   });
   socket.on("key", (data) => {
     SessionKey = data;
-  })
+  });
   socket.on("found the one", (data) => {
     console.log("both users chose " + data);
   });
 
 });
 
+<<<<<<< HEAD
 
+=======
+export { userID, Partner, PD, photos };
+>>>>>>> 18725048629398519c518a88f4b4b6b8d06e53e2

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, Image } from "react-native";
 import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
@@ -12,37 +12,10 @@ const options = {
   maximumAge: 0,
 };
 
-function success(pos) {
-  let crd = pos.coords;
-
-  console.log("Your current position is:");
-  console.log(`Latitude : ${crd.latitude}`);
-  socket.emit("latitude", crd.latitude);
-  console.log(`Longitude: ${crd.longitude}`);
-  socket.emit("longitude", crd.longitude);
-  console.log(`More or less ${crd.accuracy} meters.`);
-}
-
-function error(err) {
-  console.warn(`ERROR(${err.code}): ${err.message}`);
-}
-
 export default class host extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
-    socket.emit("host-req", userID);
-    navigator.geolocation.getCurrentPosition(success, error, options);
-    socket.on("host-info", (data) => {
-      console.log("1( the host key is " + data);
-      console.log("**userID is " + userID);
-      this.setState({ key: data });
-    });
-    console.log("host-request sent");
-    socket.on("Start", () => {
-      navigate("loading");
-      console.log("Host received start signal");
-    });
   }
 
   state = {
@@ -68,27 +41,12 @@ export default class host extends React.Component {
             width: "100%",
           }}
         >
-          <View style={styles.pane}>
-            <View style={styles.keyContainer}>
-              <Text style={styles.keyStyle}>{this.state.key}</Text>
-            </View>
-            <ActivityIndicator size="large" color="#b4cd31" />
-            <Text style={styles.waitingText}>
-              Waiting for someone to join...
-            </Text>
-            <RaisedButton
-              buttonStyle={styles.mButton}
-              title="Cancel"
-              titleStyle={styles.buttonText}
-              onPress={() => navigate("MainMenu")}
-              ViewComponent={LinearGradient} // Don't forget this!
-              linearGradientProps={{
-                colors: ["#879826", "#bfcd31"],
-                start: { x: 0, y: 0.5 },
-                end: { x: 1, y: 0.5 },
-              }}
-            />
-          </View>
+          <Image
+            style={styles.logo}
+            source={require("../assets/upick_logo.png")}
+          />
+          <ActivityIndicator size="large" color="#b4cd31" />
+          <Text style={styles.waitingText}>Loading nearest options . . .</Text>
         </LinearGradient>
       </View>
     );
@@ -141,5 +99,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "white",
     fontWeight: "bold",
+  },
+  logo: {
+    width: "65%",
+    height: "65%",
   },
 });
