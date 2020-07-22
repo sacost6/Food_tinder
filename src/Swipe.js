@@ -142,7 +142,7 @@ getPhotos() {
   renderRestaurants = () => {
 
     this.getPhotos();
-    return photos.map((item, i) => {
+    return Restaurants.map((item, i) => {
       if (i < this.state.currentIndex) {
         return null;
       } else if (i == this.state.currentIndex) {

@@ -58,8 +58,10 @@ socket.on("connect", () => {
   });
 
   socket.on('photos', (data) => {
-    console.log('photo: ' + data);
-    photos.push(data);
+   
+    photo = data.toString('ascii');
+    console.log('photo: ' + photo);
+    photos.push(photo);
   });
 
 
