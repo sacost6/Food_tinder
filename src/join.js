@@ -60,6 +60,7 @@ export default class join extends React.Component {
               title="Join"
               titleStyle={styles.buttonText}
               onPress={() => {
+                SessionKey = this.state.sesskey;
                 console.log(this.state.sesskey);
                 socket.emit("session-req", {
                   key: this.state.sesskey,
@@ -126,3 +127,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+

@@ -11,20 +11,29 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
+<<<<<<< HEAD
 import { userID, PD , photos } from "../store/index";
 
+=======
+import { userID, SessionKey } from "../store/index";
+>>>>>>> 94acde7bcb46f081b6c152dc78a8bd79e99e3be5
 
+let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
+let SCREEN_WIDTH;
 SCREEN_WIDTH = Dimensions.get("window").width;
+let counter = 0;
 
+let Restaurants;
 Restaurants = [
-  { id: "1", uri: require("../assets/burger_king_logo.png") },
-  { id: "2", uri: require("../assets/mcdonalds_logo.png") },
-  { id: "3", uri: require("../assets/pizza_logo.png") },
-  { id: "4", uri: require("../assets/dominos_logo.png") },
+  { id: "1", uri: require("../assets/burger_king_logo.png"), restName: "Burger King" },
+  { id: "2", uri: require("../assets/mcdonalds_logo.png"), restName: "McDonald's" },
+  { id: "3", uri: require("../assets/pizza_logo.png"), restName: "PizzaHut" },
+  { id: "4", uri: require("../assets/dominos_logo.png"), restName: "Domino's"},
 ];
 
 export default class Swipe extends React.Component {
+<<<<<<< HEAD
 
 
 state = {
@@ -55,7 +64,12 @@ getPhotos() {
 
   constructor() {
     super();
+=======
+  constructor(props) {
+    super(props);
+>>>>>>> 94acde7bcb46f081b6c152dc78a8bd79e99e3be5
     socket.emit("get-restaurant", userID);
+
     this.position = new Animated.ValueXY();
     this.state = {
       currentIndex: 0,
@@ -115,6 +129,8 @@ getPhotos() {
             });
           });
           console.log("done updating state");
+          socket.emit("yes", {key: SessionKey, userID: userID, rest: Restaurants[counter].restName});
+          counter = counter + 1;
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
             toValue: { x: -SCREEN_WIDTH - 1, y: gestureState.dy },
@@ -124,9 +140,10 @@ getPhotos() {
             });
           });
           console.log("done updating state");
+          socket.emit("no", {key: SessionKey, userID: userID, rest: Restaurants[counter].restName});
+          counter = counter + 1;
         } else if (
-          Math.abs(gestureState.dx) < 6 &&
-          Math.abs(gestureState.dy < 6)
+            Math.abs(gestureState.dy < 6) && Math.abs(gestureState.dx) < 6
         ) {
           this.props.navigation.navigate("info");
         } else {
@@ -145,7 +162,7 @@ getPhotos() {
     return Restaurants.map((item, i) => {
       if (i < this.state.currentIndex) {
         return null;
-      } else if (i == this.state.currentIndex) {
+      } else if (i === this.state.currentIndex) {
         console.log("rendering next card");
         return (
           <Animated.View
@@ -178,7 +195,7 @@ getPhotos() {
               <Text style={styles.dislikeStyle}>NOPE</Text>
             </Animated.View>
 
-            <Image style={styles.imageStyle} source={item.uri}></Image>
+            <Image style={styles.imageStyle} source={item.uri}/>
           </Animated.View>
         );
       } else {
@@ -196,7 +213,7 @@ getPhotos() {
               },
             ]}
           >
-            <Image style={styles.imageStyle} source={item.uri}></Image>
+            <Image style={styles.imageStyle} source={item.uri}/>
           </Animated.View>
         );
       }
@@ -206,12 +223,12 @@ getPhotos() {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <LinearGradient colors={["#4568dc", "#b06ab3"]} style={{ flex: 1 }}>
-          <View style={{ height: 60 }}></View>
+        <LinearGradient colors={["#4568dc", "#b06ab3"]} style={{flex: 1}}>
+          <View style={{height: 60}}/>
 
           <View style={{ flex: 1 }}>{this.renderRestaurants()}</View>
 
-          <View style={{ height: 60 }}></View>
+          <View style={{height: 60}}/>
         </LinearGradient>
       </View>
     );

@@ -3,7 +3,7 @@ import socket from "./socket";
 
 // New import statements
 import foodApp from "./reducers";
-import { CurrentUser, SessionKey } from "./actionTypes";
+import { CurrentUser } from "./actionTypes";
 
 let userID = -1;
 const Partner = {
@@ -14,6 +14,9 @@ const Partner = {
 let placeDetails = function () {
   this.places = [];
 };
+let SessionKey = '';
+
+let PD = new placeDetails();
 
 let photos = []
 let PD = new placeDetails();
@@ -32,7 +35,10 @@ socket.on("connect", () => {
   });
   socket.on("restaurants", (data) => {
     let sdata = "";
+<<<<<<< HEAD
     
+=======
+>>>>>>> 94acde7bcb46f081b6c152dc78a8bd79e99e3be5
     sdata = JSON.parse(data);
     if (sdata.status === "OK") {
       console.log("Status: " + sdata.status);
@@ -56,6 +62,7 @@ socket.on("connect", () => {
       console.log(sdata.status);
     }
   });
+<<<<<<< HEAD
 
   socket.on('photos', (data) => {
    
@@ -69,3 +76,14 @@ socket.on("connect", () => {
 });
 
 export { userID, Partner, PD , photos };
+=======
+  socket.on("key", (data) => {
+    SessionKey = data;
+  })
+  socket.on("found the one", (data) => {
+    console.log("both users chose " + data);
+  });
+});
+
+export { userID, Partner, PD, SessionKey };
+>>>>>>> 94acde7bcb46f081b6c152dc78a8bd79e99e3be5

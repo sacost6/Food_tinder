@@ -4,6 +4,7 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import * as Location from 'expo-location';
 import socketIO from 'socket.io-client';
+import { registerRootComponent } from 'expo';
 
 
 import Home from './src/WelcomeScreen'
