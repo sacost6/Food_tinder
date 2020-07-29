@@ -66,7 +66,7 @@ export default class join extends React.Component {
                   key: this.state.sesskey,
                   userID: userID,
                 });
-                navigate("Swipe");
+
               }}
               ViewComponent={LinearGradient} // Don't forget this!
               linearGradientProps={{

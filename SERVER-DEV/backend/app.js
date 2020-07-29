@@ -17,6 +17,13 @@ const RADIUS = 4828;
 // Find places within the specified radius, based on the coordinates
 //provided by the getCoordinates function
 
+var fs = require('fs');
+
+function base64_encode(file) {
+  var bitmap = fs.readFileSync(file);
+  return new Buffer(bitmap).toString('base64');
+}
+
 
 
 function placeSearch(latitude, longitude, radius, socket) {
@@ -80,7 +87,11 @@ function placeSearch(latitude, longitude, radius, socket) {
                   //calling socket.emit here gives max call stack size exceeded error
                   pic = response.toString('base64');
                  
+
+                 
+                  
                   socket.emit('photos', pic);
+                  console.log('photos sent to client');
                 }
               ).end(); 
 
@@ -255,7 +266,7 @@ server.on("connection", (socket) => {
     // key received by the client.
     let temp = SessionsKeys.find(function () {
       for (let i = 0; i < SessionsKeys.length; i++) {
-        console.log("in current session" + SessionsKeys[i]);
+        console.log("looking for key in session: " + SessionsKeys[i]);
         if (SessionsKeys[i] === data.key) {
           return true;
         }

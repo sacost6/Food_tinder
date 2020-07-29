@@ -17,7 +17,7 @@ let SessionKey = "";
 
 let PD = new placeDetails();
 
-let photos = [];
+
 socket.on("connect", () => {
   // get userId from server
   socket.on("userID", (data) => {
@@ -33,11 +33,6 @@ socket.on("connect", () => {
   });
   socket.on("restaurants", (data) => {
     let sdata = "";
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 18725048629398519c518a88f4b4b6b8d06e53e2
     sdata = JSON.parse(data);
     if (sdata.status === "OK") {
       console.log("Status: " + sdata.status);
@@ -61,19 +56,8 @@ socket.on("connect", () => {
       console.log(sdata.status);
     }
   });
-<<<<<<< HEAD
-  socket.on('photos', (data) => {
-   
-    photo = data.toString('ascii');
-    console.log('photo: ' + photo);
-=======
 
-  socket.on("photos", (data) => {
-    photo = data.toString("ascii");
-    console.log("photo: " + photo);
->>>>>>> 18725048629398519c518a88f4b4b6b8d06e53e2
-    photos.push(photo);
-  });
+
   socket.on("key", (data) => {
     SessionKey = data;
   });
@@ -83,8 +67,4 @@ socket.on("connect", () => {
 
 });
 
-<<<<<<< HEAD
-
-=======
-export { userID, Partner, PD, photos };
->>>>>>> 18725048629398519c518a88f4b4b6b8d06e53e2
+export { userID, Partner, PD, };

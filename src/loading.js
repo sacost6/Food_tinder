@@ -12,10 +12,24 @@ const options = {
   maximumAge: 0,
 };
 
+let photos = [];
+
 export default class host extends React.Component {
+
   constructor(props) {
     super(props);
+    socket.emit('get-restaurant', userID)
     const { navigate } = this.props.navigation;
+    socket.on("photos", (data) => {
+      photo = data.toString("ascii");
+      photos.push(photo);
+
+      if (photos.length >= 19) {
+        navigate("Swipe", {
+          myPhotos: photos,
+        }); 
+      }
+    });
   }
 
   state = {
@@ -36,17 +50,16 @@ export default class host extends React.Component {
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
-            position: "absolute",
             height: "100%",
             width: "100%",
           }}
         >
           <Image
             style={styles.logo}
-            source={require("../assets/upick_logo.png")}
+            source={require("../assets/upick_logo_v2.png")}
           />
           <ActivityIndicator size="large" color="#b4cd31" />
-          <Text style={styles.waitingText}>Loading nearest options . . .</Text>
+          <Text style={styles.waitingText}>Loading restaurants. . .</Text>
         </LinearGradient>
       </View>
     );
@@ -60,48 +73,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  keyContainer: {
-    backgroundColor: "#3d3d3d",
-    width: "80%",
-    height: 50,
-    borderRadius: 25,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  keyStyle: {
-    fontWeight: "bold",
-    color: "white",
-    fontSize: 18,
-  },
-  pane: {
-    backgroundColor: "rgba(185, 185, 185, 0.15)",
-    paddingTop: 20,
-    paddingBottom: 20,
-    borderRadius: 25,
-    width: "93%",
-    height: "40%",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
   waitingText: {
     fontSize: 12,
     fontWeight: "bold",
     color: "white",
   },
-  mButton: {
-    width: 285,
-    height: 55,
-    borderRadius: 25,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonText: {
-    fontSize: 20,
-    color: "white",
-    fontWeight: "bold",
-  },
   logo: {
-    width: "65%",
-    height: "65%",
+    width: "25%",
+    height: "25%",
   },
 });
+
+export {photos};
