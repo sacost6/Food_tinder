@@ -25,9 +25,9 @@ export default class host extends React.Component {
       photos.push(photo);
 
       if (photos.length >= 19) {
-        navigate("Swipe", {
-          myPhotos: photos,
-        }); 
+       // navigate("Swipe", {
+         // myPhotos: photos,
+        //}); 
       }
     });
   }
@@ -47,11 +47,11 @@ export default class host extends React.Component {
         <LinearGradient
           colors={["#000000", "#202020"]}
           style={{
-            flex: 1,
             alignItems: "center",
             justifyContent: "center",
             height: "100%",
             width: "100%",
+      
           }}
         >
           <Image
@@ -79,8 +79,9 @@ const styles = StyleSheet.create({
     color: "white",
   },
   logo: {
-    width: "25%",
-    height: "25%",
+    width: "70%",
+    height: "70%",
+    resizeMode: 'contain',
   },
 });
 

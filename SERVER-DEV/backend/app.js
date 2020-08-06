@@ -76,6 +76,9 @@ function placeSearch(latitude, longitude, radius, socket) {
           for(let r=0; r < PD.places.length; r++) {
             try {
                photo_ref = PD.places[r].photos[0]['photo_reference']
+               //const remoteImage = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI';
+             
+  
 
               https.request({
                   host: "maps.googleapis.com",
@@ -84,13 +87,18 @@ function placeSearch(latitude, longitude, radius, socket) {
                   ,
                   method: "GET", } ,
                 function(response){
+                
+                  console.log('header: ' + response.rawHeaders);
+                  response.on('data', () => {
+                    let pic = data.toString('base64');
+                    socket.emit('photos', pic);
+                  });
                   //calling socket.emit here gives max call stack size exceeded error
-                  pic = response.toString('base64');
-                 
+                  //pic = response.body.toString('base64');
 
-                 
+    
+                
                   
-                  socket.emit('photos', pic);
                   console.log('photos sent to client');
                 }
               ).end(); 
