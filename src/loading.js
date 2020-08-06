@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import socket from "../store/socket";
 import { userID, Partner } from "../store/index";
+import { indexOf } from "core-js/fn/array";
 
 const options = {
   enableHighAccuracy: true,
@@ -21,8 +22,11 @@ export default class host extends React.Component {
     socket.emit('get-restaurant', userID)
     const { navigate } = this.props.navigation;
     socket.on("photos", (data) => {
-      photo = data.toString("ascii");
-      photos.push(photo);
+      if(data.image) {
+        var img = new Image(); 
+        image.src = 'data:image/jpeg;base64' + data.buffer;
+        photos.push(image.src);
+      }
 
       if (photos.length >= 19) {
         navigate("Swipe", {

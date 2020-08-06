@@ -90,14 +90,11 @@ function placeSearch(latitude, longitude, radius, socket) {
                   });
 
                   response.on("end", function() {
-                     console.log("The final data is: ");
-                     console.log(iData); 
+                    console.log("The final data is: ");
+                    console.log(iData.toString('base64'));
+                    socket.emit('photos', {image: true, buffer: iData.toString('base64')});
                   })
                   
-                  //calling socket.emit here gives max call stack size exceeded error
-                  pic = iData.toString('base64');
-                  socket.emit('photos', pic);
-                  console.log('photos sent to client');
                 }
               ).end(); 
 
