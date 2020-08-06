@@ -87,18 +87,18 @@ function placeSearch(latitude, longitude, radius, socket) {
                   ,
                   method: "GET", } ,
                 function(response){
-                
-                  console.log('header: ' + response.rawHeaders);
-                  response.on('data', () => {
-                    let pic = data.toString('base64');
-                    socket.emit('photos', pic);
+                  let iData; 
+                  response.on("data", function (chunk) {
+                    iData += chunk;
                   });
-                  //calling socket.emit here gives max call stack size exceeded error
-                  //pic = response.body.toString('base64');
 
-    
-                
+                  response.on("end", function() {
+                     //console.log("The final data is: ");
+                     //console.log(iData); 
+                  })
                   
+                  //calling socket.emit here gives max call stack size exceeded error
+                  socket.emit('photos', iData);
                   console.log('photos sent to client');
                 }
               ).end(); 

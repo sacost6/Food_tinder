@@ -21,13 +21,12 @@ export default class host extends React.Component {
     socket.emit('get-restaurant', userID)
     const { navigate } = this.props.navigation;
     socket.on("photos", (data) => {
-      photo = data.toString("ascii");
-      photos.push(photo);
+      photos.push(data);
 
       if (photos.length >= 19) {
-       // navigate("Swipe", {
-         // myPhotos: photos,
-        //}); 
+        navigate("Swipe", {
+          myPhotos: photos,
+        }); 
       }
     });
   }

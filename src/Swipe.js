@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 import { userID} from "../store/index";
-import {photos} from './loading';
+import { photos } from './loading';
 
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -23,7 +23,7 @@ let counter = 0;
 let Restaurants;
 
 Restaurants = [
-  { id: "1", uri: 'data:image/jpg;base64,' + photos[0], restName: "Burger King" },
+  { id: "1", uri: photos[0], restName: "Burger King" },
   { id: "2", uri: require("../assets/mcdonalds_logo.png"), restName: "McDonald's" },
   { id: "3", uri: require("../assets/pizza_logo.png"), restName: "PizzaHut" },
   { id: "4", uri: require("../assets/dominos_logo.png"), restName: "Domino's"},
