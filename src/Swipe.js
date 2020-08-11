@@ -36,9 +36,9 @@ state = {
 };
 
   componentDidMount() {
-    for (i = 0; i < photos.length; i++) {
-      console.log("In Swipe.js");
-      console.log(photos[i]);
+    for (i = 0; i < 1; i++) {
+      console.log("In Swipe.js\n\n");
+      console.log(photos[i])
 
     }
   }
@@ -202,7 +202,8 @@ state = {
         <LinearGradient colors={["#4568dc", "#b06ab3"]} style={{flex: 1}}>
           <View style={{height: 60}}/>
 
-          <View style={{ flex: 1 }}>{this.renderRestaurants()}</View>
+         <View style={{flex: 1}}>{this.renderRestaurants()}</View>
+          
 
           <View style={{height: 60}}/>
         </LinearGradient>
