@@ -21,12 +21,10 @@ export default class host extends React.Component {
     socket.emit('get-restaurant', userID)
     const { navigate } = this.props.navigation;
     socket.on("photos", (data) => {
-      if(data.image) {
-        console.log('In if(data.image)');
-        console.log("image type: " + data.type);
-        let imageSrc = 'image/jpeg;base64,' + data.buffer;
+        console.log('Image: ');
+        console.log(data);
+        let imageSrc = 'image/jpeg;base64,' + data;
         photos.push(imageSrc);
-      }
 
       if (photos.length >= 1) {
         navigate("Swipe", {
