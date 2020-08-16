@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, Clipboard, Share } from "react-native";
 import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import socket from "../store/socket";
 import { userID, Partner } from "../store/index";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import Toast from 'react-native-simple-toast';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 const options = {
   enableHighAccuracy: true,
@@ -26,6 +30,8 @@ function success(pos) {
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
 }
+
+
 
 export default class host extends React.Component {
   constructor(props) {
@@ -51,9 +57,39 @@ export default class host extends React.Component {
     key: 0,
   };
 
+  async onShare(){
+    try {
+      const result = await Share.share({
+        message:
+          "Your uPick key is: " + this.state.key,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+          console.log("key shared");
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+        console.log("share prompt dismissed");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+
   render() {
     const { navigate } = this.props.navigation;
     const RaisedButton = (props) => <Button raised {...props} />;
+    const KeyContainer = (props) => <Button standard {...props} />;
+    
+
+    copyToClipboard = (key) => {
+      Clipboard.setString(key);
+      Toast.show('Copied to clipboard');
+    }
 
     return (
       <View style={styles.screen}>
@@ -69,9 +105,26 @@ export default class host extends React.Component {
           }}
         >
           <View style={styles.pane}>
-            <View style={styles.keyContainer}>
-              <Text style={styles.keyStyle}>{this.state.key}</Text>
-            </View>
+            
+            <KeyContainer 
+              buttonStyle={styles.keyContainerStyle}
+              onPress={() => this.onShare()}
+              title={"Key: " + this.state.key}
+              titleStyle={styles.keyStyle}
+              icon={
+                <Icon
+                  name="share-alt"
+                  type="font-awesome"
+                  size={15}
+                  color="#b4cd31"
+                />
+              }
+              iconContainerStyle={styles.iconContainer}
+            
+              
+
+              >
+            </KeyContainer>
             <ActivityIndicator size="large" color="#b4cd31" />
             <Text style={styles.waitingText}>
               Waiting for someone to join...
@@ -102,9 +155,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  keyContainer: {
+  keyContainerStyle: {
+    
     backgroundColor: "#3d3d3d",
-    width: "80%",
+    width: 300,
     height: 50,
     borderRadius: 25,
     alignItems: "center",
@@ -114,6 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     fontSize: 18,
+    paddingLeft: 10,
   },
   pane: {
     backgroundColor: "rgba(185, 185, 185, 0.15)",

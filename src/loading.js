@@ -6,6 +6,8 @@ import * as Location from "expo-location";
 import socket from "../store/socket";
 import { userID, Partner } from "../store/index";
 
+
+
 const options = {
   enableHighAccuracy: true,
   timeout: 5000,
@@ -16,6 +18,9 @@ let photos = [];
 
 export default class host extends React.Component {
 
+
+
+
   constructor(props) {
     super(props);
     socket.emit('get-restaurant', userID)
@@ -24,8 +29,9 @@ export default class host extends React.Component {
       if(data.image) {
         console.log('In if(data.image)');
         console.log("image type: " + data.type);
-        let imageSrc = 'image/jpeg;base64,' + data.buffer;
+        let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
         photos.push(imageSrc);
+        
       }
 
       if (photos.length >= 1) {

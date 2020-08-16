@@ -56,7 +56,7 @@ function placeSearch(latitude, longitude, radius, socket) {
         response.on("data", function (chunk) {
           data += chunk;
         });
-
+        
         response.on("end", function () {
           // parse the data for photo references
           socket.emit('restaurants', data);
@@ -83,21 +83,22 @@ function placeSearch(latitude, longitude, radius, socket) {
 
               https.request({
                   host: "maps.googleapis.com",
-                  path: "/maps/api/place/photo?maxwidth=500&photoreference=" +
+                  path: "/maps/api/place/photo?maxwidth=300&photoreference=" +
                   photo_ref + "&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI" 
                   ,
                   method: "GET", } ,
                 function(response){
                   let iData; 
                   let imgType = response.headers["content-type"];
+                  response.setEncoding('base64');
                   response.on("data", function (chunk) {
                     iData += chunk;
                   });
-
                   response.on("end", function() {
                     console.log("The final data is: ");
-                    console.log(iData.toString('base64'));
-                    socket.emit('photos', {type: imgType, image: true, buffer: Buffer.from(iData).toString('base64')});
+                    console.log(iData);
+                    packet = iData.replace('undefined', '');
+                    socket.emit('photos', {type: imgType, image: true, buffer: packet});
                   })
                   
                 }

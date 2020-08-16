@@ -146,6 +146,8 @@ state = {
             key={item.id}
             style={[this.rotateAndTranslate, styles.animatedStyle]}
           >
+          <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1}}>
+
             <Animated.View
               style={{
                 opacity: this.likeOpacity,
@@ -154,6 +156,7 @@ state = {
                 top: 50,
                 left: 40,
                 zIndex: 1000,
+              
               }}
             >
               <Text style={styles.likeStyle}>YES</Text>
@@ -166,12 +169,18 @@ state = {
                 top: 50,
                 right: 40,
                 zIndex: 1000,
+              
               }}
             >
               <Text style={styles.dislikeStyle}>NOPE</Text>
+              
             </Animated.View>
+            
 
-            <Image style={styles.imageStyle} source={item.uri}/>
+            <Image style={styles.imageStyle} source={{uri: item.uri}}/>
+            
+            </LinearGradient>
+
           </Animated.View>
         );
       } else {
@@ -189,6 +198,7 @@ state = {
               },
             ]}
           >
+
             <Image style={styles.imageStyle} source={item.uri}/>
           </Animated.View>
         );
@@ -199,10 +209,10 @@ state = {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <LinearGradient colors={["#4568dc", "#b06ab3"]} style={{flex: 1}}>
-          <View style={{height: 60}}/>
+        <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1}}>
+          <View style={{height: 60 }}/>
 
-         <View style={{flex: 1}}>{this.renderRestaurants()}</View>
+         <View style={{flex: 1, backgroundColor: 'yellow' }}>{this.renderRestaurants()}</View>
           
 
           <View style={{height: 60}}/>
@@ -218,14 +228,15 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     padding: 10,
     position: "absolute",
+    backgroundColor: 'black',
+    borderRadius: 20
   },
   imageStyle: {
-    height: null,
-    width: null,
-    resizeMode: "cover",
+    height: 400,
+    width: 390,
+    resizeMode: "contain",
     flex: 1,
-    backgroundColor: "#d9d7d6",
-    borderRadius: 20,
+    backgroundColor: "black"
   },
   likeStyle: {
     borderWidth: 1,
