@@ -3,7 +3,7 @@ export const ADD_CURRENT_USER = "ADD_CURRENT_USER";
 export const ADD_HOST = "ADD_HOST";
 export const ADD_GUEST = "ADD_GUEST";
 export const SESSION_KEY = "SESSION_KEY";
-
+git 
 // Action creators
 export function CurrentUser(socket) {
   return { type: ADD_CURRENT_USER, socket };
