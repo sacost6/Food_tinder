@@ -48,7 +48,7 @@ export default class join extends React.Component {
               labelStyle={styles.inputLabel}
               onChangeText={(text) => {
                 this.state.sesskey = text;
-                console.log("sessKey updated to: " + this.state.sesskey);
+                
               }}
               placeholder="Enter session key"
               leftIcon={{ type: "font-awesome", name: "key", color: "#879826" }}

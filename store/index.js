@@ -31,31 +31,7 @@ socket.on("connect", () => {
     Partner.userID = user.userID;
     Partner.socket = user.socket;
   });
-  socket.on("restaurants", (data) => {
-    let sdata = "";
-    sdata = JSON.parse(data);
-    if (sdata.status === "OK") {
-      console.log("Status: " + sdata.status);
-      console.log("Results: " + sdata.results.length);
-      for (let p = 0; p < sdata.results.length; p++) {
-        PD.places.push(sdata.results[p]);
-      }
-      for (let r = 0; r < sdata.results.length; r++) {
-        console.log("----------------------------------------------");
-        console.log(PD.places[r].name);
-        console.log(
-          "Place ID (for Place Detail search on Google):" +
-            PD.places[r].place_id
 
-          // place id ^^ for place details search
-        );
-        console.log("Rating: " + PD.places[r].rating);
-        console.log("Vicinity: " + PD.places[r].vicinity);
-      }
-    } else {
-      console.log(sdata.status);
-    }
-  });
 
 
   socket.on("key", (data) => {

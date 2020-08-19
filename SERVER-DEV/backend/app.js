@@ -63,7 +63,7 @@ function placeSearch(latitude, longitude, radius, socket) {
         
         response.on("end", function () {
           // parse the data for photo references
-          socket.emit('restaurants', data);
+          
           let placeDetails = function () {
             this.places = [];
           };
@@ -81,6 +81,12 @@ function placeSearch(latitude, longitude, radius, socket) {
           for(let r=0; r < PD.places.length; r++) {
             try {
                photo_ref = PD.places[r].photos[0]['photo_reference']
+               resRating = PD.places[r].rating;
+               resName = PD.places[r].name;
+
+
+
+
                //const remoteImage = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI'
 
               https.request({
@@ -98,10 +104,11 @@ function placeSearch(latitude, longitude, radius, socket) {
 
                   });
                   response.on("end", function() {
-                    console.log("The final data is: ");
-                    console.log(iData);
+                    
                     packet = iData.replace('undefined', '');
-                    socket.emit('photos', {type: imgType, image: true, buffer: packet});
+                    console.log("R: " + r);
+                    console.log('Sending info for restaurant: ' + resName + 'with rating of: ' + resRating);
+                    socket.emit('restaurant', {name: resName, rating: resRating, buffer: packet, type: imgType});
                   })
                   
                 }
@@ -139,16 +146,16 @@ class Session {
   }
 
   compareLikes(){
-    console.log("In CompareLikes(): ")
+    
     let user1, user2;
     user1 = users.get(this.host);
     user2 = users.get(this.guest);
     let length = Math.min(user1.length, user2.length);
-    console.log("length: " + length);
+    //console.log("length: " + length);
     for(let i = 0; i < length; i++) {
-      console.log(user1.results[i]);
+     // console.log(user1.results[i]);
       if(user1.results[i].Choice && user2.results[i].Choice) {
-        console.log("Both users agreed to " + user1.results[i].Name);
+        //console.log("Both users agreed to " + user1.results[i].Name);
         let client1, client2;
         client1 = clientSockets.get(this.host);
         client2 = clientSockets.get(this.guest);
@@ -222,8 +229,8 @@ server.on("connection", (socket) => {
    */
 
   socket.on("get-restaurant", (userID) => {
-    console.log("Restaurant request received");
-    console.log("User " + userID + " has requested to see restaurants");
+    //console.log("Restaurant request received");
+    //console.log("User " + userID + " has requested to see restaurants");
     let userSocket;
     // check if the user currently has stored coordinates
     let temp = users.get(userID);
@@ -239,7 +246,7 @@ server.on("connection", (socket) => {
         // If the user location is stored, call the search function
         userSocket = clientSockets.get(userID);
         placeSearch(temp.lat, temp.lon, RADIUS, userSocket);
-        console.log("Places have been searched using ");
+        
       }
     }
     catch (e) {

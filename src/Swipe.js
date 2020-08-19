@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 import { userID} from "../store/index";
 import { restaurants, photos } from './loading';
+import { color } from "react-native-reanimated";
 
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -20,18 +21,13 @@ let SCREEN_WIDTH;
 SCREEN_WIDTH = Dimensions.get("window").width;
 let counter = 0;
 
-let Restaurants;
-
-let locations = [];
-
-
-Restaurants = [
+/*Restaurants = [
   { id: "1", uri: photos[0], restName: "Burger King" },
   { id: "2", uri: photos[1], restName: "McDonald's" },
   { id: "3", uri: photos[2], restName: "PizzaHut" },
   { id: "4", uri: photos[3], restName: "Domino's"},
   { id: "5", uri: photos[4], restName: "????"}
-]; 
+];*/ 
 
 export default class Swipe extends React.Component {
 
@@ -40,11 +36,7 @@ state = {
 };
 
   componentDidMount() {
-    for (i = 0; i < 1; i++) {
-      console.log("In Swipe.js\n\n");
-      console.log(photos[i])
 
-    }
   }
 
   constructor(props) {
@@ -140,7 +132,7 @@ state = {
   renderRestaurants = () => {
 
     
-    return Restaurants.map((item, i) => {
+    return restaurants.map((item, i) => {
       if (i < this.state.currentIndex) {
         return null;
       } else if (i === this.state.currentIndex) {
@@ -180,8 +172,9 @@ state = {
               
             </Animated.View>
             
-
-            <Image style={styles.imageStyle} source={{uri: item.uri}}/>
+            
+            <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={25}/>
+            <Text style={styles.Name}> {item.name} </Text>
             
             </LinearGradient>
 
@@ -203,7 +196,9 @@ state = {
             ]}
           >
 
-            <Image style={styles.imageStyle} source={{uri: item.uri}}/>
+            <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={25}/>
+            <Text style={styles.Name}> {item.name} </Text>
+
           </Animated.View>
         );
       }
@@ -232,15 +227,17 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     padding: 10,
     position: "absolute",
-    backgroundColor: 'black',
-    borderRadius: 20
+    backgroundColor: '#b4cd31',
+    borderRadius: 20,
+    overflow: 'hidden'
   },
   imageStyle: {
     height: 400,
     width: 390,
     resizeMode: "contain",
     flex: 1,
-    backgroundColor: "black"
+    backgroundColor: "black",
+    borderRadius: 0
   },
   likeStyle: {
     borderWidth: 1,
@@ -258,5 +255,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     padding: 10,
   },
+  Name: {
+    backgroundColor: 'black',
+    color: 'white',
+    fontSize: 30,
+    fontWeight: '100'
+  }
 });
 

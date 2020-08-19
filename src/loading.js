@@ -19,36 +19,28 @@ let restaurants = [];
 
 export default class host extends React.Component {
 
-
-
-
   constructor(props) {
 
     super(props);
     let counter = 0;
     socket.emit('get-restaurant', userID)
     const { navigate } = this.props.navigation;
-    socket.on("photos", (data) => {
-      if(data.image) {
-        console.log('In if(data.image)');
-        console.log("image type: " + data.type);
+    socket.on("restaurant", (data) => {
+    
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
-        
-        photos.push(imageSrc);
+        let restaurant = { id: counter, name: data.name, rating: data.rating, uri: imageSrc };
+        console.log('Adding restaurant: ' + data.name + ' with ID: ' + counter);
+        restaurants.push(restaurant);
 
-
-        
-        
-      }
-
-      if (photos.length >= 10) {
+      if (restaurants.length >= 10) {
         navigate("Swipe", {
-          myPhotos: photos,
+          myPhotos: restaurants,
         }); 
       }
 
       counter += 1
     });
+
   }
 
   state = {
@@ -104,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {photos};
+export {restaurants};
