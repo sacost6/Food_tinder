@@ -94,7 +94,7 @@ function placeSearch(latitude, longitude, radius, socket) {
                   let imgType = response.headers["content-type"];
                   response.setEncoding('base64');
                   response.on("data", function (chunk) {
-                    imagedata += chunk;
+                    iData += chunk;
 
                   });
                   response.on("end", function() {

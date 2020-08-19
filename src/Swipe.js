@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 import { userID} from "../store/index";
-import { photos } from './loading';
+import { restaurants, photos } from './loading';
 
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -22,17 +22,21 @@ let counter = 0;
 
 let Restaurants;
 
+let locations = [];
+
+
 Restaurants = [
-  { id: "1", uri: photos[2], restName: "Burger King" },
-  { id: "2", uri: require("../assets/mcdonalds_logo.png"), restName: "McDonald's" },
-  { id: "3", uri: require("../assets/pizza_logo.png"), restName: "PizzaHut" },
-  { id: "4", uri: require("../assets/dominos_logo.png"), restName: "Domino's"},
-];
+  { id: "1", uri: photos[0], restName: "Burger King" },
+  { id: "2", uri: photos[1], restName: "McDonald's" },
+  { id: "3", uri: photos[2], restName: "PizzaHut" },
+  { id: "4", uri: photos[3], restName: "Domino's"},
+  { id: "5", uri: photos[4], restName: "????"}
+]; 
 
 export default class Swipe extends React.Component {
 
 state = {
-    refArray: []
+    refArray: [],
 };
 
   componentDidMount() {
@@ -199,7 +203,7 @@ state = {
             ]}
           >
 
-            <Image style={styles.imageStyle} source={item.uri}/>
+            <Image style={styles.imageStyle} source={{uri: item.uri}}/>
           </Animated.View>
         );
       }
@@ -212,7 +216,7 @@ state = {
         <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1}}>
           <View style={{height: 60 }}/>
 
-         <View style={{flex: 1, backgroundColor: 'yellow' }}>{this.renderRestaurants()}</View>
+         <View style={{flex: 1 }}>{this.renderRestaurants()}</View>
           
 
           <View style={{height: 60}}/>

@@ -4,7 +4,7 @@ import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import socket from "../store/socket";
-import { userID, Partner } from "../store/index";
+import { userID, Partner, PD } from "../store/index";
 
 
 
@@ -15,6 +15,7 @@ const options = {
 };
 
 let photos = [];
+let restaurants = [];
 
 export default class host extends React.Component {
 
@@ -22,7 +23,9 @@ export default class host extends React.Component {
 
 
   constructor(props) {
+
     super(props);
+    let counter = 0;
     socket.emit('get-restaurant', userID)
     const { navigate } = this.props.navigation;
     socket.on("photos", (data) => {
@@ -30,15 +33,21 @@ export default class host extends React.Component {
         console.log('In if(data.image)');
         console.log("image type: " + data.type);
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
+        
         photos.push(imageSrc);
+
+
+        
         
       }
 
-      if (photos.length >= 1) {
+      if (photos.length >= 10) {
         navigate("Swipe", {
           myPhotos: photos,
         }); 
       }
+
+      counter += 1
     });
   }
 

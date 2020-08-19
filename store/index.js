@@ -67,4 +67,4 @@ socket.on("connect", () => {
 
 });
 
-export { userID, Partner, PD, };
+export { userID, Partner, PD };
