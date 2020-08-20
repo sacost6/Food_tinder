@@ -76,8 +76,9 @@ function placeSearch(latitude, longitude, radius, socket) {
             console.log("Results: " + sdata.results.length);
           for (let p = 0; p < sdata.results.length; p++) {
              PD.places.push(sdata.results[p]);
+             console.log(sdata.results[p].name);
           }
-
+          let counter = 0;
           for(let r=0; r < PD.places.length; r++) {
             try {
                photo_ref = PD.places[r].photos[0]['photo_reference']
@@ -106,9 +107,11 @@ function placeSearch(latitude, longitude, radius, socket) {
                   response.on("end", function() {
                     
                     packet = iData.replace('undefined', '');
-                    console.log("R: " + r);
-                    console.log('Sending info for restaurant: ' + resName + 'with rating of: ' + resRating);
-                    socket.emit('restaurant', {name: resName, rating: resRating, buffer: packet, type: imgType});
+                    
+                    console.log('Sending info for restaurant: ' + PD.places[counter].name + ' with rating of: ' + PD.places[counter].rating);
+                    console.log('Counter: ' + counter);
+                    socket.emit('restaurant', {name: PD.places[counter].name, rating: PD.places[counter].rating, buffer: packet, type: imgType});
+                    counter++
                   })
                   
                 }
@@ -117,6 +120,7 @@ function placeSearch(latitude, longitude, radius, socket) {
             }  
             catch (error) {
               console.log(error);
+              counter++
             }
           } 
           }
@@ -220,7 +224,7 @@ server.on("connection", (socket) => {
     let temp = users.get(counter);
     temp.lon = lon;
     temp.info[1] = true;
-    console.log("User " + counter + " has longitude/latitude: " + temp.lon);
+    console.log("User " + counter + " has longitude/latitude: " + temp.lon, );
   });
 
   /* Wait for a client to send a request for restaurants with their userID included.

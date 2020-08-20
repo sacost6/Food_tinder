@@ -101,7 +101,7 @@ state = {
             });
           });
           console.log("done updating state");
-          socket.emit("yes", {key: SessionKey, userID: userID, rest: Restaurants[counter].restName});
+          socket.emit("yes", {key: SessionKey, userID: userID, rest: restaurants[counter].name});
           counter = counter + 1;
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
@@ -112,7 +112,7 @@ state = {
             });
           });
           console.log("done updating state");
-          socket.emit("no", {key: SessionKey, userID: userID, rest: Restaurants[counter].restName});
+          socket.emit("no", {key: SessionKey, userID: userID, rest: restaurants[counter].name});
           counter = counter + 1;
         } else if (
             Math.abs(gestureState.dy < 6) && Math.abs(gestureState.dx) < 6

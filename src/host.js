@@ -6,7 +6,6 @@ import * as Location from "expo-location";
 import socket from "../store/socket";
 import { userID, Partner } from "../store/index";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import Toast from 'react-native-simple-toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
@@ -87,7 +86,7 @@ export default class host extends React.Component {
 
     copyToClipboard = (key) => {
       Clipboard.setString(key);
-      Toast.show('Copied to clipboard');
+
     }
 
     return (
