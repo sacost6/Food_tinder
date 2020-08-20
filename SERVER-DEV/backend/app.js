@@ -46,9 +46,7 @@ function placeSearch(latitude, longitude, radius, socket) {
           latitude +
           "," +
           longitude +
-          "&radius=" +
-          radius +
-          "&type=meal_takeaway&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI",
+          "&type=restaurant&rankby=distance&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI",
         method: "GET", } ,
       /*
        * This callback is used to send the info to the user requesting restaurant information.
@@ -71,9 +69,9 @@ function placeSearch(latitude, longitude, radius, socket) {
          
 
           sdata = JSON.parse(data);
+          console.log(sdata);
           if (sdata.status === "OK") {
             console.log("Status: " + sdata.status);
-            console.log("Results: " + sdata.results.length);
           for (let p = 0; p < sdata.results.length; p++) {
              PD.places.push(sdata.results[p]);
              console.log(sdata.results[p].name);
@@ -109,8 +107,10 @@ function placeSearch(latitude, longitude, radius, socket) {
                     packet = iData.replace('undefined', '');
                     
                     console.log('Sending info for restaurant: ' + PD.places[counter].name + ' with rating of: ' + PD.places[counter].rating);
-                    console.log('Counter: ' + counter);
-                    socket.emit('restaurant', {name: PD.places[counter].name, rating: PD.places[counter].rating, buffer: packet, type: imgType});
+                    console.log('photo_reference: ' + PD.places[r].photos[0]);
+                    console.log('Counter: ' + counter + '\n');
+
+                    socket.emit('restaurant', {name: PD.places[r].name, rating: PD.places[r].rating, buffer: packet, type: imgType});
                     counter++
                   })
                   

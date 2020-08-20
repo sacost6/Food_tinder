@@ -142,7 +142,7 @@ state = {
             key={item.id}
             style={[this.rotateAndTranslate, styles.animatedStyle]}
           >
-          <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1}}>
+          <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1, borderRadius: 20}}>
 
             <Animated.View
               style={{
@@ -173,8 +173,10 @@ state = {
             </Animated.View>
             
             
-            <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={25}/>
-            <Text style={styles.Name}> {item.name} </Text>
+            <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={20}/>
+            <View style={styles.infoCard}>
+               <Text style={styles.Name}> {item.name} </Text>
+            </View>
             
             </LinearGradient>
 
@@ -192,13 +194,15 @@ state = {
                 width: SCREEN_WIDTH,
                 padding: 10,
                 position: "absolute",
+                backgroundColor: '#b4cd31'
               },
             ]}
           >
 
-            <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={25}/>
-            <Text style={styles.Name}> {item.name} </Text>
-
+            <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={20}/>
+            <View style={styles.infoCard}>
+              <Text style={styles.Name}> {item.name} </Text>
+            </View>
           </Animated.View>
         );
       }
@@ -211,7 +215,9 @@ state = {
         <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1}}>
           <View style={{height: 60 }}/>
 
-         <View style={{flex: 1 }}>{this.renderRestaurants()}</View>
+         <View style={{flex: 1 }}>{this.renderRestaurants()}
+      
+          </View>
           
 
           <View style={{height: 60}}/>
@@ -236,8 +242,6 @@ const styles = StyleSheet.create({
     width: 390,
     resizeMode: "contain",
     flex: 1,
-    backgroundColor: "black",
-    borderRadius: 0
   },
   likeStyle: {
     borderWidth: 1,
@@ -256,10 +260,15 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   Name: {
-    backgroundColor: 'black',
     color: 'white',
     fontSize: 30,
     fontWeight: '100'
+  },
+  infoCard: {
+      
+      flex: .1,
+      borderRadius: 25
+
   }
 });
 
