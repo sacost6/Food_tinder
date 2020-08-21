@@ -4,7 +4,7 @@ import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import socket from "../store/socket";
-import { userID, Partner, PD } from "../store/index";
+import { userID, SessionKey } from "../store/index";
 
 
 
@@ -23,7 +23,7 @@ export default class host extends React.Component {
 
     super(props);
     let counter = 0;
-    socket.emit('get-restaurant', userID)
+    socket.emit('get-restaurant', {UserID: userID, key: SessionKey});
     const { navigate } = this.props.navigation;
     socket.on("restaurant", (data) => {
     

@@ -2,19 +2,11 @@
 const io = require("socket.io"),
   server = io.listen(8000);
 
-// Require JS google maps services for Places API
-// Required for searching nearby restaurants
-const { Client, Status } = require("@googlemaps/google-maps-services-js");
-
 //Required to create Places API requests
 let https = require("follow-redirects").https;
 
 //Required to generate a random string to be sent as a key
 let crypto = require("crypto");
-
-const terminalImage = require('terminal-image');
-
-const got = require('got');
 
 const RADIUS = 4828;
 
@@ -28,9 +20,7 @@ function base64_encode(file) {
   return new Buffer(bitmap).toString('base64');
 }
 
-
-
-function placeSearch(latitude, longitude, radius, socket) {
+function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
   /* This part of the code is used to send the HTTP request to the Places API
    * The PlaceResponse function is the part of the code that is parses the JSON response
    * Note: you can change "&type=___" to a couple of different things
@@ -53,7 +43,8 @@ function placeSearch(latitude, longitude, radius, socket) {
        */
       function(response){
         let data = "";
-        console.log("UserID parameter is " + socket.id);
+        console.log("UserID parameter is " + hostSocket.id);
+        console.log("UserID parameter is " + guestSocket.id);
 
         response.on("data", function (chunk) {
           data += chunk;
@@ -66,67 +57,79 @@ function placeSearch(latitude, longitude, radius, socket) {
             this.places = [];
           };
          let PD = new placeDetails();
-         
 
-          sdata = JSON.parse(data);
+          let sdata = JSON.parse(data);
           console.log(sdata);
+          let photo_ref;
+          let resRating;
+          let resName;
           if (sdata.status === "OK") {
             console.log("Status: " + sdata.status);
-          for (let p = 0; p < sdata.results.length; p++) {
-             PD.places.push(sdata.results[p]);
-             console.log(sdata.results[p].name);
-          }
-          let counter = 0;
-          for(let r=0; r < PD.places.length; r++) {
-            try {
-               photo_ref = PD.places[r].photos[0]['photo_reference']
-               resRating = PD.places[r].rating;
-               resName = PD.places[r].name;
-
-
-
-
-               //const remoteImage = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI'
-
-              https.request({
-                  host: "maps.googleapis.com",
-                  path: "/maps/api/place/photo?maxwidth=300&photoreference=" +
-                  photo_ref + "&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI" 
-                  ,
-                  method: "GET", } ,
-                function(response){
-                  let iData; 
-                  let imgType = response.headers["content-type"];
-                  response.setEncoding('base64');
-                  response.on("data", function (chunk) {
-                    iData += chunk;
-
-                  });
-                  response.on("end", function() {
-                    
-                    packet = iData.replace('undefined', '');
-                    
-                    console.log('Sending info for restaurant: ' + PD.places[counter].name + ' with rating of: ' + PD.places[counter].rating);
-                    console.log('photo_reference: ' + PD.places[r].photos[0]);
-                    console.log('Counter: ' + counter + '\n');
-
-                    socket.emit('restaurant', {name: PD.places[r].name, rating: PD.places[r].rating, buffer: packet, type: imgType});
-                    counter++
-                  })
-                  
-                }
-              ).end(); 
-
-            }  
-            catch (error) {
-              console.log(error);
-              counter++
+            for (let p = 0; p < sdata.results.length; p++) {
+              PD.places.push(sdata.results[p]);
+              console.log(sdata.results[p].name);
             }
-          } 
+            let counter = 0;
+            for (let r = 0; r < PD.places.length; r++) {
+              try {
+                photo_ref = PD.places[r].photos[0]['photo_reference']
+                resRating = PD.places[r].rating;
+                resName = PD.places[r].name;
+
+
+                //const remoteImage = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI'
+
+                https.request({
+                      host: "maps.googleapis.com",
+                      path: "/maps/api/place/photo?maxwidth=300&photoreference=" +
+                          photo_ref + "&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI"
+                      ,
+                      method: "GET",
+                    },
+                    function (response) {
+                      let iData;
+                      let imgType = response.headers["content-type"];
+                      response.setEncoding('base64');
+                      response.on("data", function (chunk) {
+                        iData += chunk;
+
+                      });
+                      response.on("end", function () {
+
+                        packet = iData.replace('undefined', '');
+
+                        console.log('Sending info for restaurant: ' + PD.places[counter].name + ' with rating of: ' + PD.places[counter].rating);
+                        console.log('photo_reference: ' + PD.places[r].photos[0]);
+                        console.log('Counter: ' + counter + '\n');
+
+                        hostSocket.emit('restaurant', {
+                          name: PD.places[r].name,
+                          rating: PD.places[r].rating,
+                          buffer: packet,
+                          id: r,
+                          type: imgType
+                        });
+                        guestSocket.emit('restaurant', {
+                          name: PD.places[r].name,
+                          rating: PD.places[r].rating,
+                          buffer: packet,
+                          id: r,
+                          type: imgType
+                        });
+                        counter++
+                      })
+
+                    }
+                ).end();
+
+              } catch (error) {
+                console.log(error);
+                counter++
+              }
+            }
+          } else {
+            console.log(sdata.status);
           }
-        else {
-          console.log(sdata.status);
-        }
 
         });
       }).end();
@@ -232,26 +235,20 @@ server.on("connection", (socket) => {
    * calls the searchPlaces function.
    */
 
-  socket.on("get-restaurant", (userID) => {
+  socket.on("get-restaurant", (data) => {
     //console.log("Restaurant request received");
     //console.log("User " + userID + " has requested to see restaurants");
-    let userSocket;
+    let sesh = Sessions.get(data.key);
+    let host = users.get(sesh.host);
+    let guest = users.get(sesh.guest);
+    let hostsocket = clientSockets.get(sesh.host);
+    let guestsocket = clientSockets.get(sesh.guest);
+    console.log("host.lat" + host);
     // check if the user currently has stored coordinates
-    let temp = users.get(userID);
+    let temp = users.get(data.userID);
     // check if the user has both longitude and latitude values stored.
     try {
-      if (temp.info[0] !== true || temp.info[1] !== true) {
-        // If both coordinates are not found in the user's information
-        // send an error signal to the client
-
-        userSocket = clientSockets.get(userID);
-        userSocket.emit("error", userID);
-      } else {
-        // If the user location is stored, call the search function
-        userSocket = clientSockets.get(userID);
-        placeSearch(temp.lat, temp.lon, RADIUS, userSocket);
-        
-      }
+        placeSearch(host.lat, host.lon, RADIUS, hostsocket, guestsocket);
     }
     catch (e) {
       console.log(e);
@@ -276,6 +273,7 @@ server.on("connection", (socket) => {
 
     // send the key to the client that is requesting to be a host
     console.log("size of the sessionskey array is " + SessionsKeys.length);
+    socket.emit("key", id);
     socket.emit("host-info", id);
   });
 
@@ -291,6 +289,7 @@ server.on("connection", (socket) => {
       for (let i = 0; i < SessionsKeys.length; i++) {
         console.log("looking for key in session: " + SessionsKeys[i]);
         if (SessionsKeys[i] === data.key) {
+          clientSockets.get(data.userID).emit("key", data.key);
           return true;
         }
       }
@@ -315,6 +314,7 @@ server.on("connection", (socket) => {
       console.log("Current session joined is " + sess.key);
 
       // Send the start message to both the host and the guest.
+      socket.emit("key", data.key);
       socket.emit("Start", data.userID);
       socket.emit("Start", data.key);
       console.log("1/2 Start message sent to " + socket);
