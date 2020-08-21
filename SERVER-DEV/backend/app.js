@@ -102,12 +102,22 @@ function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
                         console.log('photo_reference: ' + PD.places[r].photos[0]);
                         console.log('Counter: ' + counter + '\n');
 
+
+                        if(hostSocket.id === guestSocket.id) {
+                          hostSocket.emit('restaurant', {
+                            name: PD.places[r].name,
+                            rating: PD.places[r].rating,
+                            buffer: packet,
+                            id: r,
+                            pricing: PD.places[r].price_level
+                          });
+                        } else {
+
                         hostSocket.emit('restaurant', {
                           name: PD.places[r].name,
                           rating: PD.places[r].rating,
                           buffer: packet,
                           id: r,
-                          type: imgType,
                           pricing: PD.places[r].price_level
                         });
                         guestSocket.emit('restaurant', {
@@ -118,6 +128,7 @@ function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
                           type: imgType,
                           pricing: PD.places[r].price_level
                         });
+                      }
                         counter++
                       })
 

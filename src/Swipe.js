@@ -245,7 +245,7 @@ dollar_image = require('../assets/dollar.png');
                   imageSize={17}
                 />
 
-                {this.renderPrice(item.pricing)}
+                
                 
                 
                
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     padding: 10,
     position: "absolute",
     borderRadius: 20,
-    overflow: 'hidden',
+    overflow: 'hidden'
 
   },
   imageStyle: {
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     color: "green",
     fontSize: 32,
     fontWeight: "bold",
-    padding: 10,
+    padding: 10
   },
   dislikeStyle: {
     borderWidth: 1,
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 32,
     fontWeight: "bold",
-    padding: 10,
+    padding: 10
   },
   Name: {
     color: 'white',
@@ -353,22 +353,16 @@ const styles = StyleSheet.create({
   infoCard: {
       flex: 1,
       marginLeft: 13,
-      borderRadius: 20,
-    
-      
+      borderRadius: 20
   },
   Rating: {
     color: 'white',
     fontWeight: '100'
   },
   pricing: {
-    
     width: 25,
     height: 25,
-    resizeMode: 'contain',
-    
-
-    
+    resizeMode: 'contain'
   }
 });
 

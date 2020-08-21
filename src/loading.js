@@ -18,7 +18,7 @@ export default class host extends React.Component {
     
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
         let restaurant = { id: data.id, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing };
-        console.log('Adding restaurant: ' + data.name + ' price level: ' + data.pricing);
+        console.log(data.id + '.) Adding restaurant: ' + data.name  );
         restaurants.push(restaurant);
 
       if (restaurants.length >= 10) {
