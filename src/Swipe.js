@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 import { userID} from "../store/index";
 import { restaurants, photos } from './loading';
+import {Rating} from 'react-native-elements';
 import { color } from "react-native-reanimated";
 
 let SCREEN_HEIGHT;
@@ -34,6 +35,8 @@ export default class Swipe extends React.Component {
 state = {
     refArray: [],
 };
+
+dollar_image = require('../assets/dollar.png');
 
   componentDidMount() {
 
@@ -129,6 +132,50 @@ state = {
     });
   }
 
+
+  renderPrice = (price) => {
+    if(price === 0) {
+      return null;
+    }
+    else if(price === 1) {
+      return (
+        <View style={{flex: 1, marginLeft: 15, justifyContent: 'flex-start', marginTop: 10}}>
+        <Image style={styles.pricing} source={require('../assets/dollar.png')}>
+      
+        </Image>
+        
+        </View>
+      );
+    }
+    else if(price === 2) {
+      return (
+        <View style ={{flex: 1, marginLeft: 15, backgroundColor: '', justifyContent: 'flex-start', flexDirection: 'row'}}>
+          <Image style={styles.pricing} source={require('../assets/dollar.png')}>
+          </Image>
+          <Image style={styles.pricing} source={require('../assets/dollar.png')}>
+          </Image>
+        </View>
+      );
+    }
+    else{
+      return (
+        <View style ={{flexDirection: 'row'}}>
+        <Image source={require('../assets/dollar.png')}>
+
+        </Image>
+        <Image source={require('../assets/dollar.png')}>
+
+        </Image>
+        <Image source={require('../assets/dollar.png')}>
+
+        </Image>
+        </View>
+      );
+    }
+
+
+  }
+
   renderRestaurants = () => {
 
     
@@ -142,7 +189,7 @@ state = {
             key={item.id}
             style={[this.rotateAndTranslate, styles.animatedStyle]}
           >
-          <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1, borderRadius: 20}}>
+          <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1, borderRadius: 20, borderWidth: 2, borderColor: '#b4cd31'}}>
 
             <Animated.View
               style={{
@@ -173,9 +220,26 @@ state = {
             </Animated.View>
             
             
-            <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={20}/>
+            <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={0}/>
             <View style={styles.infoCard}>
-               <Text style={styles.Name}> {item.name} </Text>
+              
+                <Text style={styles.Name}> {item.name} </Text>
+                
+              
+               <Rating
+                  readonly
+                  onFinishRating={this.ratingCompleted}
+                  ratingCount={5}
+                  startingValue={item.rating}
+                  style={{ paddingVertical: 0, alignSelf: 'flex-start', paddingLeft: 20 }}
+                  tintColor='rgba(0,0,0,.9)'
+                  imageSize={17}
+                />
+
+                {this.renderPrice(item.pricing)}
+                
+                
+               
             </View>
             
             </LinearGradient>
@@ -194,15 +258,22 @@ state = {
                 width: SCREEN_WIDTH,
                 padding: 10,
                 position: "absolute",
-                backgroundColor: '#b4cd31'
+                
               },
             ]}
           >
+            <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1, borderRadius: 20, borderWidth: 2, borderColor: '#b4cd31'}}>
 
             <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={20}/>
             <View style={styles.infoCard}>
               <Text style={styles.Name}> {item.name} </Text>
+
+
+
             </View>
+
+            </LinearGradient>
+
           </Animated.View>
         );
       }
@@ -233,15 +304,16 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     padding: 10,
     position: "absolute",
-    backgroundColor: '#b4cd31',
     borderRadius: 20,
-    overflow: 'hidden'
+    overflow: 'hidden',
+
   },
   imageStyle: {
     height: 400,
-    width: 390,
+    width: 388,
     resizeMode: "contain",
-    flex: 1,
+    flex: 2,
+    borderRadius: 6
   },
   likeStyle: {
     borderWidth: 1,
@@ -261,14 +333,28 @@ const styles = StyleSheet.create({
   },
   Name: {
     color: 'white',
-    fontSize: 30,
-    fontWeight: '100'
+    fontSize: 28,
+    fontWeight: '100',
+    paddingBottom: 5
   },
   infoCard: {
+      flex: 1,
+      marginLeft: 13,
+      borderRadius: 20,
       
-      flex: .1,
-      borderRadius: 25
+  },
+  Rating: {
+    color: 'white',
+    fontWeight: '100'
+  },
+  pricing: {
+    
+    width: 25,
+    height: 25,
+    resizeMode: 'contain',
+    
 
+    
   }
 });
 

@@ -110,7 +110,17 @@ function placeSearch(latitude, longitude, radius, socket) {
                     console.log('photo_reference: ' + PD.places[r].photos[0]);
                     console.log('Counter: ' + counter + '\n');
 
-                    socket.emit('restaurant', {name: PD.places[r].name, rating: PD.places[r].rating, buffer: packet, type: imgType});
+                    let pricing_level = PD.places[r].price_level;
+
+                    if (typeof pricing_level === "undefined") {
+                      let pricing_level = 0;
+                    }
+
+              
+
+    
+
+                    socket.emit('restaurant', {name: PD.places[r].name, rating: PD.places[r].rating, buffer: packet, type: imgType, pricing: pricing_level });
                     counter++
                   })
                   
