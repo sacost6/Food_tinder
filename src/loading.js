@@ -28,8 +28,8 @@ export default class host extends React.Component {
     socket.on("restaurant", (data) => {
     
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
-        let restaurant = { id: counter, name: data.name, rating: data.rating, uri: imageSrc };
-        console.log('Adding restaurant: ' + data.name + ' with ID: ' + counter);
+        let restaurant = { id: counter, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing };
+        console.log('Adding restaurant: ' + data.name + ' price level: ' + data.pricing);
         restaurants.push(restaurant);
 
       if (restaurants.length >= 10) {
