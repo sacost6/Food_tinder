@@ -21,6 +21,7 @@ SCREEN_HEIGHT = Dimensions.get("window").height;
 let SCREEN_WIDTH;
 SCREEN_WIDTH = Dimensions.get("window").width;
 let counter = 0;
+let rest_name = "n/a";
 
 /*Restaurants = [
   { id: "1", uri: photos[0], restName: "Burger King" },
@@ -44,7 +45,12 @@ dollar_image = require('../assets/dollar.png');
 
   constructor(props) {
     super(props);
-
+    const {navigate} = this.props.navigation;
+    socket.on("found the one", (data) => {
+      console.log("Chosen restaurant is " + data);
+      rest_name = data;
+      navigate("Chosen");
+    });
     this.position = new Animated.ValueXY();
     this.state = {
       currentIndex: 0,
@@ -358,4 +364,6 @@ const styles = StyleSheet.create({
     
   }
 });
+
+export {rest_name};
 

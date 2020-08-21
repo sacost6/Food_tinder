@@ -3,7 +3,7 @@ import socket from "./socket";
 // New import statements
 import foodApp from "./reducers";
 import { CurrentUser } from "./actionTypes";
-
+let Rests = [];
 let userID = -1;
 const Partner = {
   userID: -1,
@@ -37,10 +37,7 @@ socket.on("connect", () => {
   socket.on("key", (data) => {
     SessionKey = data;
   });
-  socket.on("found the one", (data) => {
-    console.log("both users chose " + data);
-  });
 
 });
 
-export { userID, Partner, PD };
+export { userID, Partner, PD, SessionKey };

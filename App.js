@@ -21,6 +21,7 @@ import join from "./src/join";
 import Swipe from "./src/Swipe";
 import info from "./src/info";
 import loading from "./src/loading";
+import Chosen from "./src/Chosen";
 
 console.disableYellowBox = true;
 
@@ -52,6 +53,10 @@ const Navigator = createStackNavigator({
   loading: {
     screen: loading,
     navigationOptions: { headerShown: false },
+  },
+  Chosen: {
+    screen: Chosen,
+    navigationOptions: { headerShown: false},
   },
 });
 
