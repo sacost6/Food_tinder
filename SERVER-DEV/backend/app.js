@@ -309,6 +309,8 @@ server.on("connection", (socket) => {
     //Check if the key received by the server is valid.
     if (temp === undefined) {
       console.log("key not found in array");
+      
+
     }
     else {
       // Get the session with the corresponding key and get the host

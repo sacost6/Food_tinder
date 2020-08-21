@@ -341,6 +341,7 @@ const styles = StyleSheet.create({
       flex: 1,
       marginLeft: 13,
       borderRadius: 20,
+    
       
   },
   Rating: {

@@ -46,6 +46,7 @@ export default class join extends React.Component {
             <KeyInput
               inputContainerStyle={styles.input}
               labelStyle={styles.inputLabel}
+              inputStyle={styles.inputStyle}
               onChangeText={(text) => {
                 this.state.sesskey = text;
                 
@@ -126,4 +127,7 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
   },
+  inputStyle: {
+    color: 'white'
+  }
 });
