@@ -1,20 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View, ActivityIndicator, Image } from "react-native";
-import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
-import * as Location from "expo-location";
 import socket from "../store/socket";
 import { userID, SessionKey } from "../store/index";
 
-
-
-const options = {
-  enableHighAccuracy: true,
-  timeout: 5000,
-  maximumAge: 0,
-};
-
-let photos = [];
 let restaurants = [];
 
 export default class host extends React.Component {
@@ -22,13 +11,13 @@ export default class host extends React.Component {
   constructor(props) {
 
     super(props);
-    let counter = 0;
+
     socket.emit('get-restaurant', {UserID: userID, key: SessionKey});
     const { navigate } = this.props.navigation;
     socket.on("restaurant", (data) => {
     
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
-        let restaurant = { id: counter, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing };
+        let restaurant = { id: data.id, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing };
         console.log('Adding restaurant: ' + data.name + ' price level: ' + data.pricing);
         restaurants.push(restaurant);
 
@@ -37,10 +26,7 @@ export default class host extends React.Component {
           myPhotos: restaurants,
         }); 
       }
-
-      counter += 1
     });
-
   }
 
   state = {
@@ -50,9 +36,6 @@ export default class host extends React.Component {
   };
 
   render() {
-    const { navigate } = this.props.navigation;
-    const RaisedButton = (props) => <Button raised {...props} />;
-
     return (
       <View style={styles.screen}>
         <LinearGradient
