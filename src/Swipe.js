@@ -15,6 +15,7 @@ import { userID} from "../store/index";
 import { restaurants, photos } from './loading';
 import {Rating} from 'react-native-elements';
 import { color } from "react-native-reanimated";
+import { SessionKey } from "../store/index"
 
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -129,10 +130,12 @@ dollar_image = require('../assets/dollar.png');
     
           this.props.navigation.navigate("info");
         } else {
+        
           Animated.spring(this.position, {
             toValue: { x: 0, y: 0 },
             friction: 4,
           }).start();
+          
         }
       },
     });
@@ -253,8 +256,11 @@ dollar_image = require('../assets/dollar.png');
           </Animated.View>
         );
       } else {
+        
         return (
+          
           <Animated.View
+            {...this.PanResponder.panHandlers}
             key={item.id}
             style={[
               {
@@ -282,6 +288,7 @@ dollar_image = require('../assets/dollar.png');
 
           </Animated.View>
         );
+        
       }
     }).reverse();
   };

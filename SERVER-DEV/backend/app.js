@@ -107,14 +107,16 @@ function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
                           rating: PD.places[r].rating,
                           buffer: packet,
                           id: r,
-                          type: imgType
+                          type: imgType,
+                          pricing: PD.places[r].price_level
                         });
                         guestSocket.emit('restaurant', {
                           name: PD.places[r].name,
                           rating: PD.places[r].rating,
                           buffer: packet,
                           id: r,
-                          type: imgType
+                          type: imgType,
+                          pricing: PD.places[r].price_level
                         });
                         counter++
                       })
