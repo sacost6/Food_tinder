@@ -53,7 +53,7 @@ export default class host extends React.Component {
             source={require("../assets/upick_logo_v2.png")}
           />
           <ActivityIndicator size="large" color="#b4cd31" />
-          <Text style={styles.waitingText}>Loading restaurants. . .</Text>
+          <Text style={styles.waitingText}>Searching for restaurants. . .</Text>
         </LinearGradient>
       </View>
     );
