@@ -17,7 +17,7 @@ export default class host extends React.Component {
     socket.on("restaurant", (data) => {
     
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
-        let restaurant = { id: data.id, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing };
+        let restaurant = { id: data.id, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing, lat: data.lat, lng: data.lng };
         console.log(data.id + '.) Adding restaurant: ' + data.name  );
         restaurants.push(restaurant);
 

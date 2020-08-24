@@ -14,7 +14,6 @@ import socket from "../store/socket";
 import { userID} from "../store/index";
 import { restaurants, photos } from './loading';
 import {Rating} from 'react-native-elements';
-import { color } from "react-native-reanimated";
 import { SessionKey } from "../store/index"
 
 let SCREEN_HEIGHT;
@@ -245,7 +244,7 @@ dollar_image = require('../assets/dollar.png');
                   imageSize={17}
                 />
 
-                
+                {this.renderPrice(item.pricing)}
                 
                 
                
