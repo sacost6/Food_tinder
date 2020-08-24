@@ -20,7 +20,7 @@ function base64_encode(file) {
   return new Buffer(bitmap).toString('base64');
 }
 
-function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
+async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
   /* This part of the code is used to send the HTTP request to the Places API
    * The PlaceResponse function is the part of the code that is parses the JSON response
    * Note: you can change "&type=___" to a couple of different things

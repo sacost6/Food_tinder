@@ -14,7 +14,6 @@ import socket from "../store/socket";
 import { userID, numRestaurants} from "../store/index";
 import { restaurants, photos } from './loading';
 import {Rating} from 'react-native-elements';
-import { color } from "react-native-reanimated";
 import { SessionKey } from "../store/index"
 
 let SCREEN_HEIGHT;
