@@ -21,7 +21,6 @@ export default class Chosen extends React.Component {
                         justifyContent: "center",
                         height: "100%",
                         width: "100%",
-
                     }}
                 >
                     <ActivityIndicator size="large" color="#b4cd31" />

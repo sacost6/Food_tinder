@@ -1,43 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View, ActivityIndicator, Clipboard, Share } from "react-native";
 import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
-import * as Location from "expo-location";
 import socket from "../store/socket";
-import { userID, Partner } from "../store/index";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { userID } from "../store/index";
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-
-const options = {
-  enableHighAccuracy: true,
-  timeout: 5000,
-  maximumAge: 0,
-};
-
-function success(pos) {
-  let crd = pos.coords;
-
-  console.log("Your current position is:");
-  console.log(`Latitude : ${crd.latitude}`);
-  socket.emit("latitude", crd.latitude);
-  console.log(`Longitude: ${crd.longitude}`);
-  socket.emit("longitude", crd.longitude);
-  console.log(`More or less ${crd.accuracy} meters.`);
-}
-
-function error(err) {
-  console.warn(`ERROR(${err.code}): ${err.message}`);
-}
-
-
 
 export default class host extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
     socket.emit("host-req", userID);
-    navigator.geolocation.getCurrentPosition(success, error, options);
     socket.on("host-info", (data) => {
       console.log("1( the host key is " + data);
       console.log("**userID is " + userID);
@@ -59,7 +32,7 @@ export default class host extends React.Component {
     try {
       const result = await Share.share({
         message:
-          "Your uPick key is: " + this.state.key,
+        this.state.key,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {

@@ -11,10 +11,9 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
-import { userID} from "../store/index";
+import { userID, numRestaurants} from "../store/index";
 import { restaurants, photos } from './loading';
 import {Rating} from 'react-native-elements';
-import { color } from "react-native-reanimated";
 
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -22,14 +21,6 @@ let SCREEN_WIDTH;
 SCREEN_WIDTH = Dimensions.get("window").width;
 let counter = 0;
 let rest_name = "n/a";
-
-/*Restaurants = [
-  { id: "1", uri: photos[0], restName: "Burger King" },
-  { id: "2", uri: photos[1], restName: "McDonald's" },
-  { id: "3", uri: photos[2], restName: "PizzaHut" },
-  { id: "4", uri: photos[3], restName: "Domino's"},
-  { id: "5", uri: photos[4], restName: "????"}
-];*/ 
 
 export default class Swipe extends React.Component {
 
@@ -112,6 +103,9 @@ dollar_image = require('../assets/dollar.png');
           console.log("done updating state");
           socket.emit("yes", {key: SessionKey, userID: userID, rest: restaurants[counter].name});
           counter = counter + 1;
+          if(counter === numRestaurants) {
+              console.log("You have reached the end of the card stack. Retry?");
+          }
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
             toValue: { x: -SCREEN_WIDTH - 1, y: gestureState.dy },
@@ -123,10 +117,12 @@ dollar_image = require('../assets/dollar.png');
           console.log("done updating state");
           socket.emit("no", {key: SessionKey, userID: userID, rest: restaurants[counter].name});
           counter = counter + 1;
+          if(counter === numRestaurants) {
+            console.log("You have reached the end of the card stack. Retry?");
+          }
         } else if (
             Math.abs(gestureState.dy < 6) && Math.abs(gestureState.dx) < 6
         ) {
-    
           this.props.navigation.navigate("info");
         } else {
           Animated.spring(this.position, {
@@ -146,35 +142,24 @@ dollar_image = require('../assets/dollar.png');
     else if(price === 1) {
       return (
         <View style={{flex: 1, marginLeft: 15, justifyContent: 'flex-start', marginTop: 10}}>
-        <Image style={styles.pricing} source={require('../assets/dollar.png')}>
-      
-        </Image>
-        
+        <Image style={styles.pricing} source={require('../assets/dollar.png')}></Image>
         </View>
       );
     }
     else if(price === 2) {
       return (
         <View style ={{flex: 1, marginLeft: 15, backgroundColor: '', justifyContent: 'flex-start', flexDirection: 'row'}}>
-          <Image style={styles.pricing} source={require('../assets/dollar.png')}>
-          </Image>
-          <Image style={styles.pricing} source={require('../assets/dollar.png')}>
-          </Image>
+          <Image style={styles.pricing} source={require('../assets/dollar.png')}></Image>
+          <Image style={styles.pricing} source={require('../assets/dollar.png')}></Image>
         </View>
       );
     }
     else{
       return (
         <View style ={{flexDirection: 'row'}}>
-        <Image source={require('../assets/dollar.png')}>
-
-        </Image>
-        <Image source={require('../assets/dollar.png')}>
-
-        </Image>
-        <Image source={require('../assets/dollar.png')}>
-
-        </Image>
+        <Image source={require('../assets/dollar.png')}></Image>
+        <Image source={require('../assets/dollar.png')}></Image>
+        <Image source={require('../assets/dollar.png')}></Image>
         </View>
       );
     }
@@ -183,7 +168,6 @@ dollar_image = require('../assets/dollar.png');
   }
 
   renderRestaurants = () => {
-
     
     return restaurants.map((item, i) => {
       if (i < this.state.currentIndex) {
@@ -196,7 +180,6 @@ dollar_image = require('../assets/dollar.png');
             style={[this.rotateAndTranslate, styles.animatedStyle]}
           >
           <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1, borderRadius: 20, borderWidth: 2, borderColor: '#b4cd31'}}>
-
             <Animated.View
               style={{
                 opacity: this.likeOpacity,
@@ -222,16 +205,10 @@ dollar_image = require('../assets/dollar.png');
               }}
             >
               <Text style={styles.dislikeStyle}>NOPE</Text>
-              
             </Animated.View>
-            
-            
             <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={0}/>
             <View style={styles.infoCard}>
-              
                 <Text style={styles.Name}> {item.name} </Text>
-                
-              
                <Rating
                   readonly
                   onFinishRating={this.ratingCompleted}
@@ -241,15 +218,9 @@ dollar_image = require('../assets/dollar.png');
                   tintColor='rgba(0,0,0,.9)'
                   imageSize={17}
                 />
-
                 {this.renderPrice(item.pricing)}
-                
-                
-               
             </View>
-            
             </LinearGradient>
-
           </Animated.View>
         );
       } else {
@@ -269,17 +240,11 @@ dollar_image = require('../assets/dollar.png');
             ]}
           >
             <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1, borderRadius: 20, borderWidth: 2, borderColor: '#b4cd31'}}>
-
             <Image style={styles.imageStyle} source={{uri: item.uri}} borderRadius={20}/>
             <View style={styles.infoCard}>
               <Text style={styles.Name}> {item.name} </Text>
-
-
-
             </View>
-
             </LinearGradient>
-
           </Animated.View>
         );
       }
@@ -291,12 +256,8 @@ dollar_image = require('../assets/dollar.png');
       <View style={{ flex: 1 }}>
         <LinearGradient colors={["#000000", "#202020"]} style={{flex: 1}}>
           <View style={{height: 60 }}/>
-
          <View style={{flex: 1 }}>{this.renderRestaurants()}
-      
           </View>
-          
-
           <View style={{height: 60}}/>
         </LinearGradient>
       </View>
@@ -312,7 +273,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderRadius: 20,
     overflow: 'hidden',
-
   },
   imageStyle: {
     height: 400,
@@ -347,20 +307,15 @@ const styles = StyleSheet.create({
       flex: 1,
       marginLeft: 13,
       borderRadius: 20,
-      
   },
   Rating: {
     color: 'white',
     fontWeight: '100'
   },
   pricing: {
-    
     width: 25,
     height: 25,
     resizeMode: 'contain',
-    
-
-    
   }
 });
 

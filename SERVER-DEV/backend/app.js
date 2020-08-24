@@ -65,6 +65,8 @@ function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
           let resName;
           if (sdata.status === "OK") {
             console.log("Status: " + sdata.status);
+            hostSocket.emit("amount of restaurants", sdata.results.length);
+            //clientSockets.emit("amount of restaurants", sdata.results.length);
             for (let p = 0; p < sdata.results.length; p++) {
               PD.places.push(sdata.results[p]);
               console.log(sdata.results[p].name);
@@ -95,7 +97,6 @@ function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
 
                       });
                       response.on("end", function () {
-
                         packet = iData.replace('undefined', '');
 
                         console.log('Sending info for restaurant: ' + PD.places[counter].name + ' with rating of: ' + PD.places[counter].rating);
@@ -107,15 +108,16 @@ function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
                           rating: PD.places[r].rating,
                           buffer: packet,
                           id: r,
-                          type: imgType
-                        });
+                          type: imgType,
+                          pricing: PD.places[r].price_level
+                        }); /*
                         guestSocket.emit('restaurant', {
                           name: PD.places[r].name,
                           rating: PD.places[r].rating,
                           buffer: packet,
                           id: r,
                           type: imgType
-                        });
+                        }); */
                         counter++
                       })
 
@@ -127,7 +129,11 @@ function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
                 counter++
               }
             }
-          } else {
+          }
+          else if(sdata.status === "ZERO_RESULTS") {
+
+          }
+          else {
             console.log(sdata.status);
           }
 
@@ -216,18 +222,14 @@ server.on("connection", (socket) => {
     socket.emit("userID", counter);
   })
 
-  socket.on("latitude", (lat) => {
-    console.log("User coordinates are " + lat);
+  socket.on("coordinates", (data) => {
+    console.log("User coordinates are " + data.lat);
     let temp = users.get(counter);
-    temp.lat = lat;
+    temp.lat = data.lat;
     temp.info[0] = true;
-  });
-
-  socket.on("longitude", (lon) => {
-    let temp = users.get(counter);
-    temp.lon = lon;
+    temp.lon = data.lon;
     temp.info[1] = true;
-    console.log("User " + counter + " has longitude/latitude: " + temp.lon, );
+    socket.emit("ready");
   });
 
   /* Wait for a client to send a request for restaurants with their userID included.
