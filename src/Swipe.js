@@ -14,6 +14,8 @@ import socket from "../store/socket";
 import { userID, numRestaurants} from "../store/index";
 import { restaurants, photos } from './loading';
 import {Rating} from 'react-native-elements';
+import { color } from "react-native-reanimated";
+import { SessionKey } from "../store/index"
 
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -125,10 +127,12 @@ dollar_image = require('../assets/dollar.png');
         ) {
           this.props.navigation.navigate("info");
         } else {
+        
           Animated.spring(this.position, {
             toValue: { x: 0, y: 0 },
             friction: 4,
           }).start();
+          
         }
       },
     });
@@ -219,13 +223,17 @@ dollar_image = require('../assets/dollar.png');
                   imageSize={17}
                 />
                 {this.renderPrice(item.pricing)}
+
             </View>
             </LinearGradient>
           </Animated.View>
         );
       } else {
+        
         return (
+          
           <Animated.View
+            {...this.PanResponder.panHandlers}
             key={item.id}
             style={[
               {
@@ -247,6 +255,7 @@ dollar_image = require('../assets/dollar.png');
             </LinearGradient>
           </Animated.View>
         );
+        
       }
     }).reverse();
   };
@@ -287,7 +296,7 @@ const styles = StyleSheet.create({
     color: "green",
     fontSize: 32,
     fontWeight: "bold",
-    padding: 10,
+    padding: 10
   },
   dislikeStyle: {
     borderWidth: 1,
@@ -295,7 +304,7 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 32,
     fontWeight: "bold",
-    padding: 10,
+    padding: 10
   },
   Name: {
     color: 'white',
@@ -307,6 +316,7 @@ const styles = StyleSheet.create({
       flex: 1,
       marginLeft: 13,
       borderRadius: 20,
+
   },
   Rating: {
     color: 'white',
