@@ -93,6 +93,7 @@ dollar_image = require('../assets/dollar.png');
 
       // method called when the user releases the the card
       onPanResponderRelease: (evt, gestureState) => {
+        const {navigate} = this.props.navigation;
         if (gestureState.dx > 120) {
           Animated.spring(this.position, {
             toValue: { x: SCREEN_WIDTH + 1, y: gestureState.dy },
@@ -106,6 +107,7 @@ dollar_image = require('../assets/dollar.png');
           counter = counter + 1;
           if(counter === numRestaurants) {
               console.log("You have reached the end of the card stack. Retry?");
+              navigate("EndOfOptions");
           }
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
@@ -120,6 +122,7 @@ dollar_image = require('../assets/dollar.png');
           counter = counter + 1;
           if(counter === numRestaurants) {
             console.log("You have reached the end of the card stack. Retry?");
+            navigate("EndOfOptions");
           }
         } else if (
             Math.abs(gestureState.dy < 6) && Math.abs(gestureState.dx) < 6

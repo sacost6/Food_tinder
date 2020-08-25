@@ -28,6 +28,9 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket)
    * measured in meters).
    * The results are then sent to the clients in order to be parsed on the client-side.
    */
+  if(hostSocket === undefined || guestSocket === undefined) {
+    return;
+  }
 
   https.request({
         host: "maps.googleapis.com",
@@ -41,7 +44,7 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket)
       /*
        * This callback is used to send the info to the user requesting restaurant information.
        */
-      function(response){
+      async function(response){
         let data = "";
         console.log("UserID parameter is " + hostSocket.id);
         console.log("UserID parameter is " + guestSocket.id);
@@ -49,10 +52,10 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket)
         response.on("data", function (chunk) {
           data += chunk;
         });
-        
-        response.on("end", function () {
+
+        response.on("end", async function () {
           // parse the data for photo references
-          
+
           let placeDetails = function () {
             this.places = [];
           };
@@ -78,9 +81,6 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket)
                 resRating = PD.places[r].rating;
                 resName = PD.places[r].name;
 
-
-                //const remoteImage = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI'
-
                 https.request({
                       host: "maps.googleapis.com",
                       path: "/maps/api/place/photo?maxwidth=300&photoreference=" +
@@ -88,7 +88,7 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket)
                       ,
                       method: "GET",
                     },
-                    function (response) {
+                    async function (response) {
                       let iData;
                       let imgType = response.headers["content-type"];
                       response.setEncoding('base64');
@@ -164,7 +164,6 @@ class Session {
   }
 
   compareLikes(){
-    
     let user1, user2;
     user1 = users.get(this.host);
     user2 = users.get(this.guest);
@@ -228,13 +227,23 @@ server.on("connection", (socket) => {
   })
 
   socket.on("coordinates", (data) => {
-    console.log("User coordinates are " + data.lat);
-    let temp = users.get(counter);
-    temp.lat = data.lat;
-    temp.info[0] = true;
-    temp.lon = data.lon;
-    temp.info[1] = true;
-    socket.emit("ready");
+    if(data.lon === undefined || data.lat === undefined)
+      socket.emit("location-error")
+    else {
+      console.log("User coordinates are " + data.lat);
+      let temp = users.get(counter);
+      temp.lat = data.lat;
+      temp.info[0] = true;
+      temp.lon = data.lon;
+      temp.info[1] = true;
+      if(temp.username === undefined) {
+        temp.username = this.counter;
+        socket.emit("ready");
+      }
+      else {
+        socket.emit("ready");
+      }
+    }
   });
 
   /* Wait for a client to send a request for restaurants with their userID included.
