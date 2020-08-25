@@ -5,6 +5,7 @@
 import React, { Component, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import FetchLocation from './src/FetchLocation';
+import {socket } from ";."
 import socketIO from 'socket.io-client';
 import Inputs from './services/input';
 

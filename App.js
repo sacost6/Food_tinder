@@ -22,6 +22,8 @@ import Swipe from "./src/Swipe";
 import info from "./src/info";
 import loading from "./src/loading";
 import Chosen from "./src/Chosen";
+import LoadingServer from "./src/LoadingServer";
+
 
 console.disableYellowBox = true;
 
@@ -58,6 +60,11 @@ const Navigator = createStackNavigator({
     screen: Chosen,
     navigationOptions: { headerShown: false},
   },
+  LoadingServer: {
+    screen: LoadingServer,
+    navigationOptions: {headerShown: false},
+  },
+
 });
 
 const App = createAppContainer(Navigator);

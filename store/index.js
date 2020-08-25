@@ -9,6 +9,7 @@ const Partner = {
   userID: -1,
   socket: undefined,
 };
+let numRestaurants = 0;
 
 let placeDetails = function () {
   this.places = [];
@@ -32,12 +33,15 @@ socket.on("connect", () => {
     Partner.socket = user.socket;
   });
 
-
-
   socket.on("key", (data) => {
     SessionKey = data;
   });
 
+  socket.on("amount of restaurants", (data) =>{
+    numRestaurants = data;
+    console.log("Number of expected restaurants from results are " + data);
+  });
+
 });
 
-export { userID, Partner, PD, SessionKey };
+export { userID, Partner, PD, SessionKey, numRestaurants };

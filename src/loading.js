@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, ActivityIndicator, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
-import { userID, SessionKey } from "../store/index";
+import { userID, SessionKey, numRestaurants } from "../store/index";
 
 let restaurants = [];
 
@@ -11,20 +11,23 @@ export default class host extends React.Component {
   constructor(props) {
 
     super(props);
-
+    let counter = 0;
     socket.emit('get-restaurant', {UserID: userID, key: SessionKey});
     const { navigate } = this.props.navigation;
     socket.on("restaurant", (data) => {
-    
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
         let restaurant = { id: data.id, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing, lat: data.lat, lng: data.lng };
-        console.log(data.id + '.) Adding restaurant: ' + data.name  );
-        restaurants.push(restaurant);
-
-      if (restaurants.length >= 10) {
-        navigate("Swipe", {
-          myPhotos: restaurants,
-        }); 
+        console.log('Adding restaurant: ' + data.name + ' price level: ' + data.pricing);
+        if(restaurants.includes(restaurant)) {
+            //do nothing
+        }
+        else {
+            restaurants.push(restaurant);
+            counter = counter + 1;
+            console.log("Current key for restaurant is: " + counter);
+        }
+      if (restaurants.length >= numRestaurants) {
+        navigate("Swipe");
       }
     });
   }

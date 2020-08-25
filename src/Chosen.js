@@ -16,10 +16,11 @@ SCREEN_HEIGHT = Dimensions.get("window").height;
 let SCREEN_WIDTH;
 SCREEN_WIDTH = Dimensions.get("window").width;
 
+
 export default class Chosen extends React.Component {
     constructor(props) {
         super(props);
-        
+        const { navigate } = this.props.navigation;
     }
 
     openMaps() {
@@ -69,7 +70,7 @@ export default class Chosen extends React.Component {
                     <View style={styles.bottomContainer}>
                         <IconButton
                             containerStyle={{alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 15, marginRight: 15}}
-                            buttonStyle={styles.button}
+                            buttonStyle={styles.mapButton}
                             icon={
                                 <Icon
                                  name="map"
@@ -81,6 +82,24 @@ export default class Chosen extends React.Component {
                             
         
                         />
+
+                        <IconButton
+                            containerStyle={{alignSelf: 'flex-start', marginTop: 'auto', marginBottom: 15, marginRight: 15}}
+                            buttonStyle={styles.mapButton}
+                            icon={
+                                <Icon
+                                 name="home"
+                                 size={35}
+                                 color="black"
+                                />
+                            }
+                            onPress={() => navigate('MainMenu')}
+                            
+        
+                        />  
+
+
+
                     </View>
 
                 </LinearGradient>
@@ -112,7 +131,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         
     },
-    button: {
+    mapButton: {
         borderRadius: 50,
         width: 100,
         height: 100,
@@ -130,6 +149,15 @@ const styles = StyleSheet.create({
     bottomContainer: {
         width: '100%',
         flex: 1,
-        }
+    },
+
+    homeButton: {
+        borderRadius: 50,
+        width: 100,
+        height: 100,
+        paddingTop: 10,
+        backgroundColor: '#b4cd31'
+    }
+    
     
 });

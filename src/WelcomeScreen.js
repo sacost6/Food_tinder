@@ -3,9 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
-  TextInput,
-  ScrollView,
   Image,
   TouchableWithoutFeedback,
 } from "react-native";
@@ -16,7 +13,7 @@ export default class WelcomeScreen extends React.Component {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.screen}>
-        <TouchableWithoutFeedback onPress={() => navigate("MainMenu")}>
+        <TouchableWithoutFeedback onPress={() => navigate("LoadingServer")}>
           <View style={{ flex: 1 }}>
             <LinearGradient
               colors={["#000000", "#202020"]}
