@@ -10,7 +10,8 @@ const Partner = {
   socket: undefined,
 };
 let numRestaurants = 0;
-
+let offset = 0.000000000000002;
+let first = false;
 let placeDetails = function () {
   this.places = [];
 };
@@ -27,6 +28,7 @@ socket.on("connect", () => {
     userID = data;
     console.log("User socket is " + userID);
   });
+
   socket.on("secondGuest", (user) => {
     console.log("Added new user");
     Partner.userID = user.userID;
@@ -42,6 +44,10 @@ socket.on("connect", () => {
     console.log("Number of expected restaurants from results are " + data);
   });
 
+  socket.on("first", () => {
+    first = true;
+  });
+
 });
 
-export { userID, Partner, PD, SessionKey, numRestaurants };
+export { userID, Partner, PD, SessionKey, numRestaurants, first, offset };

@@ -24,7 +24,6 @@ function error(err) {
 }
 
 export default class LoadingServer extends React.Component {
-
     constructor(props) {
         super(props);
         let counter = 0;

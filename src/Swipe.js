@@ -32,7 +32,13 @@ state = {
 dollar_image = require('../assets/dollar.png');
 
   componentDidMount() {
+    
+    this.props.navigation.addListener('beforeRemove', (e) => {
+      // Prevent default behavior of leaving the screen
+      console.log("preventing back");
+      e.preventDefault();
 
+    });
   }
 
   constructor(props) {
@@ -55,7 +61,7 @@ dollar_image = require('../assets/dollar.png');
     this.rotateAndTranslate = {
       transform: [
         {
-          rotate: this.rotate,
+          rotate: this.rotate, 
         },
         ...this.position.getTranslateTransform(),
       ],
@@ -93,33 +99,38 @@ dollar_image = require('../assets/dollar.png');
 
       // method called when the user releases the the card
       onPanResponderRelease: (evt, gestureState) => {
+        const {navigate} = this.props.navigation;
         if (gestureState.dx > 120) {
           Animated.spring(this.position, {
             toValue: { x: SCREEN_WIDTH + 1, y: gestureState.dy },
+            useNativeDriver: true
           }).start(() => {
             this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
               this.position.setValue({ x: 0, y: 0 });
             });
           });
-          console.log("done updating state");
+          
           socket.emit("yes", {key: SessionKey, userID: userID, rest: restaurants[counter].name});
           counter = counter + 1;
-          if(counter === numRestaurants) {
+          if(counter === 40) {
               console.log("You have reached the end of the card stack. Retry?");
+              navigate("EndOfOptions");
           }
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
             toValue: { x: -SCREEN_WIDTH - 1, y: gestureState.dy },
+            useNativeDriver: true
           }).start(() => {
             this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
               this.position.setValue({ x: 0, y: 0 });
             });
           });
-          console.log("done updating state");
+          
           socket.emit("no", {key: SessionKey, userID: userID, rest: restaurants[counter].name});
           counter = counter + 1;
-          if(counter === numRestaurants) {
+          if(counter === 40) {
             console.log("You have reached the end of the card stack. Retry?");
+            navigate("EndOfOptions");
           }
         } else if (
             Math.abs(gestureState.dy < 6) && Math.abs(gestureState.dx) < 6
@@ -130,6 +141,7 @@ dollar_image = require('../assets/dollar.png');
           Animated.spring(this.position, {
             toValue: { x: 0, y: 0 },
             friction: 4,
+            useNativeDriver: true
           }).start();
           
         }

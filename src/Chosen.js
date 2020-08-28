@@ -20,7 +20,7 @@ SCREEN_WIDTH = Dimensions.get("window").width;
 export default class Chosen extends React.Component {
     constructor(props) {
         super(props);
-        const { navigate } = this.props.navigation;
+
     }
 
     openMaps() {
@@ -37,18 +37,14 @@ export default class Chosen extends React.Component {
     Linking.openURL(url); 
 
 
-
-
-
-
-
-
     }
 
 
 
     
     render() {
+
+        const { navigate } = this.props.navigation;
         return (
             <View style={styles.screen}>
                 <LinearGradient
@@ -69,7 +65,7 @@ export default class Chosen extends React.Component {
 
                     <View style={styles.bottomContainer}>
                         <IconButton
-                            containerStyle={{alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 15, marginRight: 15}}
+                            containerStyle={{alignSelf: 'flex-end', marginTop: 'auto', marginBottom: 15, marginLeft: 15}}
                             buttonStyle={styles.mapButton}
                             icon={
                                 <Icon
@@ -84,8 +80,8 @@ export default class Chosen extends React.Component {
                         />
 
                         <IconButton
-                            containerStyle={{alignSelf: 'flex-start', marginTop: 'auto', marginBottom: 15, marginRight: 15}}
-                            buttonStyle={styles.mapButton}
+                            containerStyle={{alignSelf: 'flex-end', marginBottom: 15, marginLeft: 'auto', marginRight: 15}}
+                            buttonStyle={styles.homeButton}
                             icon={
                                 <Icon
                                  name="home"
@@ -133,8 +129,8 @@ const styles = StyleSheet.create({
     },
     mapButton: {
         borderRadius: 50,
-        width: 100,
-        height: 100,
+        width: 80,
+        height: 80,
         paddingTop: 10,
         backgroundColor: '#b4cd31'
     },
@@ -149,12 +145,13 @@ const styles = StyleSheet.create({
     bottomContainer: {
         width: '100%',
         flex: 1,
+        flexDirection: 'row',
+        
     },
-
     homeButton: {
         borderRadius: 50,
-        width: 100,
-        height: 100,
+        width: 80,
+        height: 80,
         paddingTop: 10,
         backgroundColor: '#b4cd31'
     }

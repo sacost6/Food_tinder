@@ -20,7 +20,11 @@ function base64_encode(file) {
   return new Buffer(bitmap).toString('base64');
 }
 
-async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket) {
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket ) {
   /* This part of the code is used to send the HTTP request to the Places API
    * The PlaceResponse function is the part of the code that is parses the JSON response
    * Note: you can change "&type=___" to a couple of different things
@@ -28,20 +32,33 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket)
    * measured in meters).
    * The results are then sent to the clients in order to be parsed on the client-side.
    */
+  if(hostSocket === undefined || guestSocket === undefined) {
+    return;
+  }
+  let myToken = 0;
+  let myPath;
+ if(myToken === 0) {
+   myPath = "/maps/api/place/nearbysearch/json?location=" +
+   latitude +
+   "," +
+   longitude +
+   "&type=restaurant&rankby=distance&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI";
+ }
+ else {
+   myPath = "/maps/api/place/nearbysearch/json?pagetoken=" + myToken + "&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI";
+   console.log("path set for next page");
+ }
+
+
 
   https.request({
         host: "maps.googleapis.com",
-        path:
-          "/maps/api/place/nearbysearch/json?location=" +
-          latitude +
-          "," +
-          longitude +
-          "&type=restaurant&rankby=distance&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI",
+        path: myPath,
         method: "GET", } ,
       /*
        * This callback is used to send the info to the user requesting restaurant information.
        */
-      function(response){
+      async function(response){
         let data = "";
         console.log("UserID parameter is " + hostSocket.id);
         console.log("UserID parameter is " + guestSocket.id);
@@ -49,10 +66,10 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket)
         response.on("data", function (chunk) {
           data += chunk;
         });
-        
-        response.on("end", function () {
+
+        response.on("end", async function () {
           // parse the data for photo references
-          
+
           let placeDetails = function () {
             this.places = [];
           };
@@ -63,91 +80,143 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket)
           let photo_ref;
           let resRating;
           let resName;
+          let nextToken;
+
           if (sdata.status === "OK") {
             console.log("Status: " + sdata.status);
+            next_page_token = sdata.next_page_token;
+
+
+            await sleep(2000);
+
             hostSocket.emit("amount of restaurants", sdata.results.length);
             //clientSockets.emit("amount of restaurants", sdata.results.length);
             for (let p = 0; p < sdata.results.length; p++) {
               PD.places.push(sdata.results[p]);
               console.log(sdata.results[p].name);
             }
-            let counter = 0;
-            for (let r = 0; r < PD.places.length; r++) {
-              try {
-                photo_ref = PD.places[r].photos[0]['photo_reference']
-                resRating = PD.places[r].rating;
-                lat = PD.places[r].geometry['location'].lat;
-                lng = PD.places[r].geometry['location'].lng;
-                console.log('lat: ' + lat + ' lng: ' + lng);
-                resName = PD.places[r].name;
 
-
-                //const remoteImage = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI'
-
-                https.request({
-                      host: "maps.googleapis.com",
-                      path: "/maps/api/place/photo?maxwidth=300&photoreference=" +
-                          photo_ref + "&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI"
-                      ,
-                      method: "GET",
-                    },
-                    function (response) {
-                      let iData;
-                      let imgType = response.headers["content-type"];
-                      response.setEncoding('base64');
-                      response.on("data", function (chunk) {
-                        iData += chunk;
-
-                      });
-                      response.on("end", function () {
-                        packet = iData.replace('undefined', '');
-
-                        console.log('Sending info for restaurant: ' + PD.places[counter].name + ' with rating of: ' + PD.places[counter].rating);
-                        console.log('photo_reference: ' + PD.places[r].photos[0]);
-                        console.log('Counter: ' + counter + '\n');
-
-
-                        if(hostSocket.id === guestSocket.id) {
-                          hostSocket.emit('restaurant', {
-                            name: PD.places[r].name,
-                            rating: PD.places[r].rating,
-                            buffer: packet,
-                            id: r,
-                            lat: lat,
-                            lng: lng,
-                            pricing: PD.places[r].price_level
-                          });
-                        } else {
-
-                        hostSocket.emit('restaurant', {
-                          name: PD.places[r].name,
-                          rating: PD.places[r].rating,
-                          buffer: packet,
-                          id: r,
-                          lat: lat,
-                          lng: lng,
-                          pricing: PD.places[r].price_level
-                        });
-                        guestSocket.emit('restaurant', {
-                          name: PD.places[r].name,
-                          rating: PD.places[r].rating,
-                          buffer: packet,
-                          id: r,
-                          type: imgType,
-                          pricing: PD.places[r].price_level
-                        });
-                      }
-                        counter++
-                      });
-
+            // second page start
+            next_page_token;
+            myPath = "/maps/api/place/nearbysearch/json?pagetoken=" + next_page_token + "&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI";
+            https.request({
+              host: "maps.googleapis.com",
+              path: myPath,
+              method: "GET", } ,
+              /*
+              * This callback is used to send the info to the user requesting restaurant information.
+              */
+              async function(response){
+                let data = "";
+      
+                response.on("data", function (chunk) {
+                  data += chunk;
+                });
+      
+                response.on("end", async function () {
+                  // parse the data for photo references
+      
+                  let sdata = JSON.parse(data);
+                  console.log(sdata);
+                  let photo_ref;
+                  let resRating;
+                  let resName;
+      
+                  if (sdata.status === "OK") {
+                    console.log("Status: " + sdata.status);
+              
+                  for (let p = 0; p < sdata.results.length; p++) {
+                    PD.places.push(sdata.results[p]);
+                    console.log(sdata.results[p].name);
+                  }
+                  
+                  }
+  
+                  // PHOTO sending starts
+                  let counter = 0;
+                  for (let r = 0; r < PD.places.length; r++) {
+                    try {
+                      photo_ref = PD.places[r].photos[0]['photo_reference']
+                      resRating = PD.places[r].rating;
+                      lat = PD.places[r].geometry['location'].lat;
+                      lng = PD.places[r].geometry['location'].lng;
+                      console.log('lat: ' + lat + ' lng: ' + lng);
+                      resName = PD.places[r].name;
+      
+                      https.request({
+                            host: "maps.googleapis.com",
+                            path: "/maps/api/place/photo?maxwidth=300&photoreference=" +
+                                photo_ref + "&key=AIzaSyBXKa025y69ZY6Uj3vCMD_JEe7Nqx5o7hI"
+                            ,
+                            method: "GET",
+                          },
+                          async function (response) {
+                            let iData;
+                            let imgType = response.headers["content-type"];
+                            response.setEncoding('base64');
+                            response.on("data", function (chunk) {
+                              iData += chunk;
+      
+                            });
+                            response.on("end", function () {
+                              packet = iData.replace('undefined', '');
+      
+                              console.log('Sending info for restaurant: ' + PD.places[counter].name + ' with rating of: ' + PD.places[counter].rating);
+                              console.log('photo_reference: ' + PD.places[r].photos[0]);
+                              console.log('Counter: ' + counter + '\n');
+      
+      
+                              if(hostSocket.id === guestSocket.id) {
+                                hostSocket.emit('restaurant', {
+                                  name: PD.places[r].name,
+                                  rating: PD.places[r].rating,
+                                  buffer: packet,
+                                  id: r,
+                                  lat: lat,
+                                  lng: lng,
+                                  pricing: PD.places[r].price_level
+                                });
+                              } else {
+      
+                              hostSocket.emit('restaurant', {
+                                name: PD.places[r].name,
+                                rating: PD.places[r].rating,
+                                buffer: packet,
+                                id: r,
+                                lat: lat,
+                                lng: lng,
+                                type: imgType,
+                                pricing: PD.places[r].price_level
+                              });
+                              guestSocket.emit('restaurant', {
+                                name: PD.places[r].name,
+                                rating: PD.places[r].rating,
+                                buffer: photo_ref,
+                                id: r,
+                                lat: lat,
+                                lng: lng,
+                                type: imgType,
+                                pricing: PD.places[r].price_level
+                              });
+                            }
+                              counter++
+                            });
+      
+                          }
+                          
+                      ).end();
+      
+                    } catch (error) {
+                      console.log(error);
+                      counter++
                     }
-                ).end();
+                  }
+    
+               
+      
+              });
+            }).end();
 
-              } catch (error) {
-                console.log(error);
-                counter++
-              }
-            }
           }
           else if(sdata.status === "ZERO_RESULTS") {
 
@@ -158,6 +227,7 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket)
 
         });
       }).end();
+      
 }
 
 // Variables used to hold clients and client information
@@ -175,10 +245,13 @@ class Session {
     this.host = host;
     this.guest = undefined;
     this.key = key;
+    this.host_next_page = 0;
+    this.guest_next_page = 0;
+    this.pages = [];
+    this.next_page_token;
   }
 
   compareLikes(){
-    
     let user1, user2;
     user1 = users.get(this.host);
     user2 = users.get(this.guest);
@@ -196,6 +269,32 @@ class Session {
       }
     }
   }
+
+
+  nextPage(data) {
+    // host is requesting a next page
+    if(data === this.host) {
+      if(this.pages.length - 1 >= this.host_next_page ) {
+        return(this.pages[this.host_next_page]);
+      } else {
+        this.nextPage(this.host);
+      }      
+      
+    } 
+    // guest is requesting enxt page
+    else {
+      if(this.pages.length - 1 >= this.guest_next_page ) {
+        return(this.pages[this.guest_next_page]);
+      }
+      else {
+        this.nextPage(this.guest);
+      }
+
+    }
+
+  }
+
+
 }
 
 // Class used to store user's location and userID
@@ -242,13 +341,23 @@ server.on("connection", (socket) => {
   })
 
   socket.on("coordinates", (data) => {
-    console.log("User coordinates are " + data.lat);
-    let temp = users.get(counter);
-    temp.lat = data.lat;
-    temp.info[0] = true;
-    temp.lon = data.lon;
-    temp.info[1] = true;
-    socket.emit("ready");
+    if(data.lon === undefined || data.lat === undefined)
+      socket.emit("location-error")
+    else {
+      console.log("User coordinates are " + data.lat);
+      let temp = users.get(counter);
+      temp.lat = data.lat;
+      temp.info[0] = true;
+      temp.lon = data.lon;
+      temp.info[1] = true;
+      if(temp.username === undefined) {
+        temp.username = this.counter;
+        socket.emit("ready");
+      }
+      else {
+        socket.emit("ready");
+      }
+    }
   });
 
   /* Wait for a client to send a request for restaurants with their userID included.
@@ -269,7 +378,9 @@ server.on("connection", (socket) => {
     let temp = users.get(data.userID);
     // check if the user has both longitude and latitude values stored.
     try {
+
         placeSearch(host.lat, host.lon, RADIUS, hostsocket, guestsocket);
+
     }
     catch (e) {
       console.log(e);
@@ -366,4 +477,15 @@ server.on("connection", (socket) => {
     let sess = Sessions.get(data.key);
     sess.compareLikes();
   });
+  socket.on("moreData", (data) => {
+  
+    let sess = Sessions.get(data.key);
+    let nextPage = sess.nextPage(data);
+    socket.emit("nextPage", nextPage);
+
+  });
+
+
+
+
 });

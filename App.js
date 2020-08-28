@@ -23,11 +23,13 @@ import info from "./src/info";
 import loading from "./src/loading";
 import Chosen from "./src/Chosen";
 import LoadingServer from "./src/LoadingServer";
+import EndOfOptions from "./src/EndOfOptions";
 
 
 console.disableYellowBox = true;
 
 const Navigator = createStackNavigator({
+  
   Home: {
     screen: Home,
     navigationOptions: { headerShown: false },
@@ -64,9 +66,16 @@ const Navigator = createStackNavigator({
     screen: LoadingServer,
     navigationOptions: {headerShown: false},
   },
-
+  EndOfOptions: {
+    screen: EndOfOptions,
+    navigationOptions: {headerShown: false},
+  }
 });
 
+
+
 const App = createAppContainer(Navigator);
+
+        
 
 export default App;
