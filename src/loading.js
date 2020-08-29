@@ -14,6 +14,7 @@ export default class host extends React.Component {
     const { navigate } = this.props.navigation;
     socket.emit('get-restaurant', {UserID: userID, key: SessionKey, offset: 0});
     socket.on("restaurant", (data) => {
+
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
         let restaurant = { id: data.id, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing, lat: data.lat, lng: data.lng };
         console.log('Adding restaurant: ' + data.name + ' price level: ' + data.pricing);
@@ -23,11 +24,12 @@ export default class host extends React.Component {
         else {
             restaurants.push(restaurant);
             counter = counter + 1;
-            console.log("Current key for restaurant is: " + counter);
         }
-      if (restaurants.length >= 35) {
-        navigate("Swipe");
-      }
+
+    });
+    socket.on("all_data_sent", (data) => { 
+        console.log("All data received, navigating to Swipe with " + restaurants.length + "restaurants");
+        navigate('Swipe');
     });
   }
 

@@ -2,6 +2,8 @@
 const io = require("socket.io"),
   server = io.listen(8000);
 
+const dummyPhotoRef = 'CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU';
+
 //Required to create Places API requests
 let https = require("follow-redirects").https;
 
@@ -121,26 +123,29 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket 
                   let photo_ref;
                   let resRating;
                   let resName;
-      
+
                   if (sdata.status === "OK") {
                     console.log("Status: " + sdata.status);
-              
-                  for (let p = 0; p < sdata.results.length; p++) {
-                    PD.places.push(sdata.results[p]);
-                    console.log(sdata.results[p].name);
-                  }
                   
+                    for (let p = 0; p < sdata.results.length; p++) {
+                      PD.places.push(sdata.results[p]);
+                      console.log(sdata.results[p].name);
+                    }
+                    
                   }
   
                   // PHOTO sending starts
                   let counter = 0;
+                  let numRequests = 0;
+                  let completedRequests = 0;
                   for (let r = 0; r < PD.places.length; r++) {
                     try {
                       photo_ref = PD.places[r].photos[0]['photo_reference']
+                      numRequests++
                       resRating = PD.places[r].rating;
                       lat = PD.places[r].geometry['location'].lat;
                       lng = PD.places[r].geometry['location'].lng;
-                      console.log('lat: ' + lat + ' lng: ' + lng);
+    
                       resName = PD.places[r].name;
       
                       https.request({
@@ -151,6 +156,7 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket 
                             method: "GET",
                           },
                           async function (response) {
+
                             let iData;
                             let imgType = response.headers["content-type"];
                             response.setEncoding('base64');
@@ -161,11 +167,10 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket 
                             response.on("end", function () {
                               packet = iData.replace('undefined', '');
       
-                              console.log('Sending info for restaurant: ' + PD.places[counter].name + ' with rating of: ' + PD.places[counter].rating);
-                              console.log('photo_reference: ' + PD.places[r].photos[0]);
-                              console.log('Counter: ' + counter + '\n');
-      
-      
+                              console.log('Sending info for restaurant: ' + PD.places[r].name + ' with rating of: ' + PD.places[r].rating);
+                 
+    
+                              
                               if(hostSocket.id === guestSocket.id) {
                                 hostSocket.emit('restaurant', {
                                   name: PD.places[r].name,
@@ -200,7 +205,18 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket 
                               });
                             }
                               counter++
+
+                              completedRequests++
+                              if(completedRequests === numRequests) {
+                                console.log("Total of " + completedRequests + " restaurants sent!");
+                                hostSocket.emit("all_data_sent", 1);
+                              }
+
+
+
                             });
+
+                          
       
                           }
                           
@@ -208,10 +224,10 @@ async function placeSearch(latitude, longitude, radius, hostSocket, guestSocket 
       
                     } catch (error) {
                       console.log(error);
-                      counter++
+                      
                     }
                   }
-    
+
                
       
               });
