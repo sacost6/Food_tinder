@@ -22,11 +22,12 @@ export default class Chosen extends React.Component {
         super(props);
 
     }
+    
+    componentDidMount() {
 
-    componentDidMount {
         this.props.navigation.addListener('beforeRemove', (e) => {
             // Prevent default behavior of leaving the screen
-
+            console.log("preventing back in 2");
             e.preventDefault();
       
           });
