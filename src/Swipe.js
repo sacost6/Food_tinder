@@ -135,7 +135,7 @@ dollar_image = require('../assets/dollar.png');
         } else if (
             Math.abs(gestureState.dy < 6) && Math.abs(gestureState.dx) < 6
         ) {
-          this.props.navigation.navigate("info");
+          
         } else {
         
           Animated.spring(this.position, {
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     height: 400,
     width: 388,
     resizeMode: "contain",
-    flex: 2,
+    flex: 3,
     borderRadius: 6
   },
   likeStyle: {
@@ -326,9 +326,14 @@ const styles = StyleSheet.create({
     paddingBottom: 5
   },
   infoCard: {
-      flex: 1,
-      marginLeft: 13,
+      paddingTop: 10,
+      paddingLeft: 5,
+      flex: 4,
+      marginLeft: 5,
       borderRadius: 20,
+      backgroundColor:'rgba(0,0,0,.4)',
+      marginRight: 5,
+      marginBottom: 10
 
   },
   Rating: {
@@ -343,4 +348,7 @@ const styles = StyleSheet.create({
 });
 
 export {rest_name};
+
+// flex 3 and 3
+// flex 3 and 4
 

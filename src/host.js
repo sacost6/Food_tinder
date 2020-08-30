@@ -18,7 +18,7 @@ export default class host extends React.Component {
     });
     console.log("host-request sent");
     socket.on("Start", () => {
-      navigate("loading");
+      navigate("Loading");
     });
   }
 

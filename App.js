@@ -1,18 +1,7 @@
-import { Provider } from "react-redux";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TextInput,
-  ScrollView,
-  Image,
-} from "react-native";
-import { createAppContainer } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
-import * as Location from "expo-location";
-import socketIO from "socket.io-client";
-import { registerRootComponent } from "expo";
+import * as React from 'react';
+import { View, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import Home from "./src/WelcomeScreen";
 import MainMenu from "./src/MainMenu";
@@ -28,54 +17,31 @@ import EndOfOptions from "./src/EndOfOptions";
 
 console.disableYellowBox = true;
 
-const Navigator = createStackNavigator({
-  
-  Home: {
-    screen: Home,
-    navigationOptions: { headerShown: false },
-  },
-  MainMenu: {
-    screen: MainMenu,
-    navigationOptions: { headerShown: false },
-  },
-  host: {
-    screen: host,
-    navigationOptions: { headerShown: false },
-  },
-  join: {
-    screen: join,
-    navigationOptions: { headerShown: false },
-  },
-  Swipe: {
-    screen: Swipe,
-    navigationOptions: { headerShown: false },
-  },
-  info: {
-    screen: info,
-    navigationOptions: { headerShown: false },
-  },
-  loading: {
-    screen: loading,
-    navigationOptions: { headerShown: false },
-  },
-  Chosen: {
-    screen: Chosen,
-    navigationOptions: { headerShown: false},
-  },
-  LoadingServer: {
-    screen: LoadingServer,
-    navigationOptions: {headerShown: false},
-  },
-  EndOfOptions: {
-    screen: EndOfOptions,
-    navigationOptions: {headerShown: false},
-  }
-});
 
 
+const Stack = createStackNavigator();
 
-const App = createAppContainer(Navigator);
-
-        
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      >
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="MainMenu" component={MainMenu} />
+        <Stack.Screen name="Host" component={host} />
+        <Stack.Screen name="Join" component={join} />
+        <Stack.Screen name="Swipe" component={Swipe} />
+        <Stack.Screen name="Info" component={info} />
+        <Stack.Screen name="Loading" component={loading} />
+        <Stack.Screen name="Chosen" component={Chosen} />
+        <Stack.Screen name="LoadingServer" component={LoadingServer} />
+        <Stack.Screen name="EndOfOptions" component={EndOfOptions} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
 export default App;

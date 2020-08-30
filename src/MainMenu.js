@@ -17,10 +17,10 @@ import socket from "../store/socket";
 export default class MainMenu extends React.Component {
 
   componentDidMount() {
-
+    
     this.props.navigation.addListener('beforeRemove', (e) => {
       // Prevent default behavior of leaving the screen
-      console.log("preventing back");
+      console.log("preventing back in 2");
       e.preventDefault();
 
     });
@@ -45,13 +45,13 @@ export default class MainMenu extends React.Component {
             justifyContent: "space-between",
           }}
         >
-          <TouchableWithoutFeedback onPress={() => navigate("host")}>
+          <TouchableWithoutFeedback onPress={() => navigate("Host")}>
             <View style={styles.create}>
               <Text style={styles.textStyle}>Host</Text>
             </View>
           </TouchableWithoutFeedback>
 
-          <TouchableWithoutFeedback onPress={() => navigate("join")}>
+          <TouchableWithoutFeedback onPress={() => navigate("Join")}>
             <View style={styles.join}>
               <Text style={styles.textStyle}>Join</Text>
             </View>

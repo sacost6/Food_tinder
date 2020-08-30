@@ -23,6 +23,15 @@ export default class Chosen extends React.Component {
 
     }
 
+    componentDidMount {
+        this.props.navigation.addListener('beforeRemove', (e) => {
+            // Prevent default behavior of leaving the screen
+
+            e.preventDefault();
+      
+          });
+    }
+
     openMaps() {
         const lat = 41.867780
         const lng = -87.883790

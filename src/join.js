@@ -17,7 +17,7 @@ export default class join extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
-    socket.on("Start", () => navigate("loading"));
+    socket.on("Start", () => navigate("Loading"));
   }
 
   state = {
