@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { View, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import * as React from "react";
+import { View, Text } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import Home from "./src/WelcomeScreen";
 import MainMenu from "./src/MainMenu";
@@ -14,10 +14,7 @@ import Chosen from "./src/Chosen";
 import LoadingServer from "./src/LoadingServer";
 import EndOfOptions from "./src/EndOfOptions";
 
-
 console.disableYellowBox = true;
-
-
 
 const Stack = createStackNavigator();
 
@@ -25,9 +22,10 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
+        screenOptions={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
       >
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="MainMenu" component={MainMenu} />
