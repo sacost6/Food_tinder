@@ -48,10 +48,16 @@ export default class host extends React.Component {
 
 
     constructor(props) {
-    this.state ={ timer: 5}
+    
     super(props);
     let counter = 0;
     const { navigate } = this.props.navigation;
+    
+
+
+
+
+
     socket.emit('get-restaurant', {UserID: userID, key: SessionKey, offset: 0});
     socket.on("restaurant", (data) => {
 
@@ -71,6 +77,12 @@ export default class host extends React.Component {
         console.log("All data received, navigating to Swipe with " + restaurants.length + "restaurants");
         navigate('Swipe');
     });
+    socket.on("Retry", () => {
+      socket('get-restaurant', {UserID: userID, key: SessionKey, offset: 0});
+    });
+
+
+
   }
 
   

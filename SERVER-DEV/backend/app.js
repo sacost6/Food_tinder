@@ -4,7 +4,7 @@ const io = require("socket.io"),
 
 const dummyPhotoRef =
   "CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU";
-git 
+
 //Required to create Places API requests
 let https = require("follow-redirects").https;
 
@@ -355,7 +355,7 @@ server.on("connection", (socket) => {
   // when socket disconnects, remove it from the list:
   socket.on("disconnect", () => {
     clientSockets.delete(socket);
-    if(Sess2Client.get(socket) === undefined) {
+    if(Sess2Client.get(socket) === undefined || Sess2Client.get(socket).partner === undefined) {
       console.info(`Client gone [id=${socket.id}]`);
     }
     else {
