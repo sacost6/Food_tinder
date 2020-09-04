@@ -248,6 +248,8 @@ async function placeSearch(
               )
               .end();
           } else if (sdata.status === "ZERO_RESULTS") {
+            hostSocket.emit("Retry");
+            guestSocket.emit("Retry");
           } else {
             console.log(sdata.status);
           }
@@ -355,7 +357,7 @@ server.on("connection", (socket) => {
   // when socket disconnects, remove it from the list:
   socket.on("disconnect", () => {
     clientSockets.delete(socket);
-    if(Sess2Client.get(socket) === undefined) {
+    if(Sess2Client.get(socket) === undefined || Sess2Client.get(socket).partner === undefined) {
       console.info(`Client gone [id=${socket.id}]`);
     }
     else {
