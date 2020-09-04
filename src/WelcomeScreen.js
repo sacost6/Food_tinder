@@ -18,7 +18,7 @@ export default class WelcomeScreen extends React.Component {
 
     return (
       <View style={styles.screen}>
-        <TouchableWithoutFeedback onPress={() => navigate("LoadingServer")}>
+        <TouchableWithoutFeedback onPress={() => navigate("MainMenu")}>
           <View style={{ flex: 1 }}>
             <LinearGradient
               colors={["#000000", "#202020"]}

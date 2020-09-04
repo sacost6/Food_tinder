@@ -5,14 +5,17 @@ import socket from "../store/socket";
 import { userID, SessionKey, numRestaurants, first, offset} from "../store/index";
 
 let restaurants = [];
+let photo_counter = 0;
 
 export default class host extends React.Component {
+
+
 
   state = {
     location: "",
     userID: 0,
     key: 0,
-    timer: 60
+    timer: 25
   };
 
   onBackPress = () => {
@@ -45,7 +48,6 @@ export default class host extends React.Component {
     constructor(props) {
     
     super(props);
-    let counter = 0;
     const { navigate } = this.props.navigation;
     let names = [];
 
@@ -53,13 +55,13 @@ export default class host extends React.Component {
 
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
         let restaurant = { id: data.id, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing, lat: data.lat, lng: data.lng };
-       // console.log('Adding restaurant: ' + data.name + ' price level: ' + data.pricing);
+        console.log('Adding restaurant: ' + data.name + ' price level: ' + data.pricing);
         if(restaurants.includes(restaurant)) {
             //do nothing
         }
         else {
             restaurants.push(restaurant);
-            counter = counter + 1;
+            photo_counter = photo_counter + 1;
         }
 
     });
@@ -67,9 +69,7 @@ export default class host extends React.Component {
         console.log("All data received, navigating to Swipe with " + restaurants.length + "restaurants");
         navigate('Swipe');
     });
-    socket.on("Retry", () => {
-      socket.emit('get-restaurant', {UserID: userID, key: SessionKey, offset: 0});
-    });
+
 
 
 
@@ -121,4 +121,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {restaurants};
+export {restaurants, photo_counter};

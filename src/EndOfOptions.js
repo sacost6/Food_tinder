@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "#3d3d3d",
     },
     pane: {
-        backgroundColor: "rgba(185, 185, 185, 0.15)",
+       
         padding: 20,
         justifyContent: "space-between",
         alignItems: "center",

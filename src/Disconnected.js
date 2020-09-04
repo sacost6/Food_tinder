@@ -52,6 +52,10 @@ export default class EndOfOptions extends React.Component {
                     }}
                 >
                     <View style={styles.pane}>
+                    <Image
+                        style={styles.logo}
+                        source={require("../assets/sad_cloud.png")}
+                    />
                         <Text style={styles.endText}>The other player has left</Text>
                         <RaisedButton
                             buttonStyle={styles.mButton}
@@ -92,7 +96,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "#3d3d3d",
     },
     pane: {
-        backgroundColor: "rgba(185, 185, 185, 0.15)",
+ 
         padding: 20,
         justifyContent: "space-between",
         alignItems: "center",
@@ -105,11 +109,11 @@ const styles = StyleSheet.create({
         width: 250,
         height: 55,
         borderRadius: 25,
-        alignItems: "center",
+        alignItems: "flex-start",
         justifyContent: "center",
     },
     buttonText: {
-        fontWeight: "bold",
+        fontWeight: "100",
         fontSize: 20,
     },
     iconContainer: {
@@ -123,12 +127,18 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     endText: {
-        marginTop: 60,
+        marginTop: 10,
         color: 'white',
         textAlign: 'center',
         fontWeight: '100',
-        fontSize: 17
-    }
+        fontSize: 17,
+        marginBottom: 100
+
+    },
+    logo: {
+        width: "65%",
+        height: "65%",
+    },
 });
 
 export {restaurants};

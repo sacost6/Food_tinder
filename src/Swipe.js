@@ -11,7 +11,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 import { userID, numRestaurants } from "../store/index";
-import { restaurants, photos } from "./loading";
+import { restaurants, photo_counter } from "./loading";
 import { Rating } from "react-native-elements";
 import { SessionKey } from "../store/index";
 
@@ -128,7 +128,7 @@ export default class Swipe extends React.Component {
             rest: restaurants[counter],
           });
           counter = counter + 1;
-          if (counter === 40) {
+          if (counter === photo_counter) {
             console.log("You have reached the end of the card stack. Retry?");
             navigate("EndOfOptions");
           }

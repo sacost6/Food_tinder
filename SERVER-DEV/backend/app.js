@@ -485,7 +485,6 @@ server.on("connection", (socket) => {
       // Send the start message to both the host and the guest.
       socket.emit("key", data.key);
       socket.emit("Start", data.userID);
-      socket.emit("Start", data.key);
       console.log("1/2 Start message sent to " + socket);
       Sess2Client.set(socket, sess);
       clientSockets.get(host).emit("Start", host);
