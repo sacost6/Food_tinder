@@ -248,6 +248,8 @@ async function placeSearch(
               )
               .end();
           } else if (sdata.status === "ZERO_RESULTS") {
+            hostSocket.emit("Retry");
+            guestSocket.emit("Retry");
           } else {
             console.log(sdata.status);
           }
@@ -361,6 +363,7 @@ server.on("connection", (socket) => {
     else {
       let partner = Sess2Client.get(socket).partner;
       partner.emit("partner-disconnected", (Sess2Client.get(socket).key));
+      console.info(`Client gone [id=${socket.id}]`);
     }
   });
 
