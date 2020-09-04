@@ -13,8 +13,6 @@ export default class host extends React.Component {
     return true;
   };
 
-
-
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;

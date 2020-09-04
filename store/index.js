@@ -28,6 +28,7 @@ socket.on("connect", () => {
     console.log("User socket is " + userID);
   });
 
+
   socket.on("secondGuest", (user) => {
     console.log("Added new user");
     Partner.userID = user.userID;
