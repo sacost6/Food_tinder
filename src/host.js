@@ -23,6 +23,7 @@ export default class host extends React.Component {
 
   componentDidMount() {
     BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+    const { navigate } = this.props.navigation;
     socket.emit("host-req", userID);
     socket.on("host-info", (data) => {
       console.log("1( the host key is " + data);

@@ -48,7 +48,7 @@ export default class Swipe extends React.Component {
       console.log("Chosen restaurant is " + data);
       rest_name = data.name;
       location.lat = data.lat;
-      location.lon = data.lon;
+      location.lon = data.lng;
       navigate("Chosen");
       this._unsubscribe();
     });
