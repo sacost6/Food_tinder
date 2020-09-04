@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, ActivityIndicator, Image } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, Image, BackHandler } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {Button, Input} from "react-native-elements";
 import socket from "../store/socket";
@@ -21,6 +21,20 @@ export default class EndOfOptions extends React.Component {
         key: 0,
     };
 
+    onBackPress = () => {
+        console.log("blocking android back press");
+        return true;
+      };
+    
+
+    componentDidMount() {
+        BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+    }
+
     render() {
         const RaisedButton = (props) => <Button raised {...props} />;
         const { navigate } = this.props.navigation;
@@ -38,7 +52,7 @@ export default class EndOfOptions extends React.Component {
                     }}
                 >
                     <View style={styles.pane}>
-                        <Text>You have gone through all the options.</Text>
+                        <Text style={styles.endText}>You have gone through all the options!</Text>
                         <RaisedButton
                             buttonStyle={styles.mButton}
                             title="Main Menu"
@@ -107,6 +121,13 @@ const styles = StyleSheet.create({
     },
     inputStyle: {
         color: 'white'
+    },
+    endText: {
+        marginTop: 60,
+        color: 'white',
+        textAlign: 'center',
+        fontWeight: '100',
+        fontSize: 25
     }
 });
 

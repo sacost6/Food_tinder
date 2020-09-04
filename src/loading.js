@@ -1,4 +1,4 @@
-lsimport React from "react";
+import React from "react";
 import { StyleSheet, Text, View, ActivityIndicator, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";

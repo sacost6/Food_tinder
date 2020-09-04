@@ -187,12 +187,16 @@ async function placeSearch(
                                     PD.places[r].rating
                                 );
 
+
+
+                                let key_id = crypto.randomBytes(4).toString("hex");
+
                                 if (hostSocket.id === guestSocket.id) {
                                   hostSocket.emit("restaurant", {
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
                                     buffer: packet,
-                                    id: counter,
+                                    id: key_id,
                                     lat: PD.places[r].geometry["location"].lat,
                                     lng: PD.places[r].geometry["location"].lng,
                                     pricing: PD.places[r].price_level,
@@ -202,7 +206,7 @@ async function placeSearch(
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
                                     buffer: packet,
-                                    id: counter,
+                                    id: key_id,
                                     lat: PD.places[r].geometry["location"].lat,
                                     lng: PD.places[r].geometry["location"].lng,
                                     type: imgType,
@@ -211,8 +215,8 @@ async function placeSearch(
                                   guestSocket.emit("restaurant", {
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
-                                    buffer: photo_ref,
-                                    id: counter,
+                                    buffer: packet,
+                                    id: key_id,
                                     lat: PD.places[r].geometry["location"].lat,
                                     lng: PD.places[r].geometry["location"].lng,
                                     type: imgType,
@@ -229,6 +233,7 @@ async function placeSearch(
                                       " restaurants sent!"
                                   );
                                   hostSocket.emit("all_data_sent", 1);
+                                  guestSocket.emit("all_data_sent", 1);
                                 }
                               });
                             }
@@ -341,6 +346,7 @@ server.on("connection", (socket) => {
 
   // when socket disconnects, remove it from the list:
   socket.on("disconnect", () => {
+    
     clientSockets.delete(socket);
     console.info(`Client gone [id=${socket.id}]`);
   });

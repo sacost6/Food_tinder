@@ -18,7 +18,6 @@ export default class host extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
-    
   }
 
   componentDidMount() {
@@ -34,6 +33,11 @@ export default class host extends React.Component {
     socket.on("Start", () => {
       navigate("Loading");
     });
+    
+  }
+
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
   }
 
   componentWillUnmount() {
