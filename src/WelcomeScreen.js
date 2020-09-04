@@ -9,6 +9,9 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 
 export default class WelcomeScreen extends React.Component {
+
+  
+
   render() {
     const { navigate } = this.props.navigation;
 

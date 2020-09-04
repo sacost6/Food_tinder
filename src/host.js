@@ -16,12 +16,7 @@ export default class host extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
-  }
-
-  componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-    const { navigate } = this.props.navigation;
-    socket.emit("host-req", userID);
+     socket.emit("host-req", userID);
     socket.on("host-info", (data) => {
       console.log("1( the host key is " + data);
       console.log("**userID is " + userID);
@@ -31,7 +26,11 @@ export default class host extends React.Component {
     socket.on("Start", () => {
       navigate("Loading");
     });
-    
+  }
+
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+     
   }
 
   componentDidMount() {
