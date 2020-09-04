@@ -44,7 +44,7 @@ export default class MainMenu extends React.Component {
             alignItems: "center",
             justifyContent: "space-between",
           }}
-        >
+        > 
           <TouchableWithoutFeedback onPress={() => navigate("Host")}>
             <View style={styles.create}>
               <Text style={styles.textStyle}>Host</Text>
