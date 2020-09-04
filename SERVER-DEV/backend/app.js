@@ -158,8 +158,6 @@ async function placeSearch(
                         photo_ref = PD.places[r].photos[0]["photo_reference"];
                         numRequests++;
                         resRating = PD.places[r].rating;
-                        
-
                         resName = PD.places[r].name;
 
                         https
@@ -267,6 +265,14 @@ let counter = 0;
 // Variables used to store sessions
 let Sessions = new Map();
 let SessionsKeys = [];
+let Sess2Client = new Map();
+
+class Couple {
+  constructor(partner, key) {
+    this.partner = partner;
+    this.key = key;
+  }
+}
 
 // Used to store the information of sessions and active sessions
 class Session {
@@ -348,11 +354,9 @@ server.on("connection", (socket) => {
 
   // when socket disconnects, remove it from the list:
   socket.on("disconnect", () => {
-    
-
-
-    
     clientSockets.delete(socket);
+    let partner = Sess2Client.get(socket).partner;
+    partner.emit("partner-disconnected", (Sess2Client.get(socket).key));
     console.info(`Client gone [id=${socket.id}]`);
   });
 
@@ -426,7 +430,8 @@ server.on("connection", (socket) => {
 
     // send the key to the client that is requesting to be a host
     console.log("size of the sessionskey array is " + SessionsKeys.length);
-    socket.emit("key", id);
+    console.log("sending key: " + id);
+
     socket.emit("host-info", id);
   });
 
@@ -468,6 +473,10 @@ server.on("connection", (socket) => {
       // Set the user's ID as the guest for the session
       console.log("The guest of this session is " + data.userID);
       sess.guest = data.userID;
+      let temp1 = new Couple(clientSockets.get(sess.guest), data.key);
+      let temp2 = new Couple(clientSockets.get(host), data.key);
+      Sess2Client.set(clientSockets.get(host), temp1);
+      Sess2Client.set(clientSockets.get(sess.guest), temp2);
       console.log("the host socket is " + clientSockets.get(host).id);
       console.log("Current sessions are " + Sessions.get(data.key));
       console.log("Current session joined is " + sess.key);
@@ -477,6 +486,7 @@ server.on("connection", (socket) => {
       socket.emit("Start", data.userID);
       socket.emit("Start", data.key);
       console.log("1/2 Start message sent to " + socket);
+      Sess2Client.set(socket, sess);
       clientSockets.get(host).emit("Start", host);
       console.log("2/2 Start message sent to " + socket);
       clientSockets.get(host).emit("key", data.key);

@@ -44,14 +44,21 @@ export default class Swipe extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
+    socket.on("partner-disconnected", (key) => {
+      socket.emit("cancel-sess", key);
+      navigate("Disconnected");
+    });
     socket.on("found the one", (data) => {
       console.log("Chosen restaurant is " + data);
       rest_name = data.name;
       location.lat = data.lat;
       location.lon = data.lng;
-      navigate("Chosen");
+      socket.removeEventListener("partner-disconnected");
       this._unsubscribe();
+      navigate("Chosen");
     });
+
+
     
     this.position = new Animated.ValueXY();
     this.state = {

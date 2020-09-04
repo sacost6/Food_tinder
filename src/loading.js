@@ -8,6 +8,13 @@ let restaurants = [];
 
 export default class host extends React.Component {
 
+  state = {
+    location: "",
+    userID: 0,
+    key: 0,
+    timer: 60
+  };
+
   onBackPress = () => {
     console.log("blocking android back press");
     return true;
@@ -66,11 +73,7 @@ export default class host extends React.Component {
     });
   }
 
-  state = {
-    location: "",
-    userID: 0,
-    key: 0,
-  };
+  
 
   render() {
     return (

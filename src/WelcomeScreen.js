@@ -9,13 +9,16 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 
 export default class WelcomeScreen extends React.Component {
+
+  
+
   render() {
     const { navigate } = this.props.navigation;
 
 
     return (
       <View style={styles.screen}>
-        <TouchableWithoutFeedback onPress={() => navigate("Disconnected")}>
+        <TouchableWithoutFeedback onPress={() => navigate("LoadingServer")}>
           <View style={{ flex: 1 }}>
             <LinearGradient
               colors={["#000000", "#202020"]}
