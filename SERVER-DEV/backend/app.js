@@ -421,6 +421,31 @@ server.on("connection", (socket) => {
     socket.emit("key", id);
     socket.emit("host-info", id);
   });
+  
+
+
+  socket.on("cancel-sess", (id) => {
+    
+    Sessions.delete(id);
+
+    console.log("Cancelled session: " + id);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* Listens for a guest's request to join a session and receives
    * the user's input as a key and their userID. The user is added
