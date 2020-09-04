@@ -113,9 +113,6 @@ export default class host extends React.Component {
                 />
               }
               iconContainerStyle={styles.iconContainer}
-            
-              
-
               >
             </KeyContainer>
             <ActivityIndicator size="large" color="#b4cd31" />

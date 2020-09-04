@@ -16,7 +16,6 @@ let placeDetails = function () {
   this.places = [];
 };
 let SessionKey = "";
-
 let PD = new placeDetails();
 
 
@@ -33,6 +32,12 @@ socket.on("connect", () => {
     console.log("Added new user");
     Partner.userID = user.userID;
     Partner.socket = user.socket;
+  });
+
+  socket.on("host-info", (data) => {
+    console.log("1( the host key is " + data);
+    console.log("**userID is " + userID);
+    SessionKey = data;
   });
 
   socket.on("key", (data) => {

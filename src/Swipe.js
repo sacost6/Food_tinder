@@ -21,6 +21,7 @@ let SCREEN_WIDTH;
 SCREEN_WIDTH = Dimensions.get("window").width;
 let counter = 0;
 let rest_name = "n/a";
+let location = {lat: 0.0, lon: 0.0};
 
 export default class Swipe extends React.Component {
   state = {
@@ -45,7 +46,9 @@ export default class Swipe extends React.Component {
     const { navigate } = this.props.navigation;
     socket.on("found the one", (data) => {
       console.log("Chosen restaurant is " + data);
-      rest_name = data;
+      rest_name = data.name;
+      location.lat = data.lat;
+      location.lon = data.lon;
       navigate("Chosen");
       this._unsubscribe();
     });
@@ -113,7 +116,7 @@ export default class Swipe extends React.Component {
           socket.emit("yes", {
             key: SessionKey,
             userID: userID,
-            rest: restaurants[counter].name,
+            rest: restaurants[counter],
           });
           counter = counter + 1;
           if (counter === 40) {
@@ -391,7 +394,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export { rest_name };
+export { rest_name, location };
 
 // flex 3 and 3
 // flex 3 and 4

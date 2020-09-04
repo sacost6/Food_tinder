@@ -14,7 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import socket from "../store/socket";
 import { userID, SessionKey } from "../store/index";
-import { rest_name } from "./Swipe";
+import { rest_name, location } from "./Swipe";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -50,8 +50,8 @@ function Chosen(props) {
   );
 
   function openMaps() {
-    const lat = 41.86778;
-    const lng = -87.88379;
+    const lat = location.lat;
+    const lng = location.lon;
     const scheme = Platform.select({
       ios: "maps:0,0?q=",
       android: "geo:0,0?q=",

@@ -1,4 +1,4 @@
-````// Require socket.io and start a server at port 8000
+// Require socket.io and start a server at port 8000
 const io = require("socket.io"),
   server = io.listen(8000);
 
@@ -289,8 +289,8 @@ class Session {
         let client1, client2;
         client1 = clientSockets.get(this.host);
         client2 = clientSockets.get(this.guest);
-        client1.emit("found the one", user1.results[i].Name);
-        client2.emit("found the one", user2.results[i].Name);
+        client1.emit("found the one", user1.results[i].rest);
+        client2.emit("found the one", user2.results[i].rest);
       }
     }
   }
@@ -422,8 +422,6 @@ server.on("connection", (socket) => {
     socket.emit("key", id);
     socket.emit("host-info", id);
   });
-  
-
 
   socket.on("cancel-sess", (id) => {
     
@@ -431,22 +429,6 @@ server.on("connection", (socket) => {
 
     console.log("Cancelled session: " + id);
   });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   /* Listens for a guest's request to join a session and receives
    * the user's input as a key and their userID. The user is added
@@ -496,7 +478,7 @@ server.on("connection", (socket) => {
   socket.on("yes", (data) => {
     console.log("UserID " + data.userID + " said yes to " + data.rest);
     let client = users.get(data.userID);
-    let temp = { Name: data.rest, Choice: true };
+    let temp = { Name: data.rest.name, Choice: true, rest: data.rest};
     console.log("in yes listener " + temp);
     client.results.push(temp);
     client.length = client.length + 1;
