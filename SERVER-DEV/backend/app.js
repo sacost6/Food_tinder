@@ -355,9 +355,13 @@ server.on("connection", (socket) => {
   // when socket disconnects, remove it from the list:
   socket.on("disconnect", () => {
     clientSockets.delete(socket);
-    let partner = Sess2Client.get(socket).partner;
-    partner.emit("partner-disconnected", (Sess2Client.get(socket).key));
-    console.info(`Client gone [id=${socket.id}]`);
+    if(Sess2Client.get(socket) === undefined) {
+      console.info(`Client gone [id=${socket.id}]`);
+    }
+    else {
+      let partner = Sess2Client.get(socket).partner;
+      partner.emit("partner-disconnected", (Sess2Client.get(socket).key));
+    }
   });
 
   // Give client a userID and add them to the list.
@@ -430,7 +434,6 @@ server.on("connection", (socket) => {
 
     // send the key to the client that is requesting to be a host
     console.log("size of the sessionskey array is " + SessionsKeys.length);
-    socket.emit("key", id);
     socket.emit("host-info", id);
   });
 
