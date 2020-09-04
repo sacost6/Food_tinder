@@ -1,4 +1,4 @@
-// Require socket.io and start a server at port 8000
+````// Require socket.io and start a server at port 8000
 const io = require("socket.io"),
   server = io.listen(8000);
 
@@ -195,7 +195,7 @@ async function placeSearch(
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
                                     buffer: packet,
-                                    id: r,
+                                    id: counter,
                                     lat: lat,
                                     lng: lng,
                                     pricing: PD.places[r].price_level,
@@ -205,7 +205,7 @@ async function placeSearch(
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
                                     buffer: packet,
-                                    id: r,
+                                    id: counter,
                                     lat: lat,
                                     lng: lng,
                                     type: imgType,
@@ -215,7 +215,7 @@ async function placeSearch(
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
                                     buffer: photo_ref,
-                                    id: r,
+                                    id: counter,
                                     lat: lat,
                                     lng: lng,
                                     type: imgType,
