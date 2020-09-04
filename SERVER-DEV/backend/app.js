@@ -158,8 +158,7 @@ async function placeSearch(
                         photo_ref = PD.places[r].photos[0]["photo_reference"];
                         numRequests++;
                         resRating = PD.places[r].rating;
-                        lat = PD.places[r].geometry["location"].lat;
-                        lng = PD.places[r].geometry["location"].lng;
+                        
 
                         resName = PD.places[r].name;
 
@@ -190,14 +189,18 @@ async function placeSearch(
                                     PD.places[r].rating
                                 );
 
+
+
+                                let key_id = crypto.randomBytes(4).toString("hex");
+
                                 if (hostSocket.id === guestSocket.id) {
                                   hostSocket.emit("restaurant", {
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
                                     buffer: packet,
-                                    id: counter,
-                                    lat: lat,
-                                    lng: lng,
+                                    id: key_id,
+                                    lat: PD.places[r].geometry["location"].lat,
+                                    lng: PD.places[r].geometry["location"].lng,
                                     pricing: PD.places[r].price_level,
                                   });
                                 } else {
@@ -205,19 +208,19 @@ async function placeSearch(
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
                                     buffer: packet,
-                                    id: counter,
-                                    lat: lat,
-                                    lng: lng,
+                                    id: key_id,
+                                    lat: PD.places[r].geometry["location"].lat,
+                                    lng: PD.places[r].geometry["location"].lng,
                                     type: imgType,
                                     pricing: PD.places[r].price_level,
                                   });
                                   guestSocket.emit("restaurant", {
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
-                                    buffer: photo_ref,
-                                    id: counter,
-                                    lat: lat,
-                                    lng: lng,
+                                    buffer: packet,
+                                    id: key_id,
+                                    lat: PD.places[r].geometry["location"].lat,
+                                    lng: PD.places[r].geometry["location"].lng,
                                     type: imgType,
                                     pricing: PD.places[r].price_level,
                                   });
@@ -232,6 +235,7 @@ async function placeSearch(
                                       " restaurants sent!"
                                   );
                                   hostSocket.emit("all_data_sent", 1);
+                                  guestSocket.emit("all_data_sent", 1);
                                 }
                               });
                             }
