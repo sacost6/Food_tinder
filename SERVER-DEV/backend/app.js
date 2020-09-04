@@ -31,8 +31,7 @@ async function placeSearch(
   latitude,
   longitude,
   radius,
-  hostSocket,
-  guestSocket
+  socket
 ) {
   /* This part of the code is used to send the HTTP request to the Places API
    * The PlaceResponse function is the part of the code that is parses the JSON response
@@ -41,7 +40,7 @@ async function placeSearch(
    * measured in meters).
    * The results are then sent to the clients in order to be parsed on the client-side.
    */
-  if (hostSocket === undefined || guestSocket === undefined) {
+  if (socket === undefined) {
     return;
   }
   let myToken = 0;
@@ -73,8 +72,7 @@ async function placeSearch(
        */
       async function (response) {
         let data = "";
-        console.log("UserID parameter is " + hostSocket.id);
-        console.log("UserID parameter is " + guestSocket.id);
+        console.log("Socket parameter is " + socket.id);
 
         response.on("data", function (chunk) {
           data += chunk;
@@ -101,8 +99,8 @@ async function placeSearch(
 
             await sleep(2000);
 
-            hostSocket.emit("amount of restaurants", sdata.results.length);
-            //clientSockets.emit("amount of restaurants", sdata.results.length);
+            socket.emit("amount of restaurants", sdata.results.length);
+
             for (let p = 0; p < sdata.results.length; p++) {
               PD.places.push(sdata.results[p]);
               console.log(sdata.results[p].name);
@@ -124,7 +122,7 @@ async function placeSearch(
                 /*
                  * This callback is used to send the info to the user requesting restaurant information.
                  */
-                async function (response) {
+                function (response) {
                   let data = "";
 
                   response.on("data", function (chunk) {
@@ -187,42 +185,19 @@ async function placeSearch(
                                     PD.places[r].rating
                                 );
 
-
-
                                 let key_id = crypto.randomBytes(4).toString("hex");
 
-                                if (hostSocket.id === guestSocket.id) {
-                                  hostSocket.emit("restaurant", {
-                                    name: PD.places[r].name,
-                                    rating: PD.places[r].rating,
-                                    buffer: packet,
-                                    id: key_id,
-                                    lat: PD.places[r].geometry["location"].lat,
-                                    lng: PD.places[r].geometry["location"].lng,
-                                    pricing: PD.places[r].price_level,
-                                  });
-                                } else {
-                                  hostSocket.emit("restaurant", {
-                                    name: PD.places[r].name,
-                                    rating: PD.places[r].rating,
-                                    buffer: packet,
-                                    id: key_id,
-                                    lat: PD.places[r].geometry["location"].lat,
-                                    lng: PD.places[r].geometry["location"].lng,
-                                    type: imgType,
-                                    pricing: PD.places[r].price_level,
-                                  });
-                                  guestSocket.emit("restaurant", {
-                                    name: PD.places[r].name,
-                                    rating: PD.places[r].rating,
-                                    buffer: packet,
-                                    id: key_id,
-                                    lat: PD.places[r].geometry["location"].lat,
-                                    lng: PD.places[r].geometry["location"].lng,
-                                    type: imgType,
-                                    pricing: PD.places[r].price_level,
-                                  });
-                                }
+                                socket.emit("restaurant", {
+                                  name: PD.places[r].name,
+                                  rating: PD.places[r].rating,
+                                  buffer: packet,
+                                  id: key_id,
+                                  lat: PD.places[r].geometry["location"].lat,
+                                  lng: PD.places[r].geometry["location"].lng,
+                                  type: imgType,
+                                  pricing: PD.places[r].price_level,
+                                });
+
                                 counter++;
 
                                 completedRequests++;
@@ -232,8 +207,7 @@ async function placeSearch(
                                       completedRequests +
                                       " restaurants sent!"
                                   );
-                                  hostSocket.emit("all_data_sent", 1);
-                                  guestSocket.emit("all_data_sent", 1);
+                                  socket.emit("all_data_sent", 1);
                                 }
                               });
                             }
@@ -248,8 +222,7 @@ async function placeSearch(
               )
               .end();
           } else if (sdata.status === "ZERO_RESULTS") {
-            hostSocket.emit("Retry");
-            guestSocket.emit("Retry");
+            socket.emit("Retry");
           } else {
             console.log(sdata.status);
           }
@@ -404,17 +377,15 @@ server.on("connection", (socket) => {
   socket.on("get-restaurant", (data) => {
     //console.log("Restaurant request received");
     //console.log("User " + userID + " has requested to see restaurants");
-    let sesh = Sessions.get(data.key);
-    let host = users.get(sesh.host);
-    let guest = users.get(sesh.guest);
-    let hostsocket = clientSockets.get(sesh.host);
-    let guestsocket = clientSockets.get(sesh.guest);
+    let sess = Sessions.get(data.key);
+    let host = users.get(sess.host);
+    let socket = users.get(data.userID);
     console.log("host.lat" + host);
     // check if the user currently has stored coordinates
     let temp = users.get(data.userID);
     // check if the user has both longitude and latitude values stored.
     try {
-      placeSearch(host.lat, host.lon, RADIUS, hostsocket, guestsocket);
+      placeSearch(host.lat, host.lon, RADIUS, socket);
     } catch (e) {
       console.log(e);
     }

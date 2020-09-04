@@ -42,21 +42,12 @@ export default class host extends React.Component {
    clearInterval(this.interval);
   }
 
-
-
-
-
-
     constructor(props) {
     
     super(props);
     let counter = 0;
     const { navigate } = this.props.navigation;
-    
-
-
-
-
+    let names = [];
 
     socket.emit('get-restaurant', {UserID: userID, key: SessionKey, offset: 0});
     socket.on("restaurant", (data) => {
@@ -64,11 +55,13 @@ export default class host extends React.Component {
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
         let restaurant = { id: data.id, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing, lat: data.lat, lng: data.lng };
         console.log('Adding restaurant: ' + data.name + ' price level: ' + data.pricing);
-        if(restaurants.includes(restaurant)) {
+
+        if(names.includes(restaurant.name)) {
             //do nothing
         }
         else {
             restaurants.push(restaurant);
+            names.push(restaurant.name);
             counter = counter + 1;
         }
 
@@ -78,7 +71,7 @@ export default class host extends React.Component {
         navigate('Swipe');
     });
     socket.on("Retry", () => {
-      socket('get-restaurant', {UserID: userID, key: SessionKey, offset: 0});
+      socket.emit('get-restaurant', {UserID: userID, key: SessionKey, offset: 0});
     });
 
 
