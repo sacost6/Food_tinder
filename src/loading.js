@@ -63,7 +63,7 @@ export default class host extends React.Component {
 
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
         let restaurant = { id: data.id, name: data.name, rating: data.rating, uri: imageSrc, pricing: data.pricing, lat: data.lat, lng: data.lng };
-        console.log('Adding restaurant: ' + data.name + ' price level: ' + data.pricing);
+       // console.log('Adding restaurant: ' + data.name + ' price level: ' + data.pricing);
         if(restaurants.includes(restaurant)) {
             //do nothing
         }

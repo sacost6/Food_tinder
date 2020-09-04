@@ -80,7 +80,7 @@ async function placeSearch(
           data += chunk;
         });
 
-        response.on("end", async function () {
+        response.on("end", zz function () {
           // parse the data for photo references
 
           let placeDetails = function () {
@@ -107,9 +107,7 @@ async function placeSearch(
               PD.places.push(sdata.results[p]);
               console.log(sdata.results[p].name);
             }
-
-            // second page start
-            next_page_token;
+            console.log("Using next_page_token: " + next_page_token);
             myPath =
               "/maps/api/place/nearbysearch/json?pagetoken=" +
               next_page_token +
@@ -124,14 +122,14 @@ async function placeSearch(
                 /*
                  * This callback is used to send the info to the user requesting restaurant information.
                  */
-                async function (response) {
+                function (response) {
                   let data = "";
 
                   response.on("data", function (chunk) {
                     data += chunk;
                   });
 
-                  response.on("end", async function () {
+                  response.on("end",  function () {
                     // parse the data for photo references
 
                     let sdata = JSON.parse(data);
@@ -248,6 +246,7 @@ async function placeSearch(
               )
               .end();
           } else if (sdata.status === "ZERO_RESULTS") {
+
             hostSocket.emit("Retry");
             guestSocket.emit("Retry");
           } else {
