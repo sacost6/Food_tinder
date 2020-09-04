@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, ActivityIndicator, Image } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, Image, BackHandler } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 import { userID, SessionKey, numRestaurants, first, offset} from "../store/index";
@@ -8,7 +8,40 @@ let restaurants = [];
 
 export default class host extends React.Component {
 
+  onBackPress = () => {
+    console.log("blocking android back press");
+    return true;
+  };
+
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.onBackPress );
+    this.interval = setInterval(
+      () => this.setState((prevState)=> ({ timer: prevState.timer - 1 })),
+      1000
+    );
+  }
+  componentDidUpdate(){
+    const {navigate} = this.props.navigation;
+
+    if(this.state.timer === 1){ 
+
+      clearInterval(this.interval);
+      navigate("MainMenu");
+    }
+  }
+  
+  componentWillUnmount(){
+   BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+   clearInterval(this.interval);
+  }
+
+
+
+
+
+
     constructor(props) {
+    this.state ={ timer: 5}
     super(props);
     let counter = 0;
     const { navigate } = this.props.navigation;

@@ -52,7 +52,7 @@ export default class EndOfOptions extends React.Component {
                     }}
                 >
                     <View style={styles.pane}>
-                        <Text style={styles.endText}>You have gone through all the options!</Text>
+                        <Text style={styles.endText}>The other player has left</Text>
                         <RaisedButton
                             buttonStyle={styles.mButton}
                             title="Main Menu"
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         fontWeight: '100',
-        fontSize: 15
+        fontSize: 17
     }
 });
 

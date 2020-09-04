@@ -52,6 +52,7 @@ export default class Swipe extends React.Component {
       navigate("Chosen");
       this._unsubscribe();
     });
+    
     this.position = new Animated.ValueXY();
     this.state = {
       currentIndex: 0,

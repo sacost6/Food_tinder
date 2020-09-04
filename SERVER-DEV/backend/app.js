@@ -349,6 +349,9 @@ server.on("connection", (socket) => {
   // when socket disconnects, remove it from the list:
   socket.on("disconnect", () => {
     
+
+
+    
     clientSockets.delete(socket);
     console.info(`Client gone [id=${socket.id}]`);
   });
