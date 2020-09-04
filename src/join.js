@@ -11,13 +11,16 @@ import { Input, Button } from "react-native-elements";
 import { connect } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
-import { userID } from "../store/index";
+import {SessionKey, userID} from "../store/index";
 
 export default class join extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
-    socket.on("Start", () => navigate("Loading"));
+    socket.on("Start", () => {
+      socket.emit("get-restaurant", {UserID: userID, key: SessionKey, offset: 0})
+      navigate("Loading");
+    });
   }
 
   state = {

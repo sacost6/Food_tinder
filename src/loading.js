@@ -49,7 +49,6 @@ export default class host extends React.Component {
     const { navigate } = this.props.navigation;
     let names = [];
 
-    socket.emit('get-restaurant', {UserID: userID, key: SessionKey, offset: 0});
     socket.on("restaurant", (data) => {
 
         let imageSrc = 'data:image/jpeg;base64,' + data.buffer;
