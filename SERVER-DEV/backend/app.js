@@ -361,6 +361,7 @@ server.on("connection", (socket) => {
     else {
       let partner = Sess2Client.get(socket).partner;
       partner.emit("partner-disconnected", (Sess2Client.get(socket).key));
+      console.info(`Client gone [id=${socket.id}]`);
     }
   });
 
