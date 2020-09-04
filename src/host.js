@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, ActivityIndicator, Clipboard, Share } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, Clipboard, Share, BackHandler } from "react-native";
 import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
@@ -7,9 +7,22 @@ import { userID } from "../store/index";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default class host extends React.Component {
+
+   onBackPress = () => {
+    console.log("blocking android back press");
+    return true;
+  };
+
+
+
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
+    
+  }
+
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
     socket.emit("host-req", userID);
     socket.on("host-info", (data) => {
       console.log("1( the host key is " + data);
@@ -22,6 +35,10 @@ export default class host extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+  }
+  
   state = {
     location: "",
     userID: 0,
@@ -29,6 +46,7 @@ export default class host extends React.Component {
   };
 
   async onShare(){
+
     try {
       const result = await Share.share({
         message:
@@ -48,6 +66,16 @@ export default class host extends React.Component {
     } catch (error) {
       alert(error.message);
     }
+
+  }
+
+  cancelSesssion() {
+
+    socket.emit("cancel-sess", this.state.key);
+    const {navigate} = this.props.navigation;
+    socket.removeEventListener("host-info");
+    navigate("MainMenu");
+
   }
 
 
@@ -56,12 +84,6 @@ export default class host extends React.Component {
     const RaisedButton = (props) => <Button raised {...props} />;
     const KeyContainer = (props) => <Button standard {...props} />;
     
-
-    copyToClipboard = (key) => {
-      Clipboard.setString(key);
-
-    }
-
     return (
       <View style={styles.screen}>
         <LinearGradient
@@ -104,7 +126,7 @@ export default class host extends React.Component {
               buttonStyle={styles.mButton}
               title="Cancel"
               titleStyle={styles.buttonText}
-              onPress={() => navigate("MainMenu")}
+              onPress={() => this.cancelSesssion()}
               ViewComponent={LinearGradient} // Don't forget this!
               linearGradientProps={{
                 colors: ["#879826", "#bfcd31"],
