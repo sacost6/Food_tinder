@@ -4,7 +4,7 @@ const io = require("socket.io"),
 
 const dummyPhotoRef =
   "CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU";
-
+git 
 //Required to create Places API requests
 let https = require("follow-redirects").https;
 
@@ -355,9 +355,13 @@ server.on("connection", (socket) => {
   // when socket disconnects, remove it from the list:
   socket.on("disconnect", () => {
     clientSockets.delete(socket);
-    let partner = Sess2Client.get(socket).partner;
-    partner.emit("partner-disconnected", (Sess2Client.get(socket).key));
-    console.info(`Client gone [id=${socket.id}]`);
+    if(Sess2Client.get(socket) === undefined) {
+      console.info(`Client gone [id=${socket.id}]`);
+    }
+    else {
+      let partner = Sess2Client.get(socket).partner;
+      partner.emit("partner-disconnected", (Sess2Client.get(socket).key));
+    }
   });
 
   // Give client a userID and add them to the list.
@@ -430,8 +434,6 @@ server.on("connection", (socket) => {
 
     // send the key to the client that is requesting to be a host
     console.log("size of the sessionskey array is " + SessionsKeys.length);
-    console.log("sending key: " + id);
-
     socket.emit("host-info", id);
   });
 
