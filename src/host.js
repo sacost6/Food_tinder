@@ -1,14 +1,32 @@
 import React from "react";
-import { StyleSheet, Text, View, ActivityIndicator, Clipboard, Share, BackHandler } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  Clipboard,
+  Share,
+  BackHandler,
+} from "react-native";
 import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 import { userID } from "../store/index";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from "react-native-vector-icons/FontAwesome";
+import {
+  WaveIndicator,
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+} from "react-native-indicators";
 
 export default class host extends React.Component {
-
-   onBackPress = () => {
+  onBackPress = () => {
     console.log("blocking android back press");
     return true;
   };
@@ -16,7 +34,7 @@ export default class host extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
-     socket.emit("host-req", userID);
+    socket.emit("host-req", userID);
     socket.on("host-info", (data) => {
       console.log("1( the host key is " + data);
       console.log("**userID is " + userID);
@@ -30,7 +48,6 @@ export default class host extends React.Component {
 
   componentDidMount() {
     BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-     
   }
 
   componentDidMount() {
@@ -40,19 +57,17 @@ export default class host extends React.Component {
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
   }
-  
+
   state = {
     location: "",
     userID: 0,
     key: 0,
   };
 
-  async onShare(){
-
+  async onShare() {
     try {
       const result = await Share.share({
-        message:
-        this.state.key,
+        message: this.state.key,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -68,24 +83,20 @@ export default class host extends React.Component {
     } catch (error) {
       alert(error.message);
     }
-
   }
 
   cancelSesssion() {
-
     socket.emit("cancel-sess", this.state.key);
-    const {navigate} = this.props.navigation;
+    const { navigate } = this.props.navigation;
     socket.removeEventListener("host-info");
     navigate("MainMenu");
-
   }
-
 
   render() {
     const { navigate } = this.props.navigation;
     const RaisedButton = (props) => <Button raised {...props} />;
     const KeyContainer = (props) => <Button standard {...props} />;
-    
+
     return (
       <View style={styles.screen}>
         <LinearGradient
@@ -100,8 +111,7 @@ export default class host extends React.Component {
           }}
         >
           <View style={styles.pane}>
-            
-            <KeyContainer 
+            <KeyContainer
               buttonStyle={styles.keyContainerStyle}
               onPress={() => this.onShare()}
               title={"Key: " + this.state.key}
@@ -115,9 +125,8 @@ export default class host extends React.Component {
                 />
               }
               iconContainerStyle={styles.iconContainer}
-              >
-            </KeyContainer>
-            <ActivityIndicator size="large" color="#b4cd31" />
+            ></KeyContainer>
+            <DotIndicator color="#b4cd31" count={3} size={16} />
             <Text style={styles.waitingText}>
               Waiting for someone to join...
             </Text>
@@ -148,7 +157,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   keyContainerStyle: {
-    
     backgroundColor: "#3d3d3d",
     width: 300,
     height: 50,
@@ -170,12 +178,13 @@ const styles = StyleSheet.create({
     width: "93%",
     height: "40%",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "flex-start",
   },
   waitingText: {
     fontSize: 12,
     fontWeight: "bold",
     color: "white",
+    marginBottom: 10,
   },
   mButton: {
     width: 285,
