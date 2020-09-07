@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   Button,
   TextInput,
@@ -11,26 +10,21 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native";
+import { Text } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 
 export default class MainMenu extends React.Component {
-
   componentDidMount() {
-    
-    this.props.navigation.addListener('beforeRemove', (e) => {
+    this.props.navigation.addListener("beforeRemove", (e) => {
       // Prevent default behavior of leaving the screen
       console.log("preventing back in 2");
       e.preventDefault();
-
     });
-
   }
-
 
   render() {
     const { navigate } = this.props.navigation;
-        
 
     return (
       <View style={styles.screen}>
@@ -44,7 +38,7 @@ export default class MainMenu extends React.Component {
             alignItems: "center",
             justifyContent: "space-between",
           }}
-        > 
+        >
           <TouchableWithoutFeedback onPress={() => navigate("Host")}>
             <View style={styles.create}>
               <Text style={styles.textStyle}>Host</Text>
@@ -90,7 +84,8 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     color: "white",
-    fontWeight: "bold",
+    fontWeight: "100",
     fontSize: 30,
+    fontFamily: "sans-serif-thin",
   },
 });

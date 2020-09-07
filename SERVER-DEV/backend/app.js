@@ -1,7 +1,7 @@
 // Require socket.io and start a server at port 8000
 const io = require("socket.io"),
   server = io.listen(8000);
-
+console.log("starting server....");
 const dummyPhotoRef =
   "CnRtAAAATLZNl354RwP_9UKbQ_5Psy40texXePv4oAlgP4qNEkdIrkyse7rPXYGd9D_Uj1rVsQdWT4oRz4QrYAJNpFX7rzqqMlZw2h2E2y5IKMUZ7ouD_SlcHxYq1yL4KbKUv3qtWgTK0A6QbGh87GB3sscrHRIQiG2RrmU_jF4tENr9wGS_YxoUSSDrYjWmrNfeEHSGSc3FyhNLlBU";
 
@@ -80,7 +80,7 @@ async function placeSearch(
           data += chunk;
         });
 
-        response.on("end",  async function () {
+        response.on("end", async function () {
           // parse the data for photo references
 
           let placeDetails = function () {
@@ -129,7 +129,7 @@ async function placeSearch(
                     data += chunk;
                   });
 
-                  response.on("end",  function () {
+                  response.on("end", function () {
                     // parse the data for photo references
 
                     let sdata = JSON.parse(data);
@@ -185,7 +185,9 @@ async function placeSearch(
                                     PD.places[r].rating
                                 );
 
-                                let key_id = crypto.randomBytes(4).toString("hex");
+                                let key_id = crypto
+                                  .randomBytes(4)
+                                  .toString("hex");
 
                                 if (hostSocket.id === guestSocket.id) {
                                   hostSocket.emit("restaurant", {
@@ -353,12 +355,14 @@ server.on("connection", (socket) => {
   // when socket disconnects, remove it from the list:
   socket.on("disconnect", () => {
     clientSockets.delete(socket);
-    if(Sess2Client.get(socket) === undefined || Sess2Client.get(socket).partner === undefined) {
+    if (
+      Sess2Client.get(socket) === undefined ||
+      Sess2Client.get(socket).partner === undefined
+    ) {
       console.info(`Client gone [id=${socket.id}]`);
-    }
-    else {
+    } else {
       let partner = Sess2Client.get(socket).partner;
-      partner.emit("partner-disconnected", (Sess2Client.get(socket).key));
+      partner.emit("partner-disconnected", Sess2Client.get(socket).key);
       console.info(`Client gone [id=${socket.id}]`);
     }
   });
@@ -437,7 +441,6 @@ server.on("connection", (socket) => {
   });
 
   socket.on("cancel-sess", (id) => {
-    
     Sessions.delete(id);
 
     console.log("Cancelled session: " + id);
@@ -495,7 +498,7 @@ server.on("connection", (socket) => {
   socket.on("yes", (data) => {
     console.log("UserID " + data.userID + " said yes to " + data.rest);
     let client = users.get(data.userID);
-    let temp = { Name: data.rest.name, Choice: true, rest: data.rest};
+    let temp = { Name: data.rest.name, Choice: true, rest: data.rest };
     console.log("in yes listener " + temp);
     client.results.push(temp);
     client.length = client.length + 1;
