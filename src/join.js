@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   TextInput,
   Image,
@@ -14,6 +13,7 @@ import socket from "../store/socket";
 import { SessionKey, userID } from "../store/index";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { WaveIndicator } from "react-native-indicators";
+import { Text } from "react-native-elements";
 
 export default class join extends React.Component {
   constructor(props) {
@@ -141,7 +141,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
-    fontWeight: "100",
+    fontWeight: "bold",
+    fontFamily: "sans-serif-thin",
     fontSize: 20,
   },
   iconContainer: {
@@ -153,6 +154,8 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     color: "white",
+    fontFamily: "sans-serif-thin",
+    fontWeight: "bold",
   },
   backButton: {
     width: 80,

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   Image,
   TouchableWithoutFeedback,
 } from "react-native";
+import { Text } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default class WelcomeScreen extends React.Component {
@@ -44,8 +44,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   welcomeText: {
-    fontWeight: "bold",
+    fontWeight: "100",
     fontSize: 18,
+    fontFamily: "sans-serif-thin",
     color: "white",
     marginBottom: "20%",
     marginTop: "10%",

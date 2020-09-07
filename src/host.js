@@ -167,7 +167,8 @@ const styles = StyleSheet.create({
   keyStyle: {
     fontWeight: "bold",
     color: "white",
-    fontSize: 18,
+    fontSize: 20,
+    fontFamily: "sans-serif-thin",
     paddingLeft: 10,
   },
   pane: {
@@ -181,9 +182,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   waitingText: {
-    fontSize: 12,
-    fontWeight: "bold",
+    fontSize: 15,
+    fontWeight: "100",
     color: "white",
+    fontFamily: "sans-serif-thin",
     marginBottom: 10,
   },
   mButton: {
@@ -196,6 +198,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     color: "white",
+    fontFamily: "sans-serif-thin",
     fontWeight: "bold",
   },
 });

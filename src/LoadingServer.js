@@ -77,9 +77,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   waitingText: {
-    fontSize: 12,
-    fontWeight: "400",
+    fontSize: 18,
+    fontWeight: "100",
     color: "white",
+    alignSelf: "center",
+    fontFamily: "sans-serif-thin",
     position: "absolute",
     marginTop: 600,
   },

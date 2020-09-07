@@ -14,6 +14,7 @@ import Chosen from "./src/Chosen";
 import LoadingServer from "./src/LoadingServer";
 import EndOfOptions from "./src/EndOfOptions";
 import Disconnected from "./src/Disconnected";
+import Waiting from "./src/Waiting";
 
 console.disableYellowBox = true;
 
@@ -39,6 +40,7 @@ function App() {
         <Stack.Screen name="LoadingServer" component={LoadingServer} />
         <Stack.Screen name="EndOfOptions" component={EndOfOptions} />
         <Stack.Screen name="Disconnected" component={Disconnected} />
+        <Stack.Screen name="Waiting" component={Waiting} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -21,7 +21,7 @@ let SCREEN_WIDTH;
 SCREEN_WIDTH = Dimensions.get("window").width;
 let counter = 0;
 let rest_name = "n/a";
-let location = {lat: 0.0, lon: 0.0};
+let location = { lat: 0.0, lon: 0.0 };
 
 export default class Swipe extends React.Component {
   state = {
@@ -59,8 +59,6 @@ export default class Swipe extends React.Component {
       navigate("Chosen");
     });
 
-
-    
     this.position = new Animated.ValueXY();
     this.state = {
       currentIndex: 0,
@@ -130,7 +128,7 @@ export default class Swipe extends React.Component {
           counter = counter + 1;
           if (counter === photo_counter) {
             console.log("You have reached the end of the card stack. Retry?");
-            navigate("EndOfOptions");
+            navigate("Waiting");
           }
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {

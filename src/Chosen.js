@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   ActivityIndicator,
   Image,
@@ -17,6 +16,7 @@ import { userID, SessionKey } from "../store/index";
 import { rest_name, location } from "./Swipe";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useFocusEffect } from "@react-navigation/native";
+import { Text } from "react-native-elements";
 
 const IconButton = (props) => <Button icon {...props} />;
 let SCREEN_HEIGHT;
@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     fontSize: 25,
     fontWeight: "100",
+    fontFamily: "sans-serif-thin",
     textAlign: "center",
   },
   mapButton: {
