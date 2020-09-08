@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     fontSize: 25,
     fontWeight: "100",
-    fontFamily: "sans-serif-thin",
+    //fontFamily: "sans-serif-thin",
     textAlign: "center",
   },
   mapButton: {

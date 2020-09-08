@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     fontSize: 20,
-    fontFamily: "sans-serif-thin",
+    //fontFamily: "sans-serif-thin",
     paddingLeft: 10,
   },
   pane: {
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "100",
     color: "white",
-    fontFamily: "sans-serif-thin",
+    //fontFamily: "sans-serif-thin",
     marginBottom: 10,
   },
   mButton: {
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     color: "white",
-    fontFamily: "sans-serif-thin",
+    //fontFamily: "sans-serif-thin",
     fontWeight: "bold",
   },
 });

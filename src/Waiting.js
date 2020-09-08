@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     fontWeight: "100",
     color: "white",
     marginBottom: 60,
-    fontFamily: "sans-serif-thin",
+    //fontFamily: "sans-serif-thin",
   },
   logo: {
     marginTop: 100,

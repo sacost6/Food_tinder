@@ -14,6 +14,8 @@ import { SessionKey, userID } from "../store/index";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { WaveIndicator } from "react-native-indicators";
 import { Text } from "react-native-elements";
+import { Root, Popup } from 'popup-ui'
+
 
 export default class join extends React.Component {
   constructor(props) {
@@ -142,7 +144,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: "bold",
-    fontFamily: "sans-serif-thin",
+    //fontFamily: "sans-serif-thin",
     fontSize: 20,
   },
   iconContainer: {
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     color: "white",
-    fontFamily: "sans-serif-thin",
+    //fontFamily: "sans-serif-thin",
     fontWeight: "bold",
   },
   backButton: {

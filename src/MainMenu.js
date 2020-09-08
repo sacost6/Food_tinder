@@ -86,6 +86,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "100",
     fontSize: 30,
-    fontFamily: "sans-serif-thin",
+    //fontFamily: "sans-serif-thin",
   },
 });

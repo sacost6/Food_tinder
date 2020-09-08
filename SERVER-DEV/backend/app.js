@@ -30,7 +30,7 @@ function sleep(ms) {
 async function placeSearch(
   latitude,
   longitude,
-  radius,
+  sesh,
   hostSocket,
   guestSocket
 ) {
@@ -225,6 +225,7 @@ async function placeSearch(
 
                                 completedRequests++;
                                 if (completedRequests === numRequests) {
+                                  sesh.numOptions = completedRequests;
                                   console.log(
                                     "Total of " +
                                       completedRequests +
@@ -284,6 +285,31 @@ class Session {
     this.guest_next_page = 0;
     this.pages = [];
     this.next_page_token;
+    this.numOptions;
+  }
+
+
+  outOfOptions(num_options) {
+    let user1 = users.get(this.host);
+    let user2 = users.get(this.guest);
+    let hostSock = clientSockets.get(this.host);
+    let guestSock = clientSockets.get(this.guest);
+
+    if(user1.results.length === num_options && user2.results.length === num_options) {
+      hostSock.emit("both_out_options", 1);
+      guestSock.emit("both_out_options", 1);
+      // end the current session
+      Sessions.delete(this.key)
+    }
+    else if(user2.results.length === num_options) {
+      guestSock.emit("1 player done", 1);
+    }
+    else if(user1.results.length === num_options) {
+      hostSock.emit("1 player done", 1);
+    }
+
+
+
   }
 
   compareLikes() {
@@ -414,7 +440,7 @@ server.on("connection", (socket) => {
     let temp = users.get(data.userID);
     // check if the user has both longitude and latitude values stored.
     try {
-      placeSearch(host.lat, host.lon, RADIUS, hostsocket, guestsocket);
+      placeSearch(host.lat, host.lon, RADIUS, hostsocket, guestsocket, sesh);
     } catch (e) {
       console.log(e);
     }
@@ -505,6 +531,7 @@ server.on("connection", (socket) => {
     console.log("in yes listener, results is " + client.results[0].Choice);
     let sess = Sessions.get(data.key);
     sess.compareLikes();
+    sess.outOfOptions(sess.numOptions);
   });
   socket.on("no", (data) => {
     console.log("UserID " + data.userID + " said no to " + data.rest);
@@ -514,6 +541,7 @@ server.on("connection", (socket) => {
     client.length = client.length + 1;
     let sess = Sessions.get(data.key);
     sess.compareLikes();
+    sess.outOfOptions(sess.numOptions);
   });
   socket.on("moreData", (data) => {
     let sess = Sessions.get(data.key);

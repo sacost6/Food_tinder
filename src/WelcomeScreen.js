@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontWeight: "100",
     fontSize: 18,
-    fontFamily: "sans-serif-thin",
+    //fontFamily: "sans-serif-thin",
     color: "white",
     marginBottom: "20%",
     marginTop: "10%",

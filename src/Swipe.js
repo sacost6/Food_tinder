@@ -7,13 +7,14 @@ import {
   Dimensions,
   Animated,
   PanResponder,
+  ToastAndroid,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
-import { userID, numRestaurants } from "../store/index";
+import { userID, numRestaurants, SessionKey } from "../store/index";
 import { restaurants, photo_counter } from "./loading";
 import { Rating } from "react-native-elements";
-import { SessionKey } from "../store/index";
+import {Root, Toast} from "popup-ui";
 
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -57,6 +58,19 @@ export default class Swipe extends React.Component {
       socket.removeEventListener("partner-disconnected");
       this._unsubscribe();
       navigate("Chosen");
+    });
+    socket.on("both_out_options", () => {
+      this._unsubscribe();
+      navigate("EndOfOptions");
+    });
+    socket.on("1 player done", () => {
+      //TODO inform player they must wait
+      console.log("This player is done but the other is not");
+      Toast.show({
+        title: 'User created',
+        text: 'Your user was successfully created, use the app now.',
+        color: '#2ecc71'
+    });
     });
 
     this.position = new Animated.ValueXY();
@@ -330,6 +344,7 @@ export default class Swipe extends React.Component {
 
   render() {
     return (
+      <Root>
       <View style={{ flex: 1 }}>
         <LinearGradient colors={["#000000", "#202020"]} style={{ flex: 1 }}>
           <View style={{ height: 60 }} />
@@ -337,6 +352,7 @@ export default class Swipe extends React.Component {
           <View style={{ height: 60 }} />
         </LinearGradient>
       </View>
+      </Root>
     );
   }
 }

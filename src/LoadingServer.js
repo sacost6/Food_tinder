@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     fontWeight: "100",
     color: "white",
     alignSelf: "center",
-    fontFamily: "sans-serif-thin",
+    //fontFamily: "sans-serif-thin",
     position: "absolute",
     marginTop: 600,
   },
