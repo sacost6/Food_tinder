@@ -25,6 +25,20 @@ import {
   UIActivityIndicator,
 } from "react-native-indicators";
 
+function success(pos) {
+  let crd = pos.coords;
+
+  console.log("Your current position is:");
+  console.log(`Latitude: ${crd.latitude}`);
+  socket.emit("coordinates", { lat: crd.latitude, lon: crd.longitude });
+  console.log(`Longitude: ${crd.longitude}`);
+  console.log(`More or less ${crd.accuracy} meters.`);
+}
+
+function error(err) {
+  console.warn(`ERROR(${err.code}): ${err.message}`);
+}
+
 export default class host extends React.Component {
   onBackPress = () => {
     console.log("blocking android back press");
@@ -34,6 +48,11 @@ export default class host extends React.Component {
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
+    navigator.geolocation.getCurrentPosition(success, error, options);
+    socket.
+    socket.on("ready", () => {
+      navigate("MainMenu");
+    });
     socket.emit("host-req", userID);
     socket.on("host-info", (data) => {
       console.log("1( the host key is " + data);

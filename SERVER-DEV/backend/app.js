@@ -190,6 +190,9 @@ async function placeSearch(
                                   .toString("hex");
 
                                 if (hostSocket.id === guestSocket.id) {
+                                  key_id = crypto
+                                      .randomBytes(4)
+                                      .toString("hex");
                                   hostSocket.emit("restaurant", {
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
@@ -200,6 +203,9 @@ async function placeSearch(
                                     pricing: PD.places[r].price_level,
                                   });
                                 } else {
+                                  key_id = crypto
+                                      .randomBytes(4)
+                                      .toString("hex");
                                   hostSocket.emit("restaurant", {
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
@@ -210,6 +216,9 @@ async function placeSearch(
                                     type: imgType,
                                     pricing: PD.places[r].price_level,
                                   });
+                                  key_id = crypto
+                                      .randomBytes(4)
+                                      .toString("hex");
                                   guestSocket.emit("restaurant", {
                                     name: PD.places[r].name,
                                     rating: PD.places[r].rating,
@@ -308,8 +317,6 @@ class Session {
       hostSock.emit("1 player done", 1);
     }
 
-
-
   }
 
   compareLikes() {
@@ -366,7 +373,7 @@ class User {
 // event fired every time a new client connects:
 server.on("connection", (socket) => {
   console.info(`Client connected [id=${socket.id}]`);
-
+  socket.emit("ready");
   // initialize this client's sequence number
   counter = counter + 1;
   clientSockets.set(counter, socket);
@@ -374,7 +381,6 @@ server.on("connection", (socket) => {
   // initialize the client's user object and add it to the map
   const user = new User(counter, 0.0, 0.0, socket);
   users.set(counter, user);
-
   // send the user their ID in the server
   socket.emit("userID", counter);
 
@@ -388,6 +394,7 @@ server.on("connection", (socket) => {
       console.info(`Client gone [id=${socket.id}]`);
     } else {
       let partner = Sess2Client.get(socket).partner;
+
       partner.emit("partner-disconnected", Sess2Client.get(socket).key);
       console.info(`Client gone [id=${socket.id}]`);
     }
@@ -403,24 +410,6 @@ server.on("connection", (socket) => {
     socket.emit("userID", counter);
   });
 
-  socket.on("coordinates", (data) => {
-    if (data.lon === undefined || data.lat === undefined)
-      socket.emit("location-error");
-    else {
-      console.log("User coordinates are " + data.lat);
-      let temp = users.get(counter);
-      temp.lat = data.lat;
-      temp.info[0] = true;
-      temp.lon = data.lon;
-      temp.info[1] = true;
-      if (temp.username === undefined) {
-        temp.username = this.counter;
-        socket.emit("ready");
-      } else {
-        socket.emit("ready");
-      }
-    }
-  });
 
   /* Wait for a client to send a request for restaurants with their userID included.
    * This uses the userID sent to get the client information from the map and then
@@ -440,11 +429,15 @@ server.on("connection", (socket) => {
     let temp = users.get(data.userID);
     // check if the user has both longitude and latitude values stored.
     try {
-      placeSearch(host.lat, host.lon, RADIUS, hostsocket, guestsocket, sesh);
+      placeSearch(data.lat, data.lon, RADIUS, hostsocket, guestsocket, sesh);
     } catch (e) {
       console.log(e);
     }
   });
+
+  socket.on("in-loading", () => {
+    socket.emit("ready");
+  })
 
   /* Listens for a request to be a host from a user, then
    * generates a key of 6 strings to identify the session.

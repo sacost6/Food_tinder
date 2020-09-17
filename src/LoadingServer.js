@@ -10,29 +10,10 @@ const options = {
   maximumAge: 0,
 };
 
-function success(pos) {
-  let crd = pos.coords;
-
-  console.log("Your current position is:");
-  console.log(`Latitude: ${crd.latitude}`);
-  socket.emit("coordinates", { lat: crd.latitude, lon: crd.longitude });
-  console.log(`Longitude: ${crd.longitude}`);
-  console.log(`More or less ${crd.accuracy} meters.`);
-}
-
-function error(err) {
-  console.warn(`ERROR(${err.code}): ${err.message}`);
-}
-
 export default class LoadingServer extends React.Component {
   constructor(props) {
     super(props);
     let counter = 0;
-    const { navigate } = this.props.navigation;
-    navigator.geolocation.getCurrentPosition(success, error, options);
-    socket.on("ready", () => {
-      navigate("MainMenu");
-    });
   }
 
   state = {
