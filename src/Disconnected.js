@@ -7,7 +7,7 @@ import { userID, SessionKey, numRestaurants, first, offset} from "../store/index
 
 let restaurants = [];
 
-export default class EndOfOptions extends React.Component {
+export default class Disconnected extends React.Component {
 
     constructor(props) {
         super(props);

@@ -15,20 +15,46 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { WaveIndicator } from "react-native-indicators";
 import { Text } from "react-native-elements";
 import { Root, Popup } from 'popup-ui'
+let crd;
 
+function success(pos) {
+ 
+  crd = pos.coords;
+  console.log("Your current position is:");
+  console.log(`Latitude: ${crd.latitude}`);
+  console.log(`Longitude: ${crd.longitude}`);
+  console.log(`More or less ${crd.accuracy} meters.`);
+}
+
+function error(err) {
+  console.warn(`ERROR(${err.code}): ${err.message}`);
+}
 
 export default class join extends React.Component {
   constructor(props) {
     super(props);
+  }
+
+ 
+ 
+  componentDidMount() {
+ 
+    navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy:true, timeout: 5000});
     const { navigate } = this.props.navigation;
     socket.on("Start", () => {
       socket.emit("get-restaurant", {
         UserID: userID,
         key: SessionKey,
         offset: 0,
+        lat: crd.latitude,
+        lon: crd.longitude
       });
       navigate("Loading");
     });
+  }
+
+  componentWillUnmount() {
+    socket.off("Start");
   }
 
   state = {
@@ -124,6 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderColor: "white",
     borderBottomColor: "#3d3d3d",
+
   },
   pane: {
     backgroundColor: "rgba(185, 185, 185, 0.15)",
@@ -155,6 +182,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   inputStyle: {
+    
     color: "white",
     //fontFamily: "sans-serif-thin",
     fontWeight: "bold",

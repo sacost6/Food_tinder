@@ -32,6 +32,10 @@ export default class Swipe extends React.Component {
   dollar_image = require("../assets/dollar.png");
 
   componentDidMount() {
+    counter = 0;
+    rest_name = "n/a";
+
+    const { navigate } = this.props.navigation;
     this._unsubscribe = this.props.navigation.addListener(
       "beforeRemove",
       (e) => {
@@ -40,11 +44,7 @@ export default class Swipe extends React.Component {
         e.preventDefault();
       }
     );
-  }
 
-  constructor(props) {
-    super(props);
-    const { navigate } = this.props.navigation;
     socket.on("partner-disconnected", (key) => {
       socket.emit("cancel-sess", key);
       this._unsubscribe();
@@ -72,6 +72,22 @@ export default class Swipe extends React.Component {
         color: '#2ecc71'
     });
     });
+
+  }
+
+  componentWillUnmount() {
+    socket.off("player");
+    socket.off("both_out_options");
+    socket.off("found the one");
+    socket.off("partner-disconnected");
+    socket.off("");
+    this._unsubscribe();
+
+  }
+
+  constructor(props) {
+    super(props);
+    
 
     this.position = new Animated.ValueXY();
     this.state = {
@@ -126,7 +142,7 @@ export default class Swipe extends React.Component {
         const { navigate } = this.props.navigation;
         if (gestureState.dx > 120) {
           Animated.spring(this.position, {
-            toValue: { x: SCREEN_WIDTH + 1, y: gestureState.dy },
+            toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
             useNativeDriver: true,
           }).start(() => {
             this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
@@ -146,7 +162,7 @@ export default class Swipe extends React.Component {
           }
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
-            toValue: { x: -SCREEN_WIDTH - 1, y: gestureState.dy },
+            toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
             useNativeDriver: true,
           }).start(() => {
             this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
@@ -369,7 +385,7 @@ const styles = StyleSheet.create({
   imageStyle: {
     marginTop: 100,
     height: 400,
-    width: 388,
+    width: '100%',
     resizeMode: "contain",
     flex: 3,
     borderRadius: 6,

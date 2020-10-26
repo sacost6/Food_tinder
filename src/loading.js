@@ -21,7 +21,7 @@ import { DotIndicator } from "react-native-indicators";
 let restaurants = [];
 let photo_counter = 0;
 
-export default class host extends React.Component {
+export default class loading extends React.Component {
   state = {
     location: "",
     userID: 0,
@@ -35,30 +35,13 @@ export default class host extends React.Component {
   };
 
   componentDidMount() {
+    const { navigate } = this.props.navigation;
+    restaurants = [];
     BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
     this.interval = setInterval(
       () => this.setState((prevState) => ({ timer: prevState.timer - 1 })),
       1000
     );
-  }
-  componentDidUpdate() {
-    const { navigate } = this.props.navigation;
-
-    if (this.state.timer === 1) {
-      clearInterval(this.interval);
-      navigate("MainMenu");
-    }
-  }
-
-  componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
-    clearInterval(this.interval);
-  }
-
-  constructor(props) {
-    super(props);
-    const { navigate } = this.props.navigation;
-    let names = [];
 
     socket.on("restaurant", (data) => {
       let imageSrc = "data:image/jpeg;base64," + data.buffer;
@@ -87,8 +70,31 @@ export default class host extends React.Component {
           restaurants.length +
           "restaurants"
       );
+      console.log("NUMBER OF RESTAURANTS::: " + restaurants.length);
       navigate("Swipe");
     });
+  }
+
+  componentDidUpdate() {
+    const { navigate } = this.props.navigation;
+
+    if (this.state.timer === 1) {
+      clearInterval(this.interval);
+      console.log("GOING TO MAIN MENU FROM LOADING WITH TIMER");
+      navigate("MainMenu");
+    }
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+    clearInterval(this.interval);
+    socket.off("all_data_sent");
+    socket.off("restaurant");
+  }
+
+  constructor(props) {
+    super(props);
+
   }
 
   render() {
@@ -97,18 +103,22 @@ export default class host extends React.Component {
         <LinearGradient
           colors={["#000000", "#202020"]}
           style={{
-            alignItems: "center",
+            alignItems: "flex-start",
             justifyContent: "flex-start",
             height: "100%",
             width: "100%",
           }}
         >
+          <View style={styles.imageContainer}>
           <Image
             style={styles.logo}
             source={require("../assets/upick_logo_v2.png")}
           />
+          </View>
           <View style={styles.container}>
-            <DotIndicator count={4} size={19} color="#b4cd31" />
+            <View style={{width: '100%', height: '10%', marginTop: '3%'}}>
+            <DotIndicator count={4} size={19} color="#b4cd31"  />
+            </View>
             <Text style={styles.waitingText}>
               Searching for restaurants. . .
             </Text>
@@ -127,23 +137,33 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   waitingText: {
+    marginBottom: '3%',
     fontSize: 12,
     fontWeight: "bold",
     color: "white",
-    position: "absolute",
-    marginTop: 600,
-    alignSelf: "center",
   },
   logo: {
-    marginTop: 100,
-    width: "70%",
-    height: "70%",
-    resizeMode: "contain",
+    width: "45%",
+    height: "45%",
+    resizeMode: "cover",
     position: "absolute",
   },
   container: {
-    marginTop: 200,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flex: 1,
+    height: '100%',
+    width: '100%'
   },
+  imageContainer: {
+    alignItems: 'center',
+    flex: 2,
+    justifyContent: 'flex-end',
+    flexDirection: 'column',
+    width: '100%',
+    height: '100%'
+  }
 });
 
 export { restaurants, photo_counter };

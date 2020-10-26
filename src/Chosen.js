@@ -109,7 +109,11 @@ function Chosen(props) {
             }}
             buttonStyle={styles.homeButton}
             icon={<Icon name="home" size={35} color="black" />}
-            onPress={() => props.navigation.navigate("MainMenu")}
+            onPress={() => {
+              console.log("NAVIGATING TO MAIN MENU FROM CHOSEN");
+              props.navigation.navigate("MainMenu")
+            }
+            }
           />
         </View>
       </LinearGradient>

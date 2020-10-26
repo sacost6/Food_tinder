@@ -11,7 +11,7 @@ import {
 import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
-import { userID } from "../store/index";
+import { userID} from "../store/index";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {
   WaveIndicator,
@@ -25,19 +25,7 @@ import {
   UIActivityIndicator,
 } from "react-native-indicators";
 
-function success(pos) {
-  let crd = pos.coords;
 
-  console.log("Your current position is:");
-  console.log(`Latitude: ${crd.latitude}`);
-  socket.emit("coordinates", { lat: crd.latitude, lon: crd.longitude });
-  console.log(`Longitude: ${crd.longitude}`);
-  console.log(`More or less ${crd.accuracy} meters.`);
-}
-
-function error(err) {
-  console.warn(`ERROR(${err.code}): ${err.message}`);
-}
 
 export default class host extends React.Component {
   onBackPress = () => {
@@ -47,16 +35,15 @@ export default class host extends React.Component {
 
   constructor(props) {
     super(props);
+  }
+
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+    console.log("\n\nComponentDidMount called");
     const { navigate } = this.props.navigation;
-    navigator.geolocation.getCurrentPosition(success, error, options);
-    socket.
-    socket.on("ready", () => {
-      navigate("MainMenu");
-    });
     socket.emit("host-req", userID);
     socket.on("host-info", (data) => {
       console.log("1( the host key is " + data);
-      console.log("**userID is " + userID);
       this.setState({ key: data });
     });
     console.log("host-request sent");
@@ -65,16 +52,12 @@ export default class host extends React.Component {
     });
   }
 
-  componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-  }
 
-  componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-  }
 
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+    socket.off('host-info');
+    socket.off('Start');
   }
 
   state = {
@@ -128,6 +111,7 @@ export default class host extends React.Component {
             height: "100%",
             width: "100%",
           }}
+          locations={[0.5,0.8]}
         >
           <View style={styles.pane}>
             <KeyContainer
