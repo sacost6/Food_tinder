@@ -26,7 +26,6 @@ export default class loading extends React.Component {
     location: "",
     userID: 0,
     key: 0,
-    timer: 25,
   };
 
   onBackPress = () => {
@@ -38,9 +37,11 @@ export default class loading extends React.Component {
     const { navigate } = this.props.navigation;
     restaurants = [];
     BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-    this.interval = setInterval(
-      () => this.setState((prevState) => ({ timer: prevState.timer - 1 })),
-      1000
+    this.timeout = setTimeout(
+      () => {
+        navigate("MainMenu");
+      },
+      25000
     );
 
     socket.on("restaurant", (data) => {
@@ -75,19 +76,10 @@ export default class loading extends React.Component {
     });
   }
 
-  componentDidUpdate() {
-    const { navigate } = this.props.navigation;
-
-    if (this.state.timer === 1) {
-      clearInterval(this.interval);
-      console.log("GOING TO MAIN MENU FROM LOADING WITH TIMER");
-      navigate("MainMenu");
-    }
-  }
 
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
-    clearInterval(this.interval);
+    clearTimeout(this.timeout);
     socket.off("all_data_sent");
     socket.off("restaurant");
   }

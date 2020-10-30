@@ -22,22 +22,16 @@ let PD = new placeDetails();
 socket.on("connect", () => {
   // get userId from server
   socket.on("userID", (data) => {
-    console.log("1) data is " + data);
-    console.log("Connected to socket server");
     userID = data;
-    console.log("User socket is " + userID);
   });
 
 
   socket.on("secondGuest", (user) => {
-    console.log("Added new user");
     Partner.userID = user.userID;
     Partner.socket = user.socket;
   });
 
   socket.on("host-info", (data) => {
-    console.log("1( the host key is " + data);
-    console.log("**userID is " + userID);
     SessionKey = data;
   });
 
@@ -47,7 +41,6 @@ socket.on("connect", () => {
 
   socket.on("amount of restaurants", (data) =>{
     numRestaurants = data;
-    console.log("Number of expected restaurants from results are " + data);
   });
 
   socket.on("first", () => {

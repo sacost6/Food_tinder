@@ -195,6 +195,83 @@ export default class Swipe extends React.Component {
     });
   }
 
+  renderRating = (rating) => {
+    rating = Math.round(rating);
+    if(Number.isNaN(rating)) {
+      return null;
+    }
+    if (rating === 0) {
+      return null;
+    } else if (rating === 1) {
+      return (
+        <View style={styles.ratingContainer} >
+          <Image
+            style={styles.pricing}
+            source={require("../assets/star.png")}
+          ></Image>
+        </View>
+      );
+    } else if (rating === 2) {
+      return (
+        <View style={styles.ratingContainer}>
+          <Image
+            style={styles.pricing}
+            source={require("../assets/star.png")}
+          ></Image>
+          <Image
+            style={styles.pricing}
+            source={require("../assets/star.png")}
+          ></Image>
+        </View>
+      );
+    } else if(rating === 3) {
+      return (
+        <View style={styles.ratingContainer}>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+        </View>
+      );
+    }
+    else if(rating === 4) {
+      return(
+        <View style={styles.ratingContainer}>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+        </View>
+
+      );
+
+    }
+    else if(rating === 5) {
+      return(
+        <View style={styles.ratingContainer}>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+          <Image style={styles.pricing} source={require("../assets/star.png")}></Image>
+        </View>
+
+      );
+
+    }
+    
+    
+  };
+
+
+
+  renderStar() {
+    return (
+      <View style={{flexDirection: 'row'}}>
+        <Image style={styles.pricing} source={require("../assets/star2.png")}></Image>
+      </View>
+    );
+  }
+
   renderPrice = (price) => {
     if (price === 0) {
       return null;
@@ -235,7 +312,7 @@ export default class Swipe extends React.Component {
           ></Image>
         </View>
       );
-    } else {
+    } else if (price === 3) {
       return (
         <View style={{ flexDirection: "row" }}>
           <Image source={require("../assets/dollar.png")}></Image>
@@ -299,25 +376,16 @@ export default class Swipe extends React.Component {
                 />
                 <View style={styles.infoCard}>
                   <Text style={styles.Name}> {item.name} </Text>
-                  <Rating
-                    readonly
-                    onFinishRating={this.ratingCompleted}
-                    ratingCount={5}
-                    startingValue={item.rating}
-                    style={{
-                      paddingVertical: 0,
-                      alignSelf: "flex-start",
-                      paddingLeft: 20,
-                    }}
-                    tintColor="rgba(0,0,0,.9)"
-                    imageSize={17}
-                  />
-                  {this.renderPrice(item.pricing)}
+                  <View style={{flex: 1}}>
+                    {this.renderPrice(item.pricing)}
+                    {this.renderRating(item.rating)}
+
+                  </View>
                 </View>
               </LinearGradient>
             </Animated.View>
           );
-        } else {
+        } else if (i === this.state.currentIndex + 1) {
           return (
             <Animated.View
               {...this.PanResponder.panHandlers}
@@ -349,6 +417,9 @@ export default class Swipe extends React.Component {
                 />
                 <View style={styles.infoCard}>
                   <Text style={styles.Name}> {item.name} </Text>
+                  {this.renderPrice(item.pricing)}
+                  {this.renderRating(item.rating)}
+
                 </View>
               </LinearGradient>
             </Animated.View>
@@ -418,7 +489,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 5,
     borderRadius: 20,
-
     marginRight: 5,
     marginBottom: 10,
   },
@@ -431,6 +501,14 @@ const styles = StyleSheet.create({
     height: 25,
     resizeMode: "contain",
   },
+  ratingContainer: {
+    flex: 1,
+    marginLeft: 15,
+    justifyContent: "flex-start",
+    marginTop: 10,
+    flexDirection: "row"
+  }
+  
 });
 
 export { rest_name, location };

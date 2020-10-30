@@ -7,28 +7,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Input, Button } from "react-native-elements";
-import { connect } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 import { SessionKey, userID } from "../store/index";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { WaveIndicator } from "react-native-indicators";
-import { Text } from "react-native-elements";
-import { Root, Popup } from 'popup-ui'
-let crd;
 
-function success(pos) {
- 
-  crd = pos.coords;
-  console.log("Your current position is:");
-  console.log(`Latitude: ${crd.latitude}`);
-  console.log(`Longitude: ${crd.longitude}`);
-  console.log(`More or less ${crd.accuracy} meters.`);
-}
-
-function error(err) {
-  console.warn(`ERROR(${err.code}): ${err.message}`);
-}
 
 export default class join extends React.Component {
   constructor(props) {
@@ -39,15 +22,12 @@ export default class join extends React.Component {
  
   componentDidMount() {
  
-    navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy:true, timeout: 5000});
     const { navigate } = this.props.navigation;
     socket.on("Start", () => {
       socket.emit("get-restaurant", {
-        UserID: userID,
+        userID: userID,
         key: SessionKey,
         offset: 0,
-        lat: crd.latitude,
-        lon: crd.longitude
       });
       navigate("Loading");
     });
@@ -164,7 +144,7 @@ const styles = StyleSheet.create({
   },
   mButton: {
     width: 230,
-    height: 70,
+    height: 60,
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",

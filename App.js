@@ -8,7 +8,7 @@ import MainMenu from "./src/MainMenu";
 import host from "./src/host";
 import join from "./src/join";
 import Swipe from "./src/Swipe";
-import info from "./src/info";
+import HostOptions from "./src/HostOptions";
 import loading from "./src/loading";
 import Chosen from "./src/Chosen";
 import LoadingServer from "./src/LoadingServer";
@@ -34,7 +34,7 @@ function App() {
         <Stack.Screen name="Host" component={host} />
         <Stack.Screen name="Join" component={join} />
         <Stack.Screen name="Swipe" component={Swipe} />
-        <Stack.Screen name="Info" component={info} />
+        <Stack.Screen name="HostOptions" component={HostOptions} />
         <Stack.Screen name="Loading" component={loading} />
         <Stack.Screen name="Chosen" component={Chosen} />
         <Stack.Screen name="LoadingServer" component={LoadingServer} />

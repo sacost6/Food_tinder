@@ -9,8 +9,6 @@ import socketIO from 'socket.io-client';
 
 export default class info extends React.Component {
 
-
-
     render() {
         const { navigate } = this.props.navigation;
 
@@ -20,6 +18,7 @@ export default class info extends React.Component {
             </View>
         );
     }
+    
 }
 
 const styles = StyleSheet.create({

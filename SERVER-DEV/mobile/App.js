@@ -29,16 +29,12 @@ export default class App extends Component {
       // get userId from server 
       socket.on('userID', (data) => {
         this.state.userName = data;
-        console.log("data is " + data);
       });
-      socket.on('host-info', (key) => {
-        console.log("the host key is " + key);
-      });
+  
     });
     // Get user location on boot up and send to user
     navigator.geolocation.getCurrentPosition(position => {
-      console.log("User longitude is: " + position.coords.longitude);
-      console.log("User latitude is: " + position.coords.latitude);
+
       this.state.latitude = position.coords.latitude;
       this.state.longitude = position.coords.longitude;
       socket.emit('latitude', position.coords.latitude);
@@ -52,8 +48,6 @@ export default class App extends Component {
       <View style={styles.container}>
         <FetchLocation onGetLocation={() => {
           socket.emit('get-restaurant', this.state.userName)
-          console.log("User longitude is " + this.state.longitude);
-          console.log("User latitude is " + this.state.latitude);
         }} />
         <Button title="Become Host" onPress={() => {
           console.log("dude wanna be the host fse")

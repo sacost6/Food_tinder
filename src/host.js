@@ -24,6 +24,7 @@ import {
   SkypeIndicator,
   UIActivityIndicator,
 } from "react-native-indicators";
+import {lat, lng, location_message} from './HostOptions';
 
 
 
@@ -39,14 +40,15 @@ export default class host extends React.Component {
 
   componentDidMount() {
     BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-    console.log("\n\nComponentDidMount called");
     const { navigate } = this.props.navigation;
-    socket.emit("host-req", userID);
+    socket.emit("host-req", {
+      hostID: userID,
+      latitude: lat,
+      longitude: lng
+    });
     socket.on("host-info", (data) => {
-      console.log("1( the host key is " + data);
       this.setState({ key: data });
     });
-    console.log("host-request sent");
     socket.on("Start", () => {
       navigate("Loading");
     });
@@ -76,11 +78,9 @@ export default class host extends React.Component {
           // shared with activity type of result.activityType
         } else {
           // shared
-          console.log("key shared");
         }
       } else if (result.action === Share.dismissedAction) {
         // dismissed
-        console.log("share prompt dismissed");
       }
     } catch (error) {
       alert(error.message);
@@ -113,6 +113,7 @@ export default class host extends React.Component {
           }}
           locations={[0.5,0.8]}
         >
+          <Text style={styles.locationStyle}>Hosting {location_message}</Text>
           <View style={styles.pane}>
             <KeyContainer
               buttonStyle={styles.keyContainerStyle}
@@ -204,4 +205,10 @@ const styles = StyleSheet.create({
     //fontFamily: "sans-serif-thin",
     fontWeight: "bold",
   },
+  locationStyle: {
+    color: 'white',
+    fontSize: 18,
+    marginBottom: 30,
+    fontWeight: '100'
+  }
 });
