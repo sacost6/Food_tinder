@@ -54,6 +54,8 @@ export default class loading extends React.Component {
         pricing: data.pricing,
         lat: data.lat,
         lng: data.lng,
+        place_id: data.place_id,
+        num_ratings: data.num_ratings
       };
       console.log(
         "Adding restaurant: " + data.name + " price level: " + data.pricing

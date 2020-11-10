@@ -22,6 +22,8 @@ let SCREEN_WIDTH;
 SCREEN_WIDTH = Dimensions.get("window").width;
 let counter = 0;
 let rest_name = "n/a";
+let phone;
+let website;
 let location = { lat: 0.0, lon: 0.0 };
 
 export default class Swipe extends React.Component {
@@ -34,8 +36,14 @@ export default class Swipe extends React.Component {
   componentDidMount() {
     counter = 0;
     rest_name = "n/a";
+    
+    
+
 
     const { navigate } = this.props.navigation;
+    // TODO: 
+    // move to constructor???
+
     this._unsubscribe = this.props.navigation.addListener(
       "beforeRemove",
       (e) => {
@@ -53,6 +61,8 @@ export default class Swipe extends React.Component {
     socket.on("found the one", (data) => {
       console.log("Chosen restaurant is " + data);
       rest_name = data.name;
+      website = data.website;
+      phone = data.phone;
       location.lat = data.lat;
       location.lon = data.lng;
       socket.removeEventListener("partner-disconnected");
@@ -320,6 +330,30 @@ export default class Swipe extends React.Component {
           <Image source={require("../assets/dollar.png")}></Image>
         </View>
       );
+
+    }
+    else if (price === 4) {
+      return (
+        <View style={{ flexDirection: "row" }}>
+          <Image source={require("../assets/dollar.png")}></Image>
+          <Image source={require("../assets/dollar.png")}></Image>
+          <Image source={require("../assets/dollar.png")}></Image>
+          <Image source={require("../assets/dollar.png")}></Image>
+        </View>
+      );
+      
+    }
+    else if (price === 5) {
+      return (
+        <View style={{ flexDirection: "row" }}>
+          <Image source={require("../assets/dollar.png")}></Image>
+          <Image source={require("../assets/dollar.png")}></Image>
+          <Image source={require("../assets/dollar.png")}></Image>
+          <Image source={require("../assets/dollar.png")}></Image>
+          <Image source={require("../assets/dollar.png")}></Image>
+        </View>
+      );
+      
     }
   };
 
@@ -511,7 +545,7 @@ const styles = StyleSheet.create({
   
 });
 
-export { rest_name, location };
+export { rest_name, location, phone, website };
 
 // flex 3 and 3
 // flex 3 and 4
