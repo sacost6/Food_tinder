@@ -37,13 +37,7 @@ export default class loading extends React.Component {
     const { navigate } = this.props.navigation;
     restaurants = [];
     BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-    this.timeout = setTimeout(
-      () => {
-        navigate("MainMenu");
-      },
-      25000
-    );
-
+    this.startTimer();
     socket.on("restaurant", (data) => {
       let imageSrc = "data:image/jpeg;base64," + data.buffer;
       let restaurant = {
@@ -74,14 +68,29 @@ export default class loading extends React.Component {
           "restaurants"
       );
       console.log("NUMBER OF RESTAURANTS::: " + restaurants.length);
+      this.stopTimer();
       navigate("Swipe");
     });
   }
 
+  startTimer() {
+    this.timeout = setTimeout(function(){
+          //navigate("MainMenu");
+          console.log("Timer done!");
+        },
+        25000
+    );
+  }
+
+  stopTimer() {
+    console.log("Timer has been cleared")
+    clearTimeout(this.timeout);
+    this.timeout = 0;
+  }
 
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
-    clearTimeout(this.timeout);
+    this.stopTimer();
     socket.off("all_data_sent");
     socket.off("restaurant");
   }

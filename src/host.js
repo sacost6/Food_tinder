@@ -24,9 +24,7 @@ import {
   SkypeIndicator,
   UIActivityIndicator,
 } from "react-native-indicators";
-import {lat, lng, location_message} from './HostOptions';
-
-
+import {lat, lng, location_message, key} from './HostOptions';
 
 export default class host extends React.Component {
   onBackPress = () => {
@@ -41,20 +39,25 @@ export default class host extends React.Component {
   componentDidMount() {
     BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
     const { navigate } = this.props.navigation;
-    socket.emit("host-req", {
+    if(key === undefined) {
+      console.log("Your key is undefined");
+      navigate('MainMenu');
+    }
+    socket.emit("host-location", {
+      key: key,
       hostID: userID,
       latitude: lat,
       longitude: lng
     });
-    socket.on("host-info", (data) => {
-      this.setState({ key: data });
-    });
+
     socket.on("Start", () => {
       navigate("Loading");
     });
+
+    socket.on("Done", () => {
+      console.log("Created session in the server.");
+    });
   }
-
-
 
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
@@ -65,7 +68,7 @@ export default class host extends React.Component {
   state = {
     location: "",
     userID: 0,
-    key: 0,
+    key: key,
   };
 
   async onShare() {
@@ -122,14 +125,14 @@ export default class host extends React.Component {
               titleStyle={styles.keyStyle}
               icon={
                 <Icon
-                  name="share-alt"
-                  type="font-awesome"
-                  size={15}
-                  color="#b4cd31"
+                    name="share-alt"
+                    type="font-awesome"
+                    size={15}
+                    color="#b4cd31"
                 />
               }
-              iconContainerStyle={styles.iconContainer}
-            ></KeyContainer>
+    iconContainerStyle={styles.iconContainer}
+    />
             <DotIndicator color="#b4cd31" count={3} size={16} />
             <Text style={styles.waitingText}>
               Waiting for someone to join...

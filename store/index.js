@@ -3,6 +3,7 @@ import socket from "./socket";
 // New import statements
 import foodApp from "./reducers";
 import { CurrentUser } from "./actionTypes";
+
 let Rests = [];
 let userID = -1;
 const Partner = {
@@ -17,7 +18,7 @@ let placeDetails = function () {
 };
 let SessionKey = "";
 let PD = new placeDetails();
-
+let key = 0;
 
 socket.on("connect", () => {
   // get userId from server
@@ -25,6 +26,9 @@ socket.on("connect", () => {
     userID = data;
   });
 
+  socket.on("disconnect", function () {
+    console.log("Disconnected from server");
+  });
 
   socket.on("secondGuest", (user) => {
     Partner.userID = user.userID;

@@ -36,9 +36,6 @@ export default class Swipe extends React.Component {
   componentDidMount() {
     counter = 0;
     rest_name = "n/a";
-    
-    
-
 
     const { navigate } = this.props.navigation;
     // TODO: 
