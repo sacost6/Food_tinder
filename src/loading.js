@@ -75,7 +75,7 @@ export default class loading extends React.Component {
 
   startTimer() {
     this.timeout = setTimeout(function(){
-          //navigate("MainMenu");
+          navigate("MainMenu");
           console.log("Timer done!");
         },
         25000
