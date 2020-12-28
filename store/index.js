@@ -19,6 +19,7 @@ let placeDetails = function () {
 let SessionKey = "";
 let PD = new placeDetails();
 let key = 0;
+let timeout;
 
 socket.on("connect", () => {
   // get userId from server
