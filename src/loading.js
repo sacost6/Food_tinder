@@ -38,13 +38,7 @@ export default class loading extends React.Component {
     restaurants = [];
     token=0;
     BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-    this.timeout = setTimeout(
-      () => {
-        navigate("MainMenu");
-      },
-      40000
-    );
-
+    this.startTimer();
     socket.on("restaurant", (data) => {
 
 
@@ -81,14 +75,29 @@ export default class loading extends React.Component {
       console.log("NUMBER OF RESTAURANTS::: " + restaurants.length);
       console.log("in loading, token: " + token);
       token = data;
+      this.stopTimer();
       navigate("Swipe");
     });
   }
 
+  startTimer() {
+    this.timeout = setTimeout(function(){
+          navigate("MainMenu");
+          console.log("Timer done!");
+        },
+        25000
+    );
+  }
+
+  stopTimer() {
+    console.log("Timer has been cleared")
+    clearTimeout(this.timeout);
+    this.timeout = 0;
+  }
 
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
-    clearTimeout(this.timeout);
+    this.stopTimer();
     socket.off("all_data_sent");
     socket.off("restaurant");
   }

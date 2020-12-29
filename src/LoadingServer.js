@@ -4,10 +4,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 import { DotIndicator } from "react-native-indicators";
 
-
-
-
-
 export default class LoadingServer extends React.Component {
   constructor(props) {
     super(props);

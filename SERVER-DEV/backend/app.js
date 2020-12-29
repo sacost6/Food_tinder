@@ -1,4 +1,4 @@
-// Require socket.io and start a server at port 8000
+ // Require socket.io and start a server at port 8000
 const io = require("socket.io"),
   server = io.listen(8000);
 console.log("starting server....");
@@ -459,6 +459,8 @@ server.on("connection", (socket) => {
     socket.emit("host-info", id);
   });
 
+
+
   socket.on("cancel-sess", (id) => {
     Sessions.delete(id);
 
@@ -500,7 +502,6 @@ server.on("connection", (socket) => {
       let temp2 = new Couple(clientSockets.get(host), data.key);
       Sess2Client.set(clientSockets.get(host), temp1);
       Sess2Client.set(clientSockets.get(sess.guest), temp2);
-      console.log("the host socket is " + clientSockets.get(host).id);
       console.log("Current sessions are " + Sessions.get(data.key));
       console.log("Current session joined is " + sess.key);
 

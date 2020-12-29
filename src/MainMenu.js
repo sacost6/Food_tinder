@@ -15,12 +15,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 
 export default class MainMenu extends React.Component {
+
   componentDidMount() {
-    this.props.navigation.addListener("beforeRemove", (e) => {
+   // this.props.navigation.addListener("beforeRemove", (e) => {
       // Prevent default behavior of leaving the screen
-      console.log("preventing back in 2");
-      e.preventDefault();
-    });
+    //  console.log("preventing back in 2");
+    //  e.preventDefault();
+  //  });
   }
 
   render() {

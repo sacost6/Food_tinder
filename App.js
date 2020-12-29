@@ -15,6 +15,7 @@ import LoadingServer from "./src/LoadingServer";
 import EndOfOptions from "./src/EndOfOptions";
 import Disconnected from "./src/Disconnected";
 import Waiting from "./src/Waiting";
+import ConnectionError from "./src/ConnectionError";
 
 console.disableYellowBox = true;
 
@@ -41,6 +42,7 @@ function App() {
         <Stack.Screen name="EndOfOptions" component={EndOfOptions} />
         <Stack.Screen name="Disconnected" component={Disconnected} />
         <Stack.Screen name="Waiting" component={Waiting} />
+        <Stack.Screen name="ConnectionError" component={ConnectionError} />
       </Stack.Navigator>
     </NavigationContainer>
   );

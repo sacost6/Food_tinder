@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -10,6 +10,10 @@ import { Text } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {Easing} from "react-native-reanimated";
 import {TapGestureHandler, State} from "react-native-gesture-handler";
+import socket from "../store/socket";
+import {connection, setConnectionFalse, setConnectionTrue} from "../store";
+
+
 
 
 
@@ -128,6 +132,35 @@ export default class WelcomeScreen extends React.Component {
   
 
 
+  startConnTimeout() {
+    const { navigate } = this.props.navigation;
+    this.timeout = setTimeout(function() {
+      console.log("Timer done, no response from the server!");
+      navigate("ConnectionError");
+      setConnectionFalse();
+    }, 10000);
+  }
+
+  stopConnTimeout(){
+    clearTimeout(this.timeout);
+    this.timeout = 0;
+  }
+
+  componentDidMount() {
+    if(connection === false) {
+      console.log("Attempting to reconnect to server.");
+      socket.connect();
+    }
+    else {
+      console.log("Already connected to the server!");
+    }
+    this.startConnTimeout();
+    socket.on("Server-Check", () => {
+      this.stopConnTimeout();
+      console.log("connection ack received");
+      this.startConnTimeout();
+    });
+  }
 
   render() {
     const { navigate } = this.props.navigation;

@@ -10,10 +10,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Icon from "react-native-vector-icons/FontAwesome";
 import socket from "../store/socket";
 import { DotIndicator, WaveIndicator, MaterialIndicator } from "react-native-indicators";
+import {userID} from "../store";
 
-
-
-let lat, lng;
+let lat, lng, key;
 let current_crd;
 let location_message;
 
@@ -40,6 +39,12 @@ export default class HostOptions extends React.Component {
     componentDidMount() {
         const { navigate } = this.props.navigation;
         navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy:true, timeout: 5000});
+        socket.emit("host-req", {
+            hostID: userID
+        });
+        socket.on("host-info", (data) => {
+            key = data;
+        });
         socket.on("geoCode_response", (response) => {
             if(response.success) {
                 
@@ -154,8 +159,15 @@ export default class HostOptions extends React.Component {
                         title="Host"
                         titleStyle={styles.buttonText}
                         onPress={() => {
+                            console.log("The session key is " + key);
+                            if(key === undefined) {
+                                navigate('MainMenu');
+                            }
                             if(this.state.isEnabled) {
                                 // use current location
+                                if(current_crd === undefined) {
+                                     navigate('MainMenu');
+                                }
                                 lat = current_crd.latitude;
                                 lng = current_crd.longitude;
                                 location_message = 'using your location';
@@ -165,7 +177,6 @@ export default class HostOptions extends React.Component {
                             else {
                                 // use custom location
                                 socket.emit("geoCode", this.state.location);
-                                
                             }
                         }}
 
@@ -288,4 +299,4 @@ const styles = StyleSheet.create({
       },
 });
 
-export {lat, lng, location_message };
+export {lat, lng, location_message, key };
