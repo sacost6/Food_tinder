@@ -5,12 +5,14 @@ import {
   TextInput,
   Image,
   ActivityIndicator,
+  Text
 } from "react-native";
 import { Input, Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
 import { SessionKey, userID } from "../store/index";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 
 export default class join extends React.Component {
@@ -42,6 +44,7 @@ export default class join extends React.Component {
     sesskey: "",
   };
 
+
   render() {
     const KeyInput = (props) => <Input leftIcon {...props} />;
     const RaisedButton = (props) => <Button raised {...props} />;
@@ -68,14 +71,17 @@ export default class join extends React.Component {
               marginLeft: 10,
             }}
             type="clear"
+            title="Host"
+            
             icon={<Icon name="arrow-left" size={35} color="#b4cd31" />}
             buttonStyle={styles.backButton}
-            titleStyle={styles.buttonText}
-            onPress={() => navigate("MainMenu")}
+            titleStyle={{...styles.buttonText, color: "#8B8B8B", marginLeft: 3}}
+            onPress={() => navigate("HostOptions")}
           />
           <View style={styles.pane}>
             <KeyInput
               inputContainerStyle={styles.input}
+              autoCapitalize = 'none'
               labelStyle={styles.inputLabel}
               inputStyle={styles.inputStyle}
               onChangeText={(text) => {
@@ -85,27 +91,20 @@ export default class join extends React.Component {
               leftIcon={{ type: "font-awesome", name: "key", color: "#879826" }}
               leftIconContainerStyle={styles.iconContainer}
             />
-
-            <RaisedButton
-              containerStyle={{ marginTop: "auto" }}
-              buttonStyle={styles.mButton}
-              title="Join"
-              titleStyle={styles.buttonText}
-              onPress={() => {
+            
+            <TouchableWithoutFeedback onPress={() => {
                 this.SessionKey = this.state.sesskey;
                 console.log(this.state.sesskey);
                 socket.emit("session-req", {
-                  key: this.state.sesskey,
+                  key: this.state.sesskey.toLowerCase(),
                   userID: userID,
                 });
-              }}
-              ViewComponent={LinearGradient} // Don't forget this!
-              linearGradientProps={{
-                colors: ["#879826", "#bfcd31"],
-                start: { x: 0, y: 0.5 },
-                end: { x: 1, y: 0.5 },
-              }}
-            />
+              }}>
+
+                <View  style={styles.mButton}>
+                  <Text style={styles.buttonText}> Join </Text>
+                </View>
+            </TouchableWithoutFeedback>
           </View>
         </LinearGradient>
       </View>
@@ -127,32 +126,35 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     overflow: "hidden",
     backgroundColor: "#3d3d3d",
-    borderRadius: 25,
+    borderRadius: 20,
     borderColor: "white",
     borderBottomColor: "#3d3d3d",
 
   },
   pane: {
-    backgroundColor: "rgba(185, 185, 185, 0.15)",
     padding: 20,
     justifyContent: "space-evenly",
     alignItems: "center",
-    height: "40%",
-    width: "90%",
-    borderRadius: 25,
-    marginBottom: 250,
+    height: "46%",
+    width: "95%",
+    borderRadius: 20,
+
+    marginBottom: 200,
   },
   mButton: {
     width: 230,
     height: 60,
-    borderRadius: 50,
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: '#262626'
+
   },
   buttonText: {
     fontWeight: "bold",
     //fontFamily: "sans-serif-thin",
     fontSize: 20,
+    color: '#b4cd31'
   },
   iconContainer: {
     marginLeft: "10%",

@@ -10,13 +10,9 @@ import {
   ToastAndroid,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import socket from "../store/socket";
 import { userID, numRestaurants, SessionKey } from "../store/index";
-import { restaurants, token } from "./loading";
 import { Rating } from "react-native-elements";
 import {Root, Toast} from "popup-ui";
-import PaginationDot from 'react-native-animated-pagination-dot'
-
 let total_num_restaurants;
 
 let SCREEN_HEIGHT;
@@ -28,22 +24,34 @@ let rest_name = "n/a";
 let phone;
 let website;
 let location = { lat: 0.0, lon: 0.0 };
-let noPhone = false;
-let noWebsite = false;
+let photoIndex = 0;
+let restaurant = {
+  id: 123,
+  name: "Google HQ",
+  rating: 4,
+  images: image_sources,
+  pricing: data.pricing,
+  lat: data.lat,
+  lng: data.lng,
+  place_id: data.place_id,
+  num_ratings: data.num_ratings
+};
 
 export default class Swipe extends React.Component {
   state = {
     refArray: [],
   };
 
+  
+  
   dollar_image = require("../assets/dollar.png");
 
   componentDidMount() {
+    restaurants = [];
+    restaurants.push(restaurant);
     counter = 0;
     rest_name = "n/a";
-    console.log("in componentdidMount, total_num_restaurants: " + restaurants.length + "\n");
-    console.log( "token: " + token);
-    total_num_restaurants = restaurants.length;
+    total_num_restaurants = 1;
 
 
 
@@ -60,78 +68,11 @@ export default class Swipe extends React.Component {
       }
     );
 
-    socket.on("partner-disconnected", (key) => {
-      socket.emit("cancel-sess", key);
-      this._unsubscribe();
-      navigate("Disconnected");
-    });
-    socket.on("found the one", (data) => {
-      console.log("Chosen restaurant is " + data.rest.name);
-      rest_name = data.rest.name;
-      website = data.website;
-      phone = data.phone;
-      location.lat = data.rest.lat;
-      location.lon = data.rest.lng;
-      socket.removeEventListener("partner-disconnected");
-      this._unsubscribe();
-
-
-      if(phone===0) {
-        noPhone = true;
-      }
-      if(website=== 'none') {
-        noWebsite = true;
-      }
-      
-      navigate("Chosen");
-    });
-    socket.on("both_out_options", () => {
-      this._unsubscribe();
-      navigate("EndOfOptions");
-    });
-    socket.on("1 player done", () => {
-      //TODO inform player they must wait
-      console.log("This player is done but the other is not");
-      Toast.show({
-        title: 'User created',
-        text: 'Your user was successfully created, use the app now.',
-        color: '#2ecc71'
-    });
-    });
-    socket.on("page2_restaurant", (data) => {
-
-      let image_sources = data.buffer;
-      for (let i = 0; i<image_sources.length; i++) {
-        image_sources[i] = "data:image/jpeg;base64," + image_sources[i];
-      }
-      let restaurant = {
-        id: data.id,
-        name: data.name,
-        rating: data.rating,
-        images: image_sources,
-        pricing: data.pricing,
-        lat: data.lat,
-        lng: data.lng,
-        place_id: data.place_id,
-        num_ratings: data.num_ratings
-      };
-
-  
-      restaurants.push(restaurant);
-      total_num_restaurants = total_num_restaurants + 1;
-      console.log("received a page 2 restaurant: " + data.name);
-
-      
-    });
 
   }
 
   componentWillUnmount() {
-    socket.off("player");
-    socket.off("both_out_options");
-    socket.off("found the one");
-    socket.off("partner-disconnected");
-    socket.off("page2_restaurant");
+
     this._unsubscribe();
 
   }
@@ -143,8 +84,6 @@ export default class Swipe extends React.Component {
     this.position = new Animated.ValueXY();
     this.state = {
       currentIndex: 0,
-      photoIndex: 0,
-      underPhotoIndex: 0
     };
     this.rotate = this.position.x.interpolate({
       inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
@@ -199,63 +138,42 @@ export default class Swipe extends React.Component {
             toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
             useNativeDriver: true,
           }).start(() => {
-            this.setState({ currentIndex: this.state.currentIndex + 1, photoIndex: 0 }, () => {
+            this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
               this.position.setValue({ x: 0, y: 0 });
             });
           });
+          photoIndex = 0;
 
-       
-          socket.emit("yes", {
-            key: SessionKey,
-            userID: userID,
-            rest: restaurants[counter],
-          });
+          
           counter = counter + 1;
           console.log("Counter: " + counter);
           console.log("total number of restaurants: " + total_num_restaurants)
-          if (counter === total_num_restaurants - 5) {
-            console.log("Sending request for next page");
-            this.getNextPage(SessionKey);
+          if (counter === total_num_restaurants - 1) {
+            console.log("Sending request for sample photo");
+            this.getSamplePhoto();
           }
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
             toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
             useNativeDriver: true,
           }).start(() => {
-            this.setState({ currentIndex: this.state.currentIndex + 1, photoIndex: 0 }, () => {
+            this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
               this.position.setValue({ x: 0, y: 0 });
             });
           });
+          photoIndex = 0;
 
-      
-          socket.emit("no", {
-            key: SessionKey,
-            userID: userID,
-            rest: restaurants[counter].name,
-          });
           counter = counter + 1;
           console.log("Counter: " + counter);
           console.log("total number of restaurants: " + total_num_restaurants)
-          if (counter === total_num_restaurants - 5) {
-            console.log("Sending request for next page");
-            this.getNextPage(SessionKey);
+          if (counter === total_num_restaurants - 1) {
+            console.log("Sending request for sample photo");
+            this.getSamplePhoto();
           }
         } else if (
           Math.abs(gestureState.dy < 6) &&
           Math.abs(gestureState.dx) < 6
         ) {
-
-          
-          if(gestureState.x0 < SCREEN_WIDTH/2) {
-            console.log("left tap");
-            this.imageTapHandler(-1, this.state.currentIndex, this.state.photoIndex);
-          }
-          else {
-            console.log("Right tap");
-            this.imageTapHandler(1, this.state.currentIndex, this.state.photoIndex);
-          }
-
-
         } else {
           Animated.spring(this.position, {
             toValue: { x: 0, y: 0 },
@@ -268,11 +186,7 @@ export default class Swipe extends React.Component {
   }
 
 
-  getNextPage(SessKey) {
-    socket.emit("nextPage", {
-    SessionKey: SessKey,
-    nextPageToken: token
-  });
+  getSamplePhoto() {
   }
 
   renderRating = (rating) => {
@@ -342,28 +256,6 @@ export default class Swipe extends React.Component {
     
   };
 
-
-  imageTapHandler(tap, index, photoIndex) {
-    num_images = restaurants[index].images.length;
-    console.log("numbr of images: " + num_images);
-    console.log("PhotoIndex passed to imageTapHandler: " + photoIndex);
-    let newIndex;
-    if(photoIndex+tap < 0) {
-      newIndex = 0;
-    }
-    else if (photoIndex+tap > num_images-1) {
-      newIndex = num_images-1;
-    } 
-    else {
-      newIndex = photoIndex + tap;
-    }
-    this.setState({
-      photoIndex: newIndex
-    });
-
-    console.log("photo_index: " + photoIndex);
-    
-  }
 
 
   renderStar() {
@@ -455,8 +347,10 @@ export default class Swipe extends React.Component {
         if (i < this.state.currentIndex) {
           return null;
         } else if (i === this.state.currentIndex) {
-          console.log("photoIndex: " + this.state.photoIndex);
-           return(
+          if (i === 0) {
+            console.log("image source:" + item.images[photoIndex]);
+          }
+          return (
             <Animated.View
               {...this.PanResponder.panHandlers}
               key={item.id}
@@ -495,22 +389,12 @@ export default class Swipe extends React.Component {
                 >
                   <Text style={styles.dislikeStyle}>NOPE</Text>
                 </Animated.View>
-                <View style={{alignItems: 'center', marginTop: 10,}}>
-                  <PaginationDot 
-                    activeDotColor={"white"} 
-                    curPage={this.state.photoIndex} 
-                    maxPage={item.images.length}
-                    sizeRatio={1.0}
-                    style={{alignItems: 'center'}}
-                />
-                
-                </View>
+
                 <Image
                   style={styles.imageStyle}
-                  source={{ uri: item.images[this.state.photoIndex] }}
+                  source={{ uri: item.images[photoIndex] }}
                   borderRadius={0}
                 />
-
                 <View style={styles.infoCard}>
                   <Text style={styles.Name}> {item.name} </Text>
                   <View style={{flex: 1}}>
@@ -547,23 +431,11 @@ export default class Swipe extends React.Component {
                   borderColor: "#b4cd31",
                 }}
               >
-                <View style={{alignItems: 'center', marginTop: 10,}}>
-                  <PaginationDot 
-                    activeDotColor={"white"} 
-                    curPage={0} 
-                    maxPage={item.images.length}
-                    sizeRatio={1.0}
-                    style={{alignItems: 'center'}}
-                />
-                </View>
-
-
                 <Image
                   style={styles.imageStyle}
-                  source={{ uri: item.images[this.state.underPhotoIndex] }}
+                  source={{ uri: item.images[photoIndex] }}
                   borderRadius={20}
                 />
-
                 <View style={styles.infoCard}>
                   <Text style={styles.Name}> {item.name} </Text>
                   {this.renderPrice(item.pricing)}
@@ -601,14 +473,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderRadius: 20,
     overflow: "hidden",
-    
   },
   imageStyle: {
     marginTop: 100,
     height: 400,
     width: '100%',
     resizeMode: "contain",
-    flex: 5,
+    flex: 3,
     borderRadius: 6,
   },
   likeStyle: {
@@ -636,7 +507,7 @@ const styles = StyleSheet.create({
   infoCard: {
     paddingTop: 10,
     paddingLeft: 5,
-    flex: 2,
+    flex: 1,
     marginLeft: 5,
     borderRadius: 20,
     marginRight: 5,
@@ -657,18 +528,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     marginTop: 10,
     flexDirection: "row"
-  },
-  photoIndexStyle: {
-    backgroundColor: 'green',
-    color: 'red',
-    width: '100%',
-
-    flex: 1
   }
   
 });
 
-export { rest_name, location, phone, website, noWebsite, noPhone };
+export { rest_name, location, phone, website };
 
 // flex 3 and 3
 // flex 3 and 4

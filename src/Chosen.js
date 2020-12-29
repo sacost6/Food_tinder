@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   StyleSheet,
   View,
-  ActivityIndicator,
   Image,
   Dimensions,
   Linking,
@@ -10,15 +9,28 @@ import {
 } from "react-native";
 import { Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
-import * as Location from "expo-location";
-import socket from "../store/socket";
-import { userID, SessionKey } from "../store/index";
-import { rest_name, location } from "./Swipe";
+import { rest_name, location, phone, website, noWebsite, noPhone} from "./Swipe";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useFocusEffect } from "@react-navigation/native";
 import { Text } from "react-native-elements";
 
-const IconButton = (props) => <Button icon {...props} />;
+const IconButton = (props) => <Button icon {...props}
+raised={true}
+ />;
+const WebButton = (props) => <Button icon {...props}
+raised={true}
+disabled={noWebsite}
+/>;
+const PhoneButton = (props) => <Button icon {...props}
+raised={true}
+disabled={noPhone}
+/>;
+
+const PillButton = (props) => <Button icon {...props}
+type="outline"
+title="Home"
+titleStyle={styles.buttonText} />;
+
 let SCREEN_HEIGHT;
 SCREEN_HEIGHT = Dimensions.get("window").height;
 let SCREEN_WIDTH;
@@ -48,6 +60,20 @@ function Chosen(props) {
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [])
   );
+
+  function callRestaurant() {
+    Linking.openURL(`tel:${phone}`);
+  }
+  function openWebsite() {
+    let url = website
+    Linking.canOpenURL(url).then(supported => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        console.log("Don't know how to open URI: " + url);
+      }
+    });
+}
 
   function openMaps() {
     const lat = location.lat;
@@ -86,6 +112,7 @@ function Chosen(props) {
             {" "}
             {"You both chose " + rest_name + "!"}{" "}
           </Text>
+      
         </View>
         <View style={styles.bottomContainer}>
           <IconButton
@@ -95,8 +122,8 @@ function Chosen(props) {
               marginBottom: 15,
               marginLeft: 15,
             }}
-            buttonStyle={styles.mapButton}
-            icon={<Icon name="map" size={35} color="black" />}
+            buttonStyle={styles.clearButton}
+            icon={<Icon name="map" size={25} color="white" />}
             onPress={() => openMaps()}
           />
 
@@ -107,13 +134,40 @@ function Chosen(props) {
               marginLeft: "auto",
               marginRight: 15,
             }}
-            buttonStyle={styles.homeButton}
-            icon={<Icon name="home" size={35} color="black" />}
+            buttonStyle={styles.clearButton}
+            icon={<Icon name="home" size={30} color="white" />}
             onPress={() => {
               props.navigation.navigate("MainMenu")
             }
             }
           />
+          <PhoneButton
+            containerStyle={{
+              alignSelf: "flex-end",
+              marginBottom: 15,
+              marginLeft: "auto",
+              marginRight: 15,
+            }}
+            buttonStyle={styles.clearButton}
+            icon={<Icon name="phone" size={30} color="white" />}
+            onPress={() => callRestaurant()
+            }
+          />
+          <WebButton
+            containerStyle={{
+              alignSelf: "flex-end",
+              marginBottom: 15,
+              marginLeft: "auto",
+              marginRight: 15,
+            }}
+            title="www"
+          
+            titleStyle={{fontSize:17, color:'white'}}
+            buttonStyle={styles.webButton}
+            onPress={() => openWebsite()
+            }
+          />
+          
         </View>
       </LinearGradient>
     </View>
@@ -144,8 +198,8 @@ const styles = StyleSheet.create({
   },
   mapButton: {
     borderRadius: 50,
-    width: 80,
-    height: 80,
+    width: 55,
+    height: 55,
     paddingTop: 10,
     backgroundColor: "#b4cd31",
   },
@@ -162,17 +216,44 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
   },
-  homeButton: {
+  clearButton: {
     borderRadius: 50,
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     paddingTop: 10,
-    backgroundColor: "#b4cd31",
+    backgroundColor: '#262626',
+    borderColor: 'red'
+    
+  },
+  webButton: {
+    borderRadius: 50,
+    width: 60,
+    height: 60,
+    paddingTop: 10,
+    backgroundColor: '#262626',
+    justifyContent: 'flex-end',
+    borderColor:'green'
   },
   textContainer: {
     marginLeft: 10,
     marginRight: 10,
   },
+  pillButton: {
+    width: '40%',
+    height: '40%',
+    borderRadius: 13,
+    borderColor: "#b4cd31",
+    borderWidth: 1,
+    backgroundColor: '#262626'
+  
+  },
+  buttonText: {
+    color: 'white',
+    marginLeft: '20%'
+  },
+  iconContainerStyle: {
+    marginRight: 19
+  }
 });
 
 export default Chosen;

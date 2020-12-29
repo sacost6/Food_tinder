@@ -18,7 +18,7 @@ export default class LoadingServer extends React.Component {
     const { navigate } = this.props.navigation;
     socket.emit("in-loading");
     socket.on("ready", () => {
-    navigate("MainMenu");
+      navigate("MainMenu");
     });
   }
 

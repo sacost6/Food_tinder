@@ -19,7 +19,7 @@ import {
 import { DotIndicator } from "react-native-indicators";
 
 let restaurants = [];
-let photo_counter = 0;
+let token;
 
 export default class loading extends React.Component {
   state = {
@@ -36,36 +36,41 @@ export default class loading extends React.Component {
   componentDidMount() {
     const { navigate } = this.props.navigation;
     restaurants = [];
+    token=0;
     BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
     this.timeout = setTimeout(
       () => {
         navigate("MainMenu");
       },
-      25000
+      40000
     );
 
     socket.on("restaurant", (data) => {
-      let imageSrc = "data:image/jpeg;base64," + data.buffer;
+
+
+      let image_sources = data.buffer;
+      for (let i = 0; i<image_sources.length; i++) {
+        image_sources[i] = "data:image/jpeg;base64," + image_sources[i];
+      }
       let restaurant = {
         id: data.id,
         name: data.name,
         rating: data.rating,
-        uri: imageSrc,
+        images: image_sources,
         pricing: data.pricing,
         lat: data.lat,
         lng: data.lng,
         place_id: data.place_id,
         num_ratings: data.num_ratings
       };
-      console.log(
-        "Adding restaurant: " + data.name + " price level: " + data.pricing
-      );
+
       if (restaurants.includes(restaurant)) {
         //do nothing
       } else {
         restaurants.push(restaurant);
-        photo_counter = photo_counter + 1;
       }
+
+
     });
     socket.on("all_data_sent", (data) => {
       console.log(
@@ -74,6 +79,8 @@ export default class loading extends React.Component {
           "restaurants"
       );
       console.log("NUMBER OF RESTAURANTS::: " + restaurants.length);
+      console.log("in loading, token: " + token);
+      token = data;
       navigate("Swipe");
     });
   }
@@ -160,4 +167,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export { restaurants, photo_counter };
+export { restaurants, token };

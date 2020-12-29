@@ -121,10 +121,11 @@ export default class HostOptions extends React.Component {
                     marginLeft: 10,
                     }}
                     type="clear"
+                    title="Join"
                     icon={<Icon name="arrow-left" size={35} color="#b4cd31" />}
                     buttonStyle={styles.backButton}
-                    titleStyle={styles.buttonText}
-                    onPress={() => navigate("MainMenu")}
+                    titleStyle={{...styles.buttonText, color:'#8B8B8B', marginLeft: 3}}
+                    onPress={() => navigate("Join")}
                  />
                     <Text style={styles.text2}> {this.state.message} </Text>
                     <View style={styles.optionsPane}>
@@ -132,7 +133,7 @@ export default class HostOptions extends React.Component {
                     <View style={styles.optionContainer}>
                         <Text style={styles.text}> Use current location </Text>
                         <Switch
-                            trackColor={{ false: "#767577", true: "#f4f3f4" }}
+                            trackColor={{ false: "#767577", true: "#242424" }}
                             thumbColor={this.state.isEnabled ? "#b4cd31" : "#f4f3f4"}
                             onValueChange={toggleSwitch}
                             value={this.state.isEnabled}
@@ -167,12 +168,7 @@ export default class HostOptions extends React.Component {
                                 
                             }
                         }}
-                        ViewComponent={LinearGradient} // Don't forget this!
-                        linearGradientProps={{
-                            colors: ["#879826", "#bfcd31"],
-                            start: { x: 0, y: 0.5 },
-                            end: { x: 1, y: 0.5 },
-                        }}
+
                     />
                     <View style={styles.customContainer}>
                         {renderInputBar()}
@@ -194,7 +190,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     container: {
-        backgroundColor: "rgba(185, 185, 185, 0.15)",
         paddingTop: 20,
         paddingBottom: 20,
         borderRadius: 25,
@@ -259,8 +254,9 @@ const styles = StyleSheet.create({
     },
     mButton: {
         width: '100%',
-        height: 50,
-        borderRadius: 15,
+        height: 70,
+        borderRadius: 20,
+        backgroundColor: '#262626',
         alignItems: "center",
         justifyContent: "center",
       },
@@ -275,6 +271,7 @@ const styles = StyleSheet.create({
         fontWeight: '100',
         //fontFamily: "sans-serif-thin",
         fontSize: 20,
+        color: '#b4cd31'
       },
       optionsPane: {
           borderRadius: 15,
