@@ -8,8 +8,7 @@ import {
 import { Text } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
-
-let connected = true;
+import {connection, setConnectionFalse, setConnectionTrue} from "../store";
 
 export default class WelcomeScreen extends React.Component {
 
@@ -18,8 +17,8 @@ export default class WelcomeScreen extends React.Component {
     this.timeout = setTimeout(function() {
       console.log("Timer done, no response from the server!");
       navigate("ConnectionError");
-      connected = false;
-    }, 5000);
+      setConnectionFalse();
+    }, 10000);
   }
 
   stopConnTimeout(){
@@ -28,16 +27,17 @@ export default class WelcomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    if(connected === false) {
+    if(connection === false) {
       console.log("Attempting to reconnect to server.");
       socket.connect();
     }
     else {
       console.log("Already connected to the server!");
     }
+    this.startConnTimeout();
     socket.on("Server-Check", () => {
       this.stopConnTimeout();
-      socket.emit("Client-Response");
+      console.log("connection ack received");
       this.startConnTimeout();
     });
   }

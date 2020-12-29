@@ -19,9 +19,19 @@ let placeDetails = function () {
 let SessionKey = "";
 let PD = new placeDetails();
 let key = 0;
+let connection = false;
 let timeout;
 
+function setConnectionTrue() {
+  connection=true;
+}
+
+function setConnectionFalse() {
+  connection=false;
+}
+
 socket.on("connect", () => {
+  connection = true;
   // get userId from server
   socket.on("userID", (data) => {
     userID = data;
@@ -29,6 +39,7 @@ socket.on("connect", () => {
 
   socket.on("disconnect", function () {
     console.log("Disconnected from server");
+    connection = false;
   });
 
   socket.on("secondGuest", (user) => {
@@ -54,4 +65,5 @@ socket.on("connect", () => {
 
 });
 
-export { userID, Partner, PD, SessionKey, numRestaurants, first, offset };
+export { userID, Partner, PD, SessionKey, numRestaurants,
+  first, offset, connection, setConnectionFalse, setConnectionTrue };
