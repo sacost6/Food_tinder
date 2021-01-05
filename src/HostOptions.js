@@ -16,44 +16,49 @@ let lat, lng, key;
 let current_crd;
 let location_message;
 
-function success(pos) {
-    current_crd = pos.coords;
-  }
-  
-function error(err) {
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-}
+
 
 export default class HostOptions extends React.Component {
-    
 
+    
     state = {
         isEnabled: true,
+        locationMissing: true,
         location: '',
         fontColor: 'white', 
         message: 'Select a location to search near'
       };
 
-    
+
+
 
     componentDidMount() {
+
         const { navigate } = this.props.navigation;
-        navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy:true, timeout: 5000});
-        socket.emit("host-req", {
-            hostID: userID
-        });
+        navigator.geolocation.getCurrentPosition(postition => {
+            this.setState({
+                locationMissing: false
+            });
+            current_crd = postition.coords;
+        }, error => {
+            console.warn(`ERROR(${error.code}): ${error.message}`);
+        }, {enableHighAccuracy:true, timeout: 5000});
         socket.on("host-info", (data) => {
             key = data;
+            navigate('Host');
         });
         socket.on("geoCode_response", (response) => {
             if(response.success) {
-                
+        
                 lat = response.latitude;
                 lng = response.longitude;
                 location_message = 'near ' + this.state.location;
-                navigate("Host");
+                socket.emit("host-req", {
+                    hostID: userID
+                });
             }
             else {
+                console.log("Invalid Location entered");
                 this.setState({
                     message: 'Unable to find location, try again'
                 });
@@ -64,6 +69,7 @@ export default class HostOptions extends React.Component {
     
     componentWillUnmount() {
         socket.off("geoCode_response");
+        socket.off("host-info");
     }
 
     handleText = (text) => {
@@ -93,6 +99,16 @@ export default class HostOptions extends React.Component {
                 return null;
             }
     
+        }
+
+        let renderButton = () =>  {
+            if(this.state.isEnabled) {
+                return this.state.locationMissing;
+            }
+            else {
+                return false;
+            }
+
         }
 
         const { navigate } = this.props.navigation;
@@ -158,25 +174,23 @@ export default class HostOptions extends React.Component {
                         buttonStyle={styles.mButton}
                         title="Host"
                         titleStyle={styles.buttonText}
-                        onPress={() => {
-                            console.log("The session key is " + key);
-                            if(key === undefined) {
-                                navigate('MainMenu');
-                            }
+                        disabled={renderButton()}
+                        onPress={() => {     
+
                             if(this.state.isEnabled) {
                                 // use current location
-                                if(current_crd === undefined) {
-                                     navigate('MainMenu');
-                                }
                                 lat = current_crd.latitude;
                                 lng = current_crd.longitude;
                                 location_message = 'using your location';
-                                navigate('Host');
-
+                                socket.emit("host-req", {
+                                    hostID: userID
+                                });
+                
                             }
                             else {
                                 // use custom location
                                 socket.emit("geoCode", this.state.location);
+                                
                             }
                         }}
 

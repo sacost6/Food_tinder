@@ -135,7 +135,7 @@ export default class WelcomeScreen extends React.Component {
   startConnTimeout() {
     const { navigate } = this.props.navigation;
     this.timeout = setTimeout(function() {
-      console.log("Timer done, no response from the server!");
+      //console.log("Timer done, no response from the server!");
       navigate("ConnectionError");
       setConnectionFalse();
     }, 10000);
@@ -148,16 +148,16 @@ export default class WelcomeScreen extends React.Component {
 
   componentDidMount() {
     if(connection === false) {
-      console.log("Attempting to reconnect to server.");
+      //console.log("Attempting to reconnect to server.");
       socket.connect();
     }
     else {
-      console.log("Already connected to the server!");
+      //console.log("Already connected to the server!");
     }
     this.startConnTimeout();
     socket.on("Server-Check", () => {
       this.stopConnTimeout();
-      console.log("connection ack received");
+      //console.log("connection ack received");
       this.startConnTimeout();
     });
   }
@@ -191,6 +191,8 @@ export default class WelcomeScreen extends React.Component {
 
                   <Animated.View style={{...styles.textContainer, opacity: this.buttonOpacity}}>
                     <Text style={styles.welcomeText}>Tap to Begin</Text>
+
+
                   </Animated.View>
               </LinearGradient>
             </View>

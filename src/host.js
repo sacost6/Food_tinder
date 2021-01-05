@@ -61,7 +61,6 @@ export default class host extends React.Component {
 
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
-    socket.off('host-info');
     socket.off('Start');
   }
 
@@ -93,8 +92,7 @@ export default class host extends React.Component {
   cancelSesssion() {
     socket.emit("cancel-sess", this.state.key);
     const { navigate } = this.props.navigation;
-    socket.removeEventListener("host-info");
-    navigate("MainMenu");
+   navigate("MainMenu");
   }
 
   render() {

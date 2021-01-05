@@ -44,7 +44,9 @@ export default class loading extends React.Component {
 
       let image_sources = data.buffer;
       for (let i = 0; i<image_sources.length; i++) {
-        image_sources[i] = "data:image/jpeg;base64," + image_sources[i];
+        image_sources[i].source = "data:image/jpeg;base64," + image_sources[i].source;
+        console.log("For restaurant " + data.name + " has Attribution : ", image_sources[i].attribution[0]);
+
       }
       let restaurant = {
         id: data.id,
@@ -72,8 +74,6 @@ export default class loading extends React.Component {
           restaurants.length +
           "restaurants"
       );
-      console.log("NUMBER OF RESTAURANTS::: " + restaurants.length);
-      console.log("in loading, token: " + token);
       token = data;
       this.stopTimer();
       navigate("Swipe");

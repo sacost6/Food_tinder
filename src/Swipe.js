@@ -16,6 +16,8 @@ import { restaurants, token } from "./loading";
 import { Rating } from "react-native-elements";
 import {Root, Toast} from "popup-ui";
 import PaginationDot from 'react-native-animated-pagination-dot'
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { Linking } from "react-native";
 
 let total_num_restaurants;
 
@@ -41,12 +43,7 @@ export default class Swipe extends React.Component {
   componentDidMount() {
     counter = 0;
     rest_name = "n/a";
-    console.log("in componentdidMount, total_num_restaurants: " + restaurants.length + "\n");
-    console.log( "token: " + token);
     total_num_restaurants = restaurants.length;
-
-
-
     const { navigate } = this.props.navigation;
     // TODO: 
     // move to constructor???
@@ -342,9 +339,50 @@ export default class Swipe extends React.Component {
     
   };
 
+  // Uses regex to extract html link from html attribute
+  getHref(href_string) {
+    return href_string.match(/href="([^"]*)/)[1];
+
+  }
+  getName(href_string) {
+    return href_string.match(/\>(.*?)\</)[1];
+  }
+
+  // Uses regex to extract the source name from html attribute
+  getHrefName = (href_string, item) => {
+    if(href_string === null) {
+      return null;
+    }else {
+    console.log("In getHrefName with href_string: " + href_string);
+    var source_name;
+    try {
+      source_name = href_string.match(/\[(.*?)\]/)[1];
+      console.log("was not null!");
+
+    } catch (error) {
+      console.log("was null!")
+
+    }
+  
+      return (
+        <View>
+        <Text style={styles.attributionText}> Photo Listing by: 
+            <Text
+              style={{color: 'blue'}}
+              onPress={() => Linking.openURL(this.getHref(item.images[this.state.photoIndex].attribution[0]))}> 
+              <Text> </Text> {this.getName(item.images[this.state.photoIndex].attribution[0])}
+            </Text> 
+        </Text>
+        </View>
+      );
+    
+      }
+    
+  };
+
 
   imageTapHandler(tap, index, photoIndex) {
-    num_images = restaurants[index].images.length;
+    let num_images = restaurants[index].images.length;
     console.log("numbr of images: " + num_images);
     console.log("PhotoIndex passed to imageTapHandler: " + photoIndex);
     let newIndex;
@@ -374,6 +412,15 @@ export default class Swipe extends React.Component {
     );
   }
 
+
+
+  renderAttribution = (attribution) => {
+    
+
+
+
+  };
+
   renderPrice = (price) => {
     if (price === 0) {
       return null;
@@ -381,8 +428,7 @@ export default class Swipe extends React.Component {
       return (
         <View
           style={{
-            flex: 1,
-            marginLeft: 15,
+            marginLeft: 10,
             justifyContent: "flex-start",
             marginTop: 10,
           }}
@@ -397,8 +443,7 @@ export default class Swipe extends React.Component {
       return (
         <View
           style={{
-            flex: 1,
-            marginLeft: 15,
+            marginLeft: 10,
             backgroundColor: "",
             justifyContent: "flex-start",
             flexDirection: "row",
@@ -495,6 +540,13 @@ export default class Swipe extends React.Component {
                 >
                   <Text style={styles.dislikeStyle}>NOPE</Text>
                 </Animated.View>
+
+
+                <Image
+                  style={styles.imageStyle}
+                  source={{ uri: item.images[this.state.photoIndex].source }}
+                  borderRadius={0}
+                />
                 <View style={{alignItems: 'center', marginTop: 10,}}>
                   <PaginationDot 
                     activeDotColor={"white"} 
@@ -505,18 +557,17 @@ export default class Swipe extends React.Component {
                 />
                 
                 </View>
-                <Image
-                  style={styles.imageStyle}
-                  source={{ uri: item.images[this.state.photoIndex] }}
-                  borderRadius={0}
-                />
-
                 <View style={styles.infoCard}>
+
+                  <View style={styles.titlePane}>
                   <Text style={styles.Name}> {item.name} </Text>
+                  </View>
                   <View style={{flex: 1}}>
                     {this.renderPrice(item.pricing)}
                     {this.renderRating(item.rating)}
-
+                  </View>
+                  <View style={styles.attributionPane}> 
+                    {this.getHrefName(item.images[this.state.photoIndex].attribution[0], item)}  
                   </View>
                 </View>
               </LinearGradient>
@@ -547,6 +598,14 @@ export default class Swipe extends React.Component {
                   borderColor: "#b4cd31",
                 }}
               >
+
+
+
+                <Image
+                  style={styles.imageStyle}
+                  source={{ uri: item.images[this.state.underPhotoIndex].source }}
+                  borderRadius={20}
+                />
                 <View style={{alignItems: 'center', marginTop: 10,}}>
                   <PaginationDot 
                     activeDotColor={"white"} 
@@ -554,15 +613,8 @@ export default class Swipe extends React.Component {
                     maxPage={item.images.length}
                     sizeRatio={1.0}
                     style={{alignItems: 'center'}}
-                />
+                  />
                 </View>
-
-
-                <Image
-                  style={styles.imageStyle}
-                  source={{ uri: item.images[this.state.underPhotoIndex] }}
-                  borderRadius={20}
-                />
 
                 <View style={styles.infoCard}>
                   <Text style={styles.Name}> {item.name} </Text>
@@ -584,6 +636,9 @@ export default class Swipe extends React.Component {
       <View style={{ flex: 1 }}>
         <LinearGradient colors={["#000000", "#202020"]} style={{ flex: 1 }}>
           <View style={{ height: 60 }} />
+          <Image source={require("../assets/powered_by_google.png")}
+            style={{marginLeft: 15, color: 'white'}}></Image>
+
           <View style={{ flex: 1 }}>{this.renderRestaurants()}</View>
           <View style={{ height: 60 }} />
         </LinearGradient>
@@ -604,7 +659,7 @@ const styles = StyleSheet.create({
     
   },
   imageStyle: {
-    marginTop: 100,
+    marginTop: 10,
     height: 400,
     width: '100%',
     resizeMode: "contain",
@@ -629,7 +684,7 @@ const styles = StyleSheet.create({
   },
   Name: {
     color: "white",
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: "100",
     paddingBottom: 5,
   },
@@ -641,6 +696,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 5,
     marginBottom: 10,
+  
+  },
+  titlePane: {
+    borderRadius: 10,
   },
   Rating: {
     color: "white",
@@ -652,11 +711,10 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   ratingContainer: {
-    flex: 1,
-    marginLeft: 15,
+    marginLeft: 10,
     justifyContent: "flex-start",
-    marginTop: 10,
-    flexDirection: "row"
+    marginTop: 0,
+    flexDirection: "row",
   },
   photoIndexStyle: {
     backgroundColor: 'green',
@@ -664,7 +722,14 @@ const styles = StyleSheet.create({
     width: '100%',
 
     flex: 1
+  },
+  attributionText: {
+    color: 'white'
+  },
+  attributionPane: {
+
   }
+
   
 });
 
