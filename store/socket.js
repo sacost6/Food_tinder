@@ -1,5 +1,5 @@
 import io from "socket.io-client"; 
-const socket = io("http://192.168.0.14:8000", {
+const socket = io("http://10.0.0.210:8000", {
     'reconnection': true,
     'reconnectionDelay': 1000,
     'reconnectionDelayMax' : 5000,
