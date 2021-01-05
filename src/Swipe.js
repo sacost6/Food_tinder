@@ -617,10 +617,14 @@ export default class Swipe extends React.Component {
                 </View>
 
                 <View style={styles.infoCard}>
+                <View style={styles.titlePane}>
                   <Text style={styles.Name}> {item.name} </Text>
+                </View>
                   {this.renderPrice(item.pricing)}
                   {this.renderRating(item.rating)}
-
+                </View>
+                <View style={styles.attributionPane}> 
+                    {this.getHrefName(item.images[this.state.underPhotoIndex].attribution[0], item)}  
                 </View>
               </LinearGradient>
             </Animated.View>
@@ -637,7 +641,7 @@ export default class Swipe extends React.Component {
         <LinearGradient colors={["#000000", "#202020"]} style={{ flex: 1 }}>
           <View style={{ height: 60 }} />
           <Image source={require("../assets/powered_by_google.png")}
-            style={{marginLeft: 15, color: 'white'}}></Image>
+            style={{marginLeft: 15}}></Image>
 
           <View style={{ flex: 1 }}>{this.renderRestaurants()}</View>
           <View style={{ height: 60 }} />

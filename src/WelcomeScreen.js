@@ -133,7 +133,6 @@ export default class WelcomeScreen extends React.Component {
 
   started = false;
   static startTimeout(navigate) {
-    console.log("This one");
     this.timeout = setTimeout(function() {
       console.log("In timeout function!")
       if(socket.connected === false) {

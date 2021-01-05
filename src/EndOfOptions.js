@@ -57,7 +57,7 @@ export default class EndOfOptions extends React.Component {
                             buttonStyle={styles.mButton}
                             title="Main Menu"
                             titleStyle={styles.buttonText}
-                            onPress={() => navigate("WelcomeScreen")}
+                            onPress={() => navigate("Home")}
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{
                                 colors: ["#879826", "#bfcd31"],

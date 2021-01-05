@@ -62,7 +62,7 @@ export default class Disconnected extends React.Component {
                             title="Main Menu"
                             titleStyle={styles.buttonText}
                             onPress={() => {
-                                navigate("WelcomeScreen");
+                                navigate("Home");
                             }}
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{

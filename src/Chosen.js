@@ -137,7 +137,7 @@ function Chosen(props) {
             buttonStyle={styles.clearButton}
             icon={<Icon name="home" size={30} color="white" />}
             onPress={() => {
-              props.navigation.navigate("WelcomeScreen")
+              props.navigation.navigate("Home")
             }
             }
           />
