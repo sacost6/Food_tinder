@@ -59,9 +59,7 @@ export default class HostOptions extends React.Component {
             }
             else {
                 console.log("Invalid Location entered");
-                this.setState({
-                    message: 'Unable to find location, try again'
-                });
+
             }
 
         });
