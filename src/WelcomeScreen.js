@@ -11,13 +11,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, {Easing} from "react-native-reanimated";
 import {TapGestureHandler, State} from "react-native-gesture-handler";
 import socket from "../store/socket";
+import { useNavigation } from '@react-navigation/native';
 import {connection, setConnectionFalse, setConnectionTrue} from "../store";
-
-
-
-
-
-
 
 
 const{width,height} = Dimensions.get("window");
@@ -70,8 +65,8 @@ function runTiming(clock, value, dest) {
 }
 
 export default class WelcomeScreen extends React.Component {
-  constructor () {
-    super()
+  constructor(props) {
+    super(props);
     this.buttonOpacity = new Value(1);
     this.onStateChange = event([
       {
@@ -129,37 +124,35 @@ export default class WelcomeScreen extends React.Component {
 
     
   }
-  
 
 
-  startConnTimeout() {
-    const { navigate } = this.props.navigation;
-    this.timeout = setTimeout(function() {
-      //console.log("Timer done, no response from the server!");
-      navigate("ConnectionError");
-      setConnectionFalse();
-    }, 10000);
-  }
-
-  stopConnTimeout(){
+  static stopConnTimeout(){
     clearTimeout(this.timeout);
     this.timeout = 0;
   }
 
+  started = false;
+  static startTimeout(navigate) {
+    console.log("This one");
+    this.timeout = setTimeout(function() {
+      console.log("In timeout function!")
+      if(socket.connected === false) {
+        console.log("Timer done, no response from the server");
+        navigate("ConnectionError");
+      }
+      else {
+        WelcomeScreen.stopConnTimeout();
+        WelcomeScreen.startTimeout();
+      }
+    }, 10000);
+  }
+
   componentDidMount() {
-    if(connection === false) {
-      //console.log("Attempting to reconnect to server.");
-      socket.connect();
+    if(this.started === false) {
+      const {navigate} = this.props.navigation;
+      WelcomeScreen.startTimeout(navigate);
+      console.log("Is socket connected: " + socket.connected);
     }
-    else {
-      //console.log("Already connected to the server!");
-    }
-    this.startConnTimeout();
-    socket.on("Server-Check", () => {
-      this.stopConnTimeout();
-      //console.log("connection ack received");
-      this.startConnTimeout();
-    });
   }
 
   render() {

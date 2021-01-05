@@ -5,6 +5,8 @@ import {Button, Input} from "react-native-elements";
 import socket from "../store/socket";
 import { userID, SessionKey, numRestaurants, first, offset} from "../store/index";
 import io from "socket.io-client";
+import {goBack} from "@react-navigation/routers/src/CommonActions";
+import WelcomeScreen from "./WelcomeScreen";
 
 export default class ConnectionError extends React.Component {
     constructor(props) {
@@ -54,8 +56,15 @@ export default class ConnectionError extends React.Component {
                             title="Attempt to Reconnect"
                             titleStyle={styles.buttonText}
                             onPress={() => {
-                                socket.connect();
-                                console.log("Attempting to reconnect to server.");
+                                if(socket.connected === true) {
+                                    this.props.navigation.goBack();
+                                    WelcomeScreen.startTimeout(this.props.navigation);
+                                }
+                                else {
+                                    // TODO: Add some sort of toast or message to user telling they are not connected yet
+                                    console.log("Not connected to the server!");
+                                    socket.connect();
+                                }
                             }}
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{
