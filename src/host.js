@@ -92,7 +92,7 @@ export default class host extends React.Component {
   cancelSesssion() {
     socket.emit("cancel-sess", this.state.key);
     const { navigate } = this.props.navigation;
-   navigate("MainMenu");
+   navigate("HostOptions");
   }
 
   render() {
