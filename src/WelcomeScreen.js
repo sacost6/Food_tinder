@@ -134,9 +134,7 @@ export default class WelcomeScreen extends React.Component {
   started = false;
   static startTimeout(navigate) {
     this.timeout = setTimeout(function() {
-      console.log("In timeout function!")
       if(socket.connected === false) {
-        console.log("Timer done, no response from the server");
         navigate("ConnectionError");
       }
       else {
@@ -150,7 +148,6 @@ export default class WelcomeScreen extends React.Component {
     if(this.started === false) {
       const {navigate} = this.props.navigation;
       WelcomeScreen.startTimeout(navigate);
-      console.log("Is socket connected: " + socket.connected);
     }
   }
 

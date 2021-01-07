@@ -45,8 +45,6 @@ export default class Swipe extends React.Component {
     rest_name = "n/a";
     total_num_restaurants = restaurants.length;
     const { navigate } = this.props.navigation;
-    // TODO: 
-    // move to constructor???
 
     this._unsubscribe = this.props.navigation.addListener(
       "beforeRemove",

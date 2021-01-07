@@ -20,7 +20,7 @@ export default class ConnectionError extends React.Component {
         return true;
     };
 
-
+    // TODO: If the previous screen was the swipescreen, and the session has ended, return to the mainmenu. 
     componentDidMount() {
         BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
     }
@@ -61,7 +61,6 @@ export default class ConnectionError extends React.Component {
                                     WelcomeScreen.startTimeout(this.props.navigation);
                                 }
                                 else {
-                                    // TODO: Add some sort of toast or message to user telling they are not connected yet
                                     console.log("Not connected to the server!");
                                     socket.connect();
                                 }
