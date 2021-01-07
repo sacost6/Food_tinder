@@ -15,12 +15,11 @@ import {userID} from "../store";
 let lat, lng, key;
 let current_crd;
 let location_message;
-
+let mount = true;
 
 
 export default class HostOptions extends React.Component {
 
-    
     state = {
         isEnabled: true,
         locationMissing: true,
@@ -29,17 +28,15 @@ export default class HostOptions extends React.Component {
         message: 'Select a location to search near'
       };
 
-
-
-
     componentDidMount() {
-
         const { navigate } = this.props.navigation;
-        navigator.geolocation.getCurrentPosition(postition => {
-            this.setState({
-                locationMissing: false
-            });
-            current_crd = postition.coords;
+        navigator.geolocation.getCurrentPosition(position => {
+            if(mount) {
+                this.setState({
+                    locationMissing: false
+                });
+            }
+            current_crd = position.coords;
         }, error => {
             console.warn(`ERROR(${error.code}): ${error.message}`);
         }, {enableHighAccuracy:true, timeout: 5000});
@@ -49,7 +46,6 @@ export default class HostOptions extends React.Component {
         });
         socket.on("geoCode_response", (response) => {
             if(response.success) {
-        
                 lat = response.latitude;
                 lng = response.longitude;
                 location_message = 'near ' + this.state.location;
@@ -68,6 +64,7 @@ export default class HostOptions extends React.Component {
     componentWillUnmount() {
         socket.off("geoCode_response");
         socket.off("host-info");
+        mount = false;
     }
 
     handleText = (text) => {
