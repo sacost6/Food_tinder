@@ -6,7 +6,7 @@ import socket from "../store/socket";
 import { userID, SessionKey, numRestaurants, first, offset} from "../store/index";
 import io from "socket.io-client";
 import {goBack} from "@react-navigation/routers/src/CommonActions";
-import WelcomeScreen from "./WelcomeScreen";
+import {connTimeout} from "../store/index";
 
 export default class ConnectionError extends React.Component {
     constructor(props) {
@@ -57,8 +57,8 @@ export default class ConnectionError extends React.Component {
                             titleStyle={styles.buttonText}
                             onPress={() => {
                                 if(socket.connected === true) {
+                                    connTimeout.startTimeout();
                                     this.props.navigation.goBack();
-                                    WelcomeScreen.startTimeout(this.props.navigation);
                                 }
                                 else {
                                     // TODO: Add some sort of toast or message to user telling they are not connected yet

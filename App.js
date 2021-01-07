@@ -4,7 +4,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import Home from "./src/WelcomeScreen";
-import MainMenu from "./src/MainMenu";
 import host from "./src/host";
 import join from "./src/join";
 import Swipe from "./src/Swipe";
@@ -15,15 +14,21 @@ import LoadingServer from "./src/LoadingServer";
 import EndOfOptions from "./src/EndOfOptions";
 import Disconnected from "./src/Disconnected";
 import Waiting from "./src/Waiting";
+
 import ConnectionError from "./src/ConnectionError";
+import { navigationRef } from './rootNavigation';
 
 console.disableYellowBox = true;
 
 const Stack = createStackNavigator();
 
+
 function App() {
+
   return (
-    <NavigationContainer>
+
+    <NavigationContainer ref={navigationRef}>
+
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -31,7 +36,6 @@ function App() {
         }}
       >
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="MainMenu" component={MainMenu} />
         <Stack.Screen name="Host" component={host} />
         <Stack.Screen name="Join" component={join} />
         <Stack.Screen name="Swipe" component={Swipe} />
@@ -44,8 +48,11 @@ function App() {
         <Stack.Screen name="Waiting" component={Waiting} />
         <Stack.Screen name="ConnectionError" component={ConnectionError} />
       </Stack.Navigator>
+
     </NavigationContainer>
+
   );
+
 }
 
 export default App;

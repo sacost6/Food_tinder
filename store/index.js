@@ -1,10 +1,6 @@
 import socket from "./socket";
+import * as rootNavigation from "../rootNavigation";
 
-// New import statements
-import foodApp from "./reducers";
-import { CurrentUser } from "./actionTypes";
-
-let Rests = [];
 let userID = -1;
 const Partner = {
   userID: -1,
@@ -18,20 +14,38 @@ let placeDetails = function () {
 };
 let SessionKey = "";
 let PD = new placeDetails();
-let key = 0;
-let connection = false;
-let timeout;
 
-function setConnectionTrue() {
-  connection=true;
-}
 
-function setConnectionFalse() {
-  connection=false;
+class Timeout {
+
+  // Function passsed as callback for timeout
+
+// Function used to reset the timeout
+  startTimeout() {
+    console.log("Starting the timeout")
+    this.timeout = setTimeout(() => {
+      console.log("In timeout function! (index.js)")
+      if(socket.connected === false) {
+        rootNavigation.navigate("ConnectionError");
+        console.log("Timer done, no response from the server");
+        setConnectionFalse();
+      }
+      else {
+        setConnectionTrue();
+        this.resetTimeout();
+      }
+    }, 10000);
+  }
+
+  resetTimeout() {
+    clearTimeout(this.timeout);
+    this.timeout = 0;
+    this.startTimeout();
+  }
+
 }
 
 socket.on("connect", () => {
-  connection = true;
   // get userId from server
   socket.on("userID", (data) => {
     userID = data;
@@ -39,7 +53,7 @@ socket.on("connect", () => {
 
   socket.on("disconnect", function () {
     console.log("Disconnected from server");
-    connection = false;
+    rootNavigation.navigate("ConnectionError");
   });
 
   socket.on("secondGuest", (user) => {
@@ -65,5 +79,8 @@ socket.on("connect", () => {
 
 });
 
+let connTimeout = new Timeout();
+connTimeout.startTimeout();
+
 export { userID, Partner, PD, SessionKey, numRestaurants,
-  first, offset, connection, setConnectionFalse, setConnectionTrue };
+  first, offset, connTimeout};

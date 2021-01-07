@@ -60,8 +60,6 @@ function runTiming(clock, value, dest) {
     state.position
   ]);
 
-
-
 }
 
 export default class WelcomeScreen extends React.Component {
@@ -125,33 +123,8 @@ export default class WelcomeScreen extends React.Component {
     
   }
 
-
-  static stopConnTimeout(){
-    clearTimeout(this.timeout);
-    this.timeout = 0;
-  }
-
-  started = false;
-  static startTimeout(navigate) {
-    this.timeout = setTimeout(function() {
-      console.log("In timeout function!")
-      if(socket.connected === false) {
-        console.log("Timer done, no response from the server");
-        navigate("ConnectionError");
-      }
-      else {
-        WelcomeScreen.stopConnTimeout();
-        WelcomeScreen.startTimeout();
-      }
-    }, 10000);
-  }
-
   componentDidMount() {
-    if(this.started === false) {
-      const {navigate} = this.props.navigation;
-      WelcomeScreen.startTimeout(navigate);
-      console.log("Is socket connected: " + socket.connected);
-    }
+
   }
 
   render() {
