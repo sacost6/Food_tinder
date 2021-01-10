@@ -10,7 +10,7 @@ import {
 import { Input, Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
-import { SessionKey, userID } from "../store/index";
+import { userID } from "../store/index";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
@@ -26,11 +26,6 @@ export default class join extends React.Component {
  
     const { navigate } = this.props.navigation;
     socket.on("Start", () => {
-      socket.emit("get-restaurant", {
-        userID: userID,
-        key: SessionKey,
-        offset: 0,
-      });
       navigate("Loading");
     });
   }
@@ -67,7 +62,7 @@ export default class join extends React.Component {
           <IconButton
             containerStyle={{
               marginRight: "auto",
-              marginTop: 50,
+              marginTop: 20,
               marginLeft: 10,
             }}
             type="clear"
@@ -93,7 +88,6 @@ export default class join extends React.Component {
             />
             
             <TouchableWithoutFeedback onPress={() => {
-                this.SessionKey = this.state.sesskey;
                 console.log(this.state.sesskey);
                 socket.emit("session-req", {
                   key: this.state.sesskey.toLowerCase(),

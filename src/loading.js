@@ -9,17 +9,12 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
-import {
-  userID,
-  SessionKey,
-  numRestaurants,
-  first,
-  offset,
-} from "../store/index";
+
 import { DotIndicator } from "react-native-indicators";
 
 let restaurants = [];
 let token;
+let isMounted = false;
 
 export default class loading extends React.Component {
   state = {
@@ -28,24 +23,28 @@ export default class loading extends React.Component {
     key: 0,
   };
 
+  constructor(props) {
+    super(props);
+    token = 0;
+  }
+
   onBackPress = () => {
     console.log("blocking android back press");
     return true;
   };
 
   componentDidMount() {
+    isMounted = true;
     const { navigate } = this.props.navigation;
     restaurants = [];
-    token=0;
     BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-    this.startTimer();
+    this.startTimer(navigate);
     socket.on("restaurant", (data) => {
 
 
       let image_sources = data.buffer;
       for (let i = 0; i<image_sources.length; i++) {
         image_sources[i].source = "data:image/jpeg;base64," + image_sources[i].source;
-        console.log("For restaurant " + data.name + " has Attribution : ", image_sources[i].attribution[0]);
 
       }
       let restaurant = {
@@ -78,14 +77,29 @@ export default class loading extends React.Component {
       this.stopTimer();
       navigate("Swipe");
     });
+    socket.on("dis_from", () => {
+      console.log("in loading, disconnecting....")
+      socket.disconnect();
+    });
+    
+    socket.on("partner-disconnected", (key) => {
+      socket.emit("cancel-sess", key);
+      this.stopTimer();
+      socket.off("all_data_sent");
+      socket.off("restaurant");
+      console.log("partner_disconnected fired in loading.js");
+      navigate("Disconnected");
+    });
   }
 
-  startTimer() {
+  startTimer(navigate) {
     this.timeout = setTimeout(function(){
+          if(isMounted) {
+          console.log("In timer function, navigating to home");
           navigate("Home");
-          console.log("Timer done!");
+          console.log("Timer done!"); }
         },
-        25000
+        35000
     );
   }
 
@@ -96,16 +110,13 @@ export default class loading extends React.Component {
   }
 
   componentWillUnmount() {
+    isMounted = false;
     BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
     this.stopTimer();
     socket.off("all_data_sent");
     socket.off("restaurant");
   }
-
-  constructor(props) {
-    super(props);
-
-  }
+  
 
   render() {
     return (

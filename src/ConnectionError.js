@@ -1,12 +1,8 @@
 import React from "react";
-import { StyleSheet, Text, View, ActivityIndicator, Image, BackHandler } from "react-native";
+import { StyleSheet, Text, View, Image, BackHandler } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import {Button, Input} from "react-native-elements";
-import socket from "../store/socket";
-import { userID, SessionKey, numRestaurants, first, offset} from "../store/index";
-import io from "socket.io-client";
-import {goBack} from "@react-navigation/routers/src/CommonActions";
-import WelcomeScreen from "./WelcomeScreen";
+import {Button} from "react-native-elements";
+import {connTimeout} from "../store/index";
 
 export default class ConnectionError extends React.Component {
     constructor(props) {
@@ -50,20 +46,15 @@ export default class ConnectionError extends React.Component {
                             style={styles.logo}
                             source={require("../assets/sad_cloud.png")}
                         />
-                        <Text style={styles.endText}>Your connection has been interrupted.</Text>
+                        <Text style={styles.endText}>Connection to the server was interrupted</Text>
                         <RaisedButton
                             buttonStyle={styles.mButton}
-                            title="Attempt to Reconnect"
+                            title="Home"
                             titleStyle={styles.buttonText}
                             onPress={() => {
-                                if(socket.connected === true) {
-                                    this.props.navigation.goBack();
-                                    WelcomeScreen.startTimeout(this.props.navigation);
-                                }
-                                else {
-                                    console.log("Not connected to the server!");
-                                    socket.connect();
-                                }
+                                    connTimeout.startTimeout();
+                                    this.props.navigation.navigate("Home");
+                                
                             }}
                             ViewComponent={LinearGradient} // Don't forget this!
                             linearGradientProps={{

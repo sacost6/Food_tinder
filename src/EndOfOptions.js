@@ -1,9 +1,7 @@
 import React from "react";
-import { StyleSheet, Text, View, ActivityIndicator, Image, BackHandler } from "react-native";
+import { StyleSheet, Text, View, BackHandler } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {Button, Input} from "react-native-elements";
-import socket from "../store/socket";
-import { userID, SessionKey, numRestaurants, first, offset} from "../store/index";
 
 let restaurants = [];
 

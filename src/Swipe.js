@@ -11,12 +11,11 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import socket from "../store/socket";
-import { userID, numRestaurants, SessionKey } from "../store/index";
+import { userID } from "../store/index";
 import { restaurants, token } from "./loading";
 import { Rating } from "react-native-elements";
 import {Root, Toast} from "popup-ui";
 import PaginationDot from 'react-native-animated-pagination-dot'
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Linking } from "react-native";
 
 let total_num_restaurants;
@@ -49,15 +48,21 @@ export default class Swipe extends React.Component {
     this._unsubscribe = this.props.navigation.addListener(
       "beforeRemove",
       (e) => {
+        if(socket.connected) {
         // Prevent default behavior of leaving the screen
-        console.log("preventing back from swipe");
-        e.preventDefault();
+          console.log("Socket is connected to the server");
+          console.log("preventing back from swipe");
+
+          e.preventDefault();
+        
       }
+     }
     );
 
     socket.on("partner-disconnected", (key) => {
       socket.emit("cancel-sess", key);
       this._unsubscribe();
+      console.log("partner_disconnected fired in swipe.js");
       navigate("Disconnected");
     });
     socket.on("found the one", (data) => {
@@ -80,6 +85,9 @@ export default class Swipe extends React.Component {
       
       navigate("Chosen");
     });
+    socket.on("dis_from_serv", () => {
+      socket.disconnect();
+    });
     socket.on("both_out_options", () => {
       this._unsubscribe();
       navigate("EndOfOptions");
@@ -97,7 +105,7 @@ export default class Swipe extends React.Component {
 
       let image_sources = data.buffer;
       for (let i = 0; i<image_sources.length; i++) {
-        image_sources[i] = "data:image/jpeg;base64," + image_sources[i];
+        image_sources[i].source = "data:image/jpeg;base64," + image_sources[i].source;
       }
       let restaurant = {
         id: data.id,
@@ -199,9 +207,7 @@ export default class Swipe extends React.Component {
             });
           });
 
-       
           socket.emit("yes", {
-            key: SessionKey,
             userID: userID,
             rest: restaurants[counter],
           });
@@ -210,7 +216,7 @@ export default class Swipe extends React.Component {
           console.log("total number of restaurants: " + total_num_restaurants)
           if (counter === total_num_restaurants - 5) {
             console.log("Sending request for next page");
-            this.getNextPage(SessionKey);
+            this.getNextPage();
           }
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
@@ -224,7 +230,6 @@ export default class Swipe extends React.Component {
 
       
           socket.emit("no", {
-            key: SessionKey,
             userID: userID,
             rest: restaurants[counter].name,
           });
@@ -233,7 +238,7 @@ export default class Swipe extends React.Component {
           console.log("total number of restaurants: " + total_num_restaurants)
           if (counter === total_num_restaurants - 5) {
             console.log("Sending request for next page");
-            this.getNextPage(SessionKey);
+            this.getNextPage();
           }
         } else if (
           Math.abs(gestureState.dy < 6) &&
@@ -263,9 +268,8 @@ export default class Swipe extends React.Component {
   }
 
 
-  getNextPage(SessKey) {
+  getNextPage() {
     socket.emit("nextPage", {
-    SessionKey: SessKey,
     nextPageToken: token
   });
   }
@@ -350,15 +354,16 @@ export default class Swipe extends React.Component {
   getHrefName = (href_string, item) => {
     if(href_string === null) {
       return null;
-    }else {
-    console.log("In getHrefName with href_string: " + href_string);
+    }
+    else if(href_string === undefined) {
+      return null;
+    }
+    else {
     var source_name;
     try {
       source_name = href_string.match(/\[(.*?)\]/)[1];
-      console.log("was not null!");
 
     } catch (error) {
-      console.log("was null!")
 
     }
   
@@ -565,7 +570,7 @@ export default class Swipe extends React.Component {
                     {this.renderRating(item.rating)}
                   </View>
                   <View style={styles.attributionPane}> 
-                    {this.getHrefName(item.images[this.state.photoIndex].attribution[0], item)}  
+                    
                   </View>
                 </View>
               </LinearGradient>
@@ -622,7 +627,7 @@ export default class Swipe extends React.Component {
                   {this.renderRating(item.rating)}
                 </View>
                 <View style={styles.attributionPane}> 
-                    {this.getHrefName(item.images[this.state.underPhotoIndex].attribution[0], item)}  
+                    
                 </View>
               </LinearGradient>
             </Animated.View>
@@ -729,7 +734,7 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   attributionPane: {
-
+    marginLeft: 10
   }
 
   

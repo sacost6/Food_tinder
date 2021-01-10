@@ -15,12 +15,15 @@ import {userID} from "../store";
 let lat, lng, key;
 let current_crd;
 let location_message;
-
+let mount = true;
 
 
 export default class HostOptions extends React.Component {
-
-    
+    constructor(props)
+    {
+    super(props);
+     mount = true;
+    }
     state = {
         isEnabled: true,
         locationMissing: true,
@@ -29,17 +32,15 @@ export default class HostOptions extends React.Component {
         message: 'Select a location to search near'
       };
 
-
-
-
     componentDidMount() {
-
         const { navigate } = this.props.navigation;
-        navigator.geolocation.getCurrentPosition(postition => {
-            this.setState({
-                locationMissing: false
-            });
-            current_crd = postition.coords;
+        navigator.geolocation.getCurrentPosition(position => {
+            if(mount) {
+                this.setState({
+                    locationMissing: false
+                });
+            }
+            current_crd = position.coords;
         }, error => {
             console.warn(`ERROR(${error.code}): ${error.message}`);
         }, {enableHighAccuracy:true, timeout: 5000});
@@ -49,12 +50,11 @@ export default class HostOptions extends React.Component {
         });
         socket.on("geoCode_response", (response) => {
             if(response.success) {
-        
                 lat = response.latitude;
                 lng = response.longitude;
                 location_message = 'near ' + this.state.location;
                 socket.emit("host-req", {
-                    hostID: userID
+                    hostID: socket.id
                 });
             }
             else {
@@ -68,6 +68,7 @@ export default class HostOptions extends React.Component {
     componentWillUnmount() {
         socket.off("geoCode_response");
         socket.off("host-info");
+        mount = false;
     }
 
     handleText = (text) => {
@@ -136,7 +137,7 @@ export default class HostOptions extends React.Component {
                 <IconButton
                     containerStyle={{
                     marginRight: "auto",
-                    marginTop: 50,
+                    marginTop: 20,
                     marginLeft: 10,
                     }}
                     type="clear"
@@ -146,13 +147,14 @@ export default class HostOptions extends React.Component {
                     titleStyle={{...styles.buttonText, color:'#8B8B8B', marginLeft: 3}}
                     onPress={() => navigate("Join")}
                  />
+                 <View style={styles.pane}>
                     <Text style={styles.text2}> {this.state.message} </Text>
                     <View style={styles.optionsPane}>
 
                     <View style={styles.optionContainer}>
-                        <Text style={styles.text}> Use current location </Text>
+                        <Text style={styles.text}> Use my location </Text>
                         <Switch
-                            trackColor={{ false: "#767577", true: "#242424" }}
+                            trackColor={{ false: "#767577", true: "white" }}
                             thumbColor={this.state.isEnabled ? "#b4cd31" : "#f4f3f4"}
                             onValueChange={toggleSwitch}
                             value={this.state.isEnabled}
@@ -160,6 +162,7 @@ export default class HostOptions extends React.Component {
                         />
                     </View>
                     </View>
+                </View>
 
                 </KeyboardAwareScrollView>
 
@@ -221,21 +224,20 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-start",
       },
-    text: {marginBottom: 'auto',
+    text: {
         color: 'white',
-        fontSize: 24,
-        marginLeft: '5%'
+        fontSize: 15,
+        marginLeft: '5%',
+        marginLeft: 'auto'
     },
     text2: {
         color: 'white',
-        fontSize: 18,
+        fontSize: 20,
         alignSelf: 'center',
     },
     optionContainer: {
-        marginTop: '7%',
-        marginBottom: '4%',
+        marginTop: '5%',
         width: '100%',
-        height: '30%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         
@@ -273,7 +275,7 @@ const styles = StyleSheet.create({
     },
     top: {
         width: '100%',
-        flex: 1,
+        flex: 2,
     },
     mButton: {
         width: '100%',
@@ -297,17 +299,28 @@ const styles = StyleSheet.create({
         color: '#b4cd31'
       },
       optionsPane: {
-          borderRadius: 15,
-          width: '85%',
+    
+          width: '90%',
           alignSelf: 'center',
-          marginTop: '3%',
-          height: '50%',
+          marginTop: '0%',
+          flex: 1
       },
       backButton: {
         width: 80,
         height: 80,
         borderRadius: 50,
         marginBottom: '5%'
+      },
+      pane: {
+        backgroundColor: "rgba(185, 185, 185, 0.15)",
+        paddingTop: 15,
+        paddingBottom: 15,
+        borderRadius: 22,
+        width: "90%",
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "flex-start",
+        alignSelf: 'center'
       },
 });
 

@@ -13,15 +13,21 @@ import LoadingServer from "./src/LoadingServer";
 import EndOfOptions from "./src/EndOfOptions";
 import Disconnected from "./src/Disconnected";
 import Waiting from "./src/Waiting";
+
 import ConnectionError from "./src/ConnectionError";
+import { navigationRef } from './rootNavigation';
 
 console.disableYellowBox = true;
 
 const Stack = createStackNavigator();
 
+
 function App() {
+
   return (
-    <NavigationContainer>
+
+    <NavigationContainer ref={navigationRef}>
+
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -41,8 +47,11 @@ function App() {
         <Stack.Screen name="Waiting" component={Waiting} />
         <Stack.Screen name="ConnectionError" component={ConnectionError} />
       </Stack.Navigator>
+
     </NavigationContainer>
+
   );
+
 }
 
 export default App;

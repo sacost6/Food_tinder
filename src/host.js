@@ -41,21 +41,24 @@ export default class host extends React.Component {
     const { navigate } = this.props.navigation;
     if(key === undefined) {
       console.log("Your key is undefined");
-      navigate('MainMenu');
+      navigate('Home');
+    }
+    if(userID === -1) {
+      console.log("userID: " + userID);
+      console.log("ID was invalid before host-location emition");
     }
     socket.emit("host-location", {
       key: key,
-      hostID: userID,
+      hostID: socket.id,
       latitude: lat,
       longitude: lng
     });
 
-    socket.on("Start", () => {
+    socket.on("Start", (key) => {
       navigate("Loading");
     });
 
     socket.on("Done", () => {
-      console.log("Created session in the server.");
     });
   }
 

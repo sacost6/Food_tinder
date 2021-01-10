@@ -56,11 +56,9 @@ function runTiming(clock, value, dest) {
       startClock(clock)
     ]),
     timing(clock, state, config),
-    cond(state.finished, debug('stop clock', stopClock(clock))),
+    cond(state.finished, debug('Hello World', stopClock(clock))),
     state.position
   ]);
-
-
 
 }
 
@@ -122,32 +120,21 @@ export default class WelcomeScreen extends React.Component {
       extrapolate: Extrapolate.CLAMP
     })
 
-    
-  }
 
 
-  static stopConnTimeout(){
-    clearTimeout(this.timeout);
-    this.timeout = 0;
-  }
-
-  started = false;
-  static startTimeout(navigate) {
-    this.timeout = setTimeout(function() {
-      if(socket.connected === false) {
-        navigate("ConnectionError");
-      }
-      else {
-        WelcomeScreen.stopConnTimeout();
-        WelcomeScreen.startTimeout();
-      }
-    }, 10000);
   }
 
   componentDidMount() {
-    if(this.started === false) {
-      const {navigate} = this.props.navigation;
-      WelcomeScreen.startTimeout(navigate);
+    if(socket.connected === false) {
+      console.log("In Welcome screen, socket is not connected to server");
+      console.log("Attempting to reconnect...");
+      socket.connect();
+      if(socket.connected) {
+        console.log("Reconnect attempt succesful!");
+      }
+      else {
+        console.log("Reconnect attempt unsuccesful");
+      }
     }
   }
 
@@ -208,13 +195,24 @@ export default class WelcomeScreen extends React.Component {
             </TapGestureHandler>
 
 
-            <TouchableWithoutFeedback onPress={() => navigate("HostOptions")}>
+            <TouchableWithoutFeedback onPress={() =>  {
+              if(socket.connected) {
+              navigate("HostOptions"); }
+              else {socket.connect();}
+            }}>
                 <Animated.View style={styles.button}>
                   <Text style={{color: '#b4cd31'}}> HOST </Text>
                 </Animated.View>
             </TouchableWithoutFeedback>
             
-            <TouchableWithoutFeedback onPress={() => navigate("Join")}>
+            <TouchableWithoutFeedback onPress={() => {
+              if(socket.connected)  {
+                navigate("Join")
+              } 
+              else {socket.connect();}
+          }}
+
+            >
                 <Animated.View style={styles.button}>
                   <Text style={{color: 'white'}}> JOIN </Text>
                 </Animated.View>
