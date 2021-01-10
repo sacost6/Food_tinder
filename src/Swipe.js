@@ -570,7 +570,7 @@ export default class Swipe extends React.Component {
                     {this.renderRating(item.rating)}
                   </View>
                   <View style={styles.attributionPane}> 
-                    
+                    {this.getHrefName(item.images[this.state.photoIndex].attribution[0], item)}  
                   </View>
                 </View>
               </LinearGradient>
@@ -627,7 +627,7 @@ export default class Swipe extends React.Component {
                   {this.renderRating(item.rating)}
                 </View>
                 <View style={styles.attributionPane}> 
-                    
+                    {this.getHrefName(item.images[this.state.underPhotoIndex].attribution[0], item)}  
                 </View>
               </LinearGradient>
             </Animated.View>
