@@ -227,7 +227,6 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         fontSize: 15,
-        marginLeft: '5%',
         marginLeft: 'auto'
     },
     text2: {
@@ -299,7 +298,6 @@ const styles = StyleSheet.create({
         color: '#b4cd31'
       },
       optionsPane: {
-    
           width: '90%',
           alignSelf: 'center',
           marginTop: '0%',

@@ -46,7 +46,6 @@ socket.on("connect", () => {
 
   socket.on("disconnect", function () {
     console.log("Disconnected from server, in index.js");
-    rootNavigation.navigate("ConnectionError");
   });
 
 });
