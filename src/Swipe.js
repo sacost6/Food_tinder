@@ -208,7 +208,7 @@ export default class Swipe extends React.Component {
           console.log("total number of restaurants: " + total_num_restaurants)
           if (counter === total_num_restaurants - 5 && counter < 20) {
             console.log("Sending request for next page");
-            //this.getNextPage();
+            this.getNextPage();
           }
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
@@ -230,7 +230,7 @@ export default class Swipe extends React.Component {
           console.log("total number of restaurants: " + total_num_restaurants)
           if (counter === total_num_restaurants - 5 && counter < 20) {
             console.log("Sending request for next page");
-            //this.getNextPage();
+            this.getNextPage();
           }
         } else if (
           Math.abs(gestureState.dy < 6) &&
