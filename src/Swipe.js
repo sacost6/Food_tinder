@@ -85,22 +85,7 @@ export default class Swipe extends React.Component {
       
       navigate("Chosen");
     });
-    socket.on("dis_from_serv", () => {
-      socket.disconnect();
-    });
-    socket.on("both_out_options", () => {
-      this._unsubscribe();
-      navigate("EndOfOptions");
-    });
-    socket.on("1 player done", () => {
-      //TODO inform player they must wait
-      console.log("This player is done but the other is not");
-      Toast.show({
-        title: 'User created',
-        text: 'Your user was successfully created, use the app now.',
-        color: '#2ecc71'
-    });
-    });
+
     socket.on("page2_restaurant", (data) => {
 
       let image_sources = data.buffer;
@@ -126,11 +111,18 @@ export default class Swipe extends React.Component {
 
       
     });
+    socket.on("no_match", () => {
+      this._unsubscribe();
+      socket.off("no_match");
+      socket.off("found the one");
+      socket.off("partner-disconnected");
+      socket.off("page2_restaurant");
+      navigate("EndOfOptions");
+    }); 
 
   }
 
   componentWillUnmount() {
-    socket.off("player");
     socket.off("both_out_options");
     socket.off("found the one");
     socket.off("partner-disconnected");
@@ -214,9 +206,9 @@ export default class Swipe extends React.Component {
           counter = counter + 1;
           console.log("Counter: " + counter);
           console.log("total number of restaurants: " + total_num_restaurants)
-          if (counter === total_num_restaurants - 5) {
+          if (counter === total_num_restaurants - 5 && counter < 20) {
             console.log("Sending request for next page");
-            this.getNextPage();
+            //this.getNextPage();
           }
         } else if (gestureState.dx < -120) {
           Animated.spring(this.position, {
@@ -236,9 +228,9 @@ export default class Swipe extends React.Component {
           counter = counter + 1;
           console.log("Counter: " + counter);
           console.log("total number of restaurants: " + total_num_restaurants)
-          if (counter === total_num_restaurants - 5) {
+          if (counter === total_num_restaurants - 5 && counter < 20) {
             console.log("Sending request for next page");
-            this.getNextPage();
+            //this.getNextPage();
           }
         } else if (
           Math.abs(gestureState.dy < 6) &&
@@ -269,6 +261,8 @@ export default class Swipe extends React.Component {
 
 
   getNextPage() {
+
+    
     socket.emit("nextPage", {
     nextPageToken: token
   });
@@ -351,7 +345,14 @@ export default class Swipe extends React.Component {
   }
 
   // Uses regex to extract the source name from html attribute
-  getHrefName = (href_string, item) => {
+  getHrefName = (item, index) => {
+    let href_string;
+    try {
+    href_string = item.images[index].attribution[0]; }
+    catch(error) {
+      return null;
+    }
+
     if(href_string === null) {
       return null;
     }
@@ -372,8 +373,8 @@ export default class Swipe extends React.Component {
         <Text style={styles.attributionText}> Photo Listing by: 
             <Text
               style={{color: 'blue'}}
-              onPress={() => Linking.openURL(this.getHref(item.images[this.state.photoIndex].attribution[0]))}> 
-              <Text> </Text> {this.getName(item.images[this.state.photoIndex].attribution[0])}
+              onPress={() => Linking.openURL(this.getHref(item.images[index].attribution[0]))}> 
+              <Text> </Text> {this.getName(item.images[index].attribution[0])}
             </Text> 
         </Text>
         </View>
@@ -503,7 +504,6 @@ export default class Swipe extends React.Component {
         if (i < this.state.currentIndex) {
           return null;
         } else if (i === this.state.currentIndex) {
-          console.log("photoIndex: " + this.state.photoIndex);
            return(
             <Animated.View
               {...this.PanResponder.panHandlers}
@@ -570,7 +570,8 @@ export default class Swipe extends React.Component {
                     {this.renderRating(item.rating)}
                   </View>
                   <View style={styles.attributionPane}> 
-                    {this.getHrefName(item.images[this.state.photoIndex].attribution[0], item)}  
+                    {this.getHrefName(item, this.state.photoIndex)}  
+
                   </View>
                 </View>
               </LinearGradient>
@@ -606,7 +607,7 @@ export default class Swipe extends React.Component {
 
                 <Image
                   style={styles.imageStyle}
-                  source={{ uri: item.images[this.state.underPhotoIndex].source }}
+                  source={{ uri: item.images[0].source }}
                   borderRadius={20}
                 />
                 <View style={{alignItems: 'center', marginTop: 10,}}>
@@ -627,7 +628,7 @@ export default class Swipe extends React.Component {
                   {this.renderRating(item.rating)}
                 </View>
                 <View style={styles.attributionPane}> 
-                    {this.getHrefName(item.images[this.state.underPhotoIndex].attribution[0], item)}  
+                  {this.getHrefName(item, 0)}  
                 </View>
               </LinearGradient>
             </Animated.View>
@@ -640,14 +641,14 @@ export default class Swipe extends React.Component {
   render() {
     return (
       <Root>
-      <View style={{ flex: 1 }}>
-        <LinearGradient colors={["#000000", "#202020"]} style={{ flex: 1 }}>
-          <View style={{ height: 60 }} />
+      <View style={{ flex: 1, zIndex: -2}}>
+        <LinearGradient colors={["#000000", "#202020"]} style={{ flex: 1, zIndex: -2 }}>
+          <View style={{ height: 60, zIndex: -2 }} />
           <Image source={require("../assets/powered_by_google.png")}
-            style={{marginLeft: 15}}></Image>
-
+            style={{marginLeft: 15, zIndex: 0}}></Image>
+          <Text style={styles.outOfOptionsText}>Out of options</Text>
           <View style={{ flex: 1 }}>{this.renderRestaurants()}</View>
-          <View style={{ height: 60 }} />
+          <View style={{ height: 60, zIndex: -2 }} />
         </LinearGradient>
       </View>
       </Root>
@@ -663,7 +664,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderRadius: 20,
     overflow: "hidden",
-    
+
+    zIndex: 2
   },
   imageStyle: {
     marginTop: 10,
@@ -735,6 +737,14 @@ const styles = StyleSheet.create({
   },
   attributionPane: {
     marginLeft: 10
+  },
+  outOfOptionsText: {
+    zIndex: 0,
+    alignSelf: 'center',
+    marginTop: SCREEN_HEIGHT/2,
+    fontSize: 20,
+    color: 'white',
+    position: 'absolute'
   }
 
   

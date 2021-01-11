@@ -115,6 +115,7 @@ export default class loading extends React.Component {
     this.stopTimer();
     socket.off("all_data_sent");
     socket.off("restaurant");
+    socket.off("partner-disconnected");
   }
   
 
