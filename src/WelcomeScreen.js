@@ -198,7 +198,8 @@ export default class WelcomeScreen extends React.Component {
             <TouchableWithoutFeedback onPress={() =>  {
               if(socket.connected) {
               navigate("HostOptions"); }
-              else {socket.connect();}
+              else {socket.connect();
+              }
             }}>
                 <Animated.View style={styles.button}>
                   <Text style={{color: '#b4cd31'}}> HOST </Text>

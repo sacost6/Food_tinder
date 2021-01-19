@@ -49,7 +49,6 @@ socket.on("connect", () => {
   });
 
 });
-
 let connTimeout = new Timeout();
 if(timeoutStarted === false) {
   connTimeout.startTimeout();

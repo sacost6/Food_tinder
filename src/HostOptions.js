@@ -1,19 +1,16 @@
 
 
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Image, Switch, KeyboardAvoidingView } from 'react-native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View, Switch, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
-import socketIO from 'socket.io-client';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Icon from "react-native-vector-icons/FontAwesome";
 import socket from "../store/socket";
-import { DotIndicator, WaveIndicator, MaterialIndicator } from "react-native-indicators";
 import {userID} from "../store";
+import * as Location from 'expo-location';
 
 let lat, lng, key;
-let current_crd;
 let location_message;
 let mount = true;
 
@@ -32,18 +29,31 @@ export default class HostOptions extends React.Component {
         message: 'Select a location to search near'
       };
 
-    componentDidMount() {
-        const { navigate } = this.props.navigation;
-        navigator.geolocation.getCurrentPosition(position => {
+      async getLocation()  {
+        let { status } = await Location.requestPermissionsAsync();
+        if (status !== 'granted') {
+        } else {
+            let location = await Location.getLastKnownPositionAsync({});
+
             if(mount) {
                 this.setState({
                     locationMissing: false
                 });
             }
-            current_crd = position.coords;
-        }, error => {
-            console.warn(`ERROR(${error.code}): ${error.message}`);
-        }, {enableHighAccuracy:true, timeout: 5000});
+            lat = location.coords.latitude;
+            lng = location.coords.longitude;
+            
+
+        
+        }
+      }
+
+    componentDidMount() {
+        const { navigate } = this.props.navigation;
+
+        this.getLocation();
+
+
         socket.on("host-info", (data) => {
             key = data;
             navigate('Host');
@@ -58,7 +68,6 @@ export default class HostOptions extends React.Component {
                 });
             }
             else {
-                console.log("Invalid Location entered");
 
             }
 
@@ -130,10 +139,8 @@ export default class HostOptions extends React.Component {
                 position: "absolute",
                 height: "100%",
                 width: "100%", }}
-              locations={[0.5,1]}
             >
 
-                <KeyboardAwareScrollView style={styles.top}>
                 <IconButton
                     containerStyle={{
                     marginRight: "auto",
@@ -164,24 +171,15 @@ export default class HostOptions extends React.Component {
                     </View>
                 </View>
 
-                </KeyboardAwareScrollView>
+                
+                <KeyboardAvoidingView   behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={styles.bottom}>
 
-                <View style={styles.bottom}>
-
-
-
-                    <RaisedButton
-                        containerStyle={styles.buttonContainer}
-                        buttonStyle={styles.mButton}
-                        title="Host"
-                        titleStyle={styles.buttonText}
+                    <TouchableWithoutFeedback 
                         disabled={renderButton()}
-                        onPress={() => {     
-
+                        onPress={() => {
                             if(this.state.isEnabled) {
                                 // use current location
-                                lat = current_crd.latitude;
-                                lng = current_crd.longitude;
                                 location_message = 'using your location';
                                 socket.emit("host-req", {
                                     hostID: userID
@@ -193,13 +191,17 @@ export default class HostOptions extends React.Component {
                                 socket.emit("geoCode", this.state.location);
                                 
                             }
-                        }}
+                    }}>
 
-                    />
+                        <View  style={styles.mButton}>
+                        <Text style={styles.buttonText}> Create Session </Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+
                     <View style={styles.customContainer}>
                         {renderInputBar()}
                     </View>
-                </View>
+                </KeyboardAvoidingView>
 
             </LinearGradient>
           </View>
@@ -239,7 +241,6 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        
     },
     input: {
         width: "90%",
@@ -252,70 +253,65 @@ const styles = StyleSheet.create({
         borderBottomColor: "#3d3d3d",
     
       },
-      iconContainer: {
+    iconContainer: {
         marginLeft: "5%",
         marginRight: '3%',
-      },
-      inputLabel: {
+    },
+    inputLabel: {
         color: "black",
         fontWeight: "bold",
-      },
-      inputStyle: {
+    },
+    inputStyle: {
         color: "white",
         //fontFamily: "sans-serif-thin",
         fontWeight: "bold",
-      },
-      customContainer: {
+    },
+    customContainer: {
         marginTop: '3%'
     },
-      bottom: {
+    bottom: {
         width: '100%',
-        flex: 1,
+        flex: 4,
     },
     top: {
         width: '100%',
         flex: 2,
     },
     mButton: {
-        width: '100%',
+        marginTop: 'auto',
+        width: '86%',
         height: 70,
         borderRadius: 20,
         backgroundColor: '#262626',
         alignItems: "center",
         justifyContent: "center",
+        alignSelf: 'center'
       },
-      buttonContainer: {
-          width: '86%',
-          marginTop: 'auto',
-          justifyContent: 'center',
-          alignItems: 'center',
-          alignSelf: 'center'
-      },
-      buttonText: {
+    buttonText: {
         fontWeight: '100',
         //fontFamily: "sans-serif-thin",
         fontSize: 20,
         color: '#b4cd31'
-      },
-      optionsPane: {
-          width: '90%',
-          alignSelf: 'center',
-          marginTop: '0%',
-          flex: 1
-      },
-      backButton: {
+    },
+    optionsPane: {
+        width: '90%',
+        alignSelf: 'center',
+
+
+    },
+    backButton: {
         width: 80,
         height: 80,
         borderRadius: 50,
         marginBottom: '5%'
       },
-      pane: {
+    pane: {
         backgroundColor: "rgba(185, 185, 185, 0.15)",
         paddingTop: 15,
         paddingBottom: 15,
+        marginBottom: 10,
         borderRadius: 22,
         width: "90%",
-        flex: 1,
         alignItems: "center",
         justifyContent: "flex-start",
         alignSelf: 'center'

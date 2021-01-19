@@ -14,33 +14,60 @@ import { userID } from "../store/index";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
-
+let isMounted = false;
 export default class join extends React.Component {
   constructor(props) {
     super(props);
+    isMounted = false;
   }
 
  
  
   componentDidMount() {
- 
+    isMounted = true;
     const { navigate } = this.props.navigation;
     socket.on("Start", () => {
       navigate("Loading");
     });
+    socket.on("Session_not_found", () => {
+      if(isMounted) {
+        this.setState({
+          showServerMessage: true
+        });
+      }
+    });
   }
 
   componentWillUnmount() {
+    isMounted = false;
     socket.off("Start");
+    socket.off("Session_not_found");
   }
 
   state = {
     // updated whenever the KeyInput field is updated
     sesskey: "",
+    showServerMessage: false
   };
 
 
+
+
   render() {
+
+    
+  let renderServerMessage = () => {
+    if(this.state.showServerMessage) {
+      return( 
+        <Text style={styles.serverMessage}> Invalid key, try again</Text>
+      );
+    }
+    else {
+      return null;
+    }
+
+  }
+  
     const KeyInput = (props) => <Input leftIcon {...props} />;
     const RaisedButton = (props) => <Button raised {...props} />;
     const IconButton = (props) => <Button icon {...props} />;
@@ -99,7 +126,11 @@ export default class join extends React.Component {
                   <Text style={styles.buttonText}> Join </Text>
                 </View>
             </TouchableWithoutFeedback>
+            {renderServerMessage()}
+
           </View>
+
+
         </LinearGradient>
       </View>
     );
@@ -158,7 +189,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   inputStyle: {
-    
     color: "white",
     //fontFamily: "sans-serif-thin",
     fontWeight: "bold",
@@ -168,4 +198,8 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 50,
   },
+  serverMessage: {
+    color: 'white',
+    fontSize: 16,
+  }
 });

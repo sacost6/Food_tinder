@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "first_app",
+    "name": "UPick",
     "slug": "first_app",
     "platforms": [
       "ios",
@@ -9,11 +9,11 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/upick_icon_2.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/upick_logo_v2.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1c1c1c"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,10 +22,16 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.demboiz.upick"
     },
     "android": {
-      "package": "com.demboiz.upick"
+      "package": "com.demboiz.upick",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION "
+      ],
+      "versionCode": 2
     }
   }
 }
